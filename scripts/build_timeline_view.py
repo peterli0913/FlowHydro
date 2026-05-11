@@ -564,7 +564,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
             f'<div class="section-row">'
             f'<div class="section-label">{html.escape(sec_zh)}'
             f'<span class="section-en">{html.escape(sec_key)}</span></div>'
-            f'<div class="section-bar" style="width:{track_w}px"></div></div>'
+            f'<div class="section-bar"></div></div>'
         )
         for it in sec_items:
             zh = ITEM_LABEL_ZH.get(it.name_en, it.name_en)
@@ -674,24 +674,25 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                 f'    </div>'
                 f'    {note_html}'
                 f'  </div>'
-                f'  <div class="item-track" style="width:{track_w}px" data-item="{key}">'
+                f'  <div class="item-track" data-item="{key}">'
                 f'    {"".join(bar_html)}'
                 f'  </div>'
                 f'</div>'
             )
 
-    # Month header HTML (no pseudo ::before any more — we use a real sticky spacer)
+    # Month header HTML (widths come from CSS variables so compact mode can
+    # resize everything via a single class toggle).
     month_header_html = []
     week_header_html = []
     for (y, m, span) in month_headers:
         cls = "mh-cur" if (y, m) == (TODAY.year, TODAY.month) else ""
         month_header_html.append(
-            f'<div class="month-cell {cls}" style="width:{span*week_w}px">'
+            f'<div class="month-cell {cls}" style="--span:{span};">'
             f'{y}/<span class="m">{m:02d}</span></div>'
         )
         for w in range(1, span + 1):
             week_header_html.append(
-                f'<div class="week-cell" style="width:{week_w}px">w{w}</div>'
+                f'<div class="week-cell">w{w}</div>'
             )
 
     # Decisions
@@ -765,7 +766,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     time_slots_json = json.dumps(time_slots, ensure_ascii=False)
 
     css = """
-    :root { --label-w: %(label_w)dpx; --week-w: %(week_w)dpx; }
+    :root { --label-w: %(label_w)dpx; --week-w: %(week_w)dpx; --n-cols: %(n_cols)d; }
     * { box-sizing: border-box; }
     body { font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
            margin: 0; color: #1f2937; background: #f5f7fa; }
@@ -824,7 +825,28 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     .gantt { background: #fff; border-radius: 10px; overflow: hidden;
              box-shadow: 0 1px 3px rgba(15,52,96,0.06); }
     .gantt-scroll { overflow: auto; max-height: 78vh; position: relative; }
-    .gantt-grid { position: relative; }
+    .gantt-grid { position: relative;
+                  min-width: calc(var(--label-w) + var(--week-w) * var(--n-cols)); }
+    /* Compact "overview" mode: shrink everything to fit on one screen and
+       hide secondary info in the left column. */
+    .gantt-grid.compact { --label-w: 200px; --week-w: 11px; }
+    .gantt-grid.compact .item-en, .gantt-grid.compact .item-zh {
+      font-size: 11px; line-height: 1.25; font-weight: 600; }
+    .gantt-grid.compact .item-owner, .gantt-grid.compact .row-deps,
+    .gantt-grid.compact .row-influence, .gantt-grid.compact .row-note {
+      display: none; }
+    .gantt-grid.compact .item-row { min-height: 18px; }
+    .gantt-grid.compact .section-row { min-height: 16px; }
+    .gantt-grid.compact .item-label { padding: 3px 6px; }
+    .gantt-grid.compact .section-label { padding: 3px 8px; font-size: 11px; }
+    .gantt-grid.compact .bar { top: 2px; height: 14px; }
+    .gantt-grid.compact .bar.bar-original { top: 16px; height: 4px; }
+    .gantt-grid.compact .bar.bar-update { width: 4px !important;
+                                           height: 22px !important; top: 0; }
+    .gantt-grid.compact .month-cell { padding: 2px 4px; font-size: 11px; }
+    .gantt-grid.compact .week-cell { padding: 1px 0; font-size: 9px; }
+    .toolbar-btn.active-toggle { background: #d97706; color: #fff;
+                                  border-color: #d97706; }
 
     /* sticky-top headers; left-sticky corner uses a real spacer div */
     .month-row, .week-row { display: flex; position: sticky; z-index: 8;
@@ -835,11 +857,13 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                       background: #e2e8f0; border-right: 1px solid #cbd5e1;
                       position: sticky; left: 0; z-index: 10; }
     .month-cell { padding: 6px 8px; border-right: 1px solid #cbd5e1;
-                  text-align: center; flex-shrink: 0; }
+                  text-align: center; flex-shrink: 0;
+                  width: calc(var(--week-w) * var(--span, 1)); }
     .month-cell.mh-cur { background: #fde68a; color: #92400e; }
     .month-cell .m { font-size: 13px; }
     .week-cell { border-right: 1px dashed #e2e8f0; padding: 2px 0;
-                 text-align: center; flex-shrink: 0; }
+                 text-align: center; flex-shrink: 0;
+                 width: var(--week-w); }
 
     /* sticky-left labels */
     .section-row { display: flex; align-items: stretch; background: #eef2f7; }
@@ -850,7 +874,9 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                      background: #eef2f7; }
     .section-label .section-en { color: #94a3b8; font-weight: 400;
                                   font-size: 11px; margin-left: 6px; }
-    .section-bar { flex-shrink: 0; }
+    .section-bar { flex-shrink: 0;
+                    width: calc(var(--week-w) * var(--n-cols)); }
+    .item-track-w { width: calc(var(--week-w) * var(--n-cols)); }
 
     .item-row { display: flex; border-bottom: 1px solid #f1f5f9;
                 min-height: 40px; position: relative; }
@@ -887,7 +913,8 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     .row-note:empty::before { content: attr(data-placeholder);
                                color: #cbd5e1; font-style: italic; }
 
-    .item-track { position: relative; flex-shrink: 0; }
+    .item-track { position: relative; flex-shrink: 0;
+                   width: calc(var(--week-w) * var(--n-cols)); }
     .bar { position: absolute; top: 8px; height: 22px; border-radius: 3px;
            opacity: 0.92; cursor: help;
            transition: transform 0.1s ease, box-shadow 0.1s ease; }
@@ -905,7 +932,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
 
     .today-marker {
        position: absolute; top: 0; bottom: 0; width: 2px; background: #dc2626;
-       left: %(today_left_px).1fpx;
+       left: calc(var(--label-w) + var(--week-w) * var(--today-col-offset, 0));
        z-index: 4; pointer-events: none;
     }
     .today-label { position: absolute; top: 30px; transform: translateX(-50%%);
@@ -1046,7 +1073,9 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
 
     .footer { font-size: 11px; color: #94a3b8; text-align: center;
               margin: 18px 0; }
-    """ % dict(label_w=label_w, week_w=week_w, today_left_px=today_left_px)
+    """ % dict(label_w=label_w, week_w=week_w, n_cols=n_cols)
+
+    today_col_offset = today_col - col_start
 
     html_doc = f"""<!doctype html>
 <html lang="zh-CN">
@@ -1083,6 +1112,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
       <div class="legend">{"".join(legend_html)}</div>
     </div>
     <div class="right">
+      <button class="toolbar-btn secondary" id="btn-compact" title="只看交付项名称 + 时间轴，整体观感">📐 简略总览</button>
       <button class="toolbar-btn secondary" id="btn-scroll-today">⤴ 跳到"今天"</button>
       <button class="toolbar-btn secondary" id="btn-clear-sel">清除高亮</button>
       <button class="toolbar-btn secondary" id="btn-show-mm">🗺 缩略图</button>
@@ -1098,7 +1128,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
 
   <div class="gantt">
     <div class="gantt-scroll" id="ganttScroll">
-      <div class="gantt-grid" id="ganttGrid" style="min-width: calc(var(--label-w) + {n_cols*week_w}px);">
+      <div class="gantt-grid" id="ganttGrid" style="--n-cols:{n_cols}; --today-col-offset:{today_col_offset:.4f};">
         <div class="month-row">
           <div class="header-spacer" style="top:0;"></div>
           {"".join(month_header_html)}
@@ -1147,12 +1177,20 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
   // ===== Constants ========================================================
   var LS_NOTE = "sandwich-note:";
   var LS_DEPS = "sandwich-deps:";
+  var LS_COMPACT = "sandwich-compact";
   var scroller = document.getElementById('ganttScroll');
   var grid     = document.getElementById('ganttGrid');
-  var labelW   = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--label-w'), 10) || 380;
-  var weekW    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--week-w'), 10) || 18;
-  var todayLeftPx = {today_left_px:.1f};
-  var trackW   = {track_w};
+  var todayColOffset = {today_col_offset:.4f};
+  // Metrics derived from CSS vars; refreshed on compact-mode toggle so
+  // layout / bars / minimap follow a single source of truth.
+  var labelW = 380, weekW = 18, trackW = 0, todayLeftPx = 0;
+  function refreshMetrics() {{
+    var cs = getComputedStyle(grid);
+    labelW = parseFloat(cs.getPropertyValue('--label-w')) || 380;
+    weekW  = parseFloat(cs.getPropertyValue('--week-w'))  || 18;
+    trackW = weekW * {n_cols};
+    todayLeftPx = labelW + todayColOffset * weekW;
+  }}
   var ITEMS     = JSON.parse(document.getElementById('items-meta').textContent);
   var DEFAULTS  = JSON.parse(document.getElementById('default-deps').textContent);
   var TIMESLOTS = JSON.parse(document.getElementById('time-slots').textContent);
@@ -1704,6 +1742,23 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
   }});
   document.getElementById('btn-clear-sel').addEventListener('click', clearHighlights);
 
+  // Compact "overview" toggle — collapses item detail in left column and
+  // shrinks week/label widths so the whole project fits more naturally.
+  var compactBtn = document.getElementById('btn-compact');
+  function applyCompact(on) {{
+    grid.classList.toggle('compact', on);
+    compactBtn.classList.toggle('active-toggle', on);
+    compactBtn.textContent = on ? '📐 详细视图' : '📐 简略总览';
+    refreshMetrics();
+    renderAllRowBars();
+    buildMinimap();
+  }}
+  compactBtn.addEventListener('click', function() {{
+    var next = !grid.classList.contains('compact');
+    try {{ localStorage.setItem(LS_COMPACT, next ? '1' : '0'); }} catch(e) {{}}
+    applyCompact(next);
+  }});
+
   document.getElementById('btn-export-notes').addEventListener('click', function() {{
     var notes = {{}}, deps = {{}}, bars = {{}};
     try {{
@@ -1900,8 +1955,18 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
   }})();
 
   // ===== Init =============================================================
+  refreshMetrics();
   snapshotXlsxBars();
   loadUserBars();
+  // Restore compact preference (before initial bar render so layout is right)
+  var initialCompact = false;
+  try {{ initialCompact = localStorage.getItem(LS_COMPACT) === '1'; }} catch(e) {{}}
+  if (initialCompact) {{
+    grid.classList.add('compact');
+    compactBtn.classList.add('active-toggle');
+    compactBtn.textContent = '📐 详细视图';
+    refreshMetrics();
+  }}
   renderAllRowBars();
   loadDeps();
   renderAllRel();
