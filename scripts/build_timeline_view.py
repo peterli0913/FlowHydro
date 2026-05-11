@@ -12,9 +12,10 @@ Output:
 
 The script extracts the colored Gantt cells from the "Timeline " sheet and
 renders both the original (blue) and the revised / current (orange) plans
-on the same chart, overlaid with HAZOP markers (yellow) and key
-milestones (purple). It also encodes the decisions and action items from
-the 2026-05-09 meetings.
+on the same chart, overlaid with "需要更新的时间节点" (purple) and "CE 认证
+公司介入节点" (green). Yellow cells in the xlsx are intentionally not
+drawn. The script also encodes the decisions / actions / risks from the
+2026-05-09 meetings (rendered above the chart, not as fake bars).
 """
 
 from __future__ import annotations
@@ -42,24 +43,23 @@ TODAY = date(2026, 5, 9)
 # Color buckets ----------------------------------------------------------------
 COLOR_ORIGINAL = "FF00B0F0"      # 浅蓝 = 原计划
 COLOR_REVISED = "FFFFC000"       # 橙黄 = 本次更新后的计划
-COLOR_MILESTONE = "FF7030A0"     # 紫 = 关键节点
-COLOR_HAZOP = "FFFFFF00"         # 黄 = HAZOP 标识
-COLOR_DONE_GREEN = "FF92D050"    # 绿 = 完成 / 责任色
-COLOR_DONE_DARKGREEN = "FF00B050"
+COLOR_UPDATE = "FF7030A0"        # 紫 = 需要更新的时间节点
+COLOR_CERT_GREEN = "FF92D050"    # 绿 = CE 认证公司介入节点
+COLOR_CERT_DARKGREEN = "FF00B050"
+COLOR_HAZOP_IGNORE = "FFFFFF00"  # 黄 = 不绘制（按 5/11 反馈去掉）
 
 PALETTE = {
     "original": "#7DCBED",
     "revised":  "#F0A93B",
-    "milestone":"#7C3FAA",
-    "hazop":    "#F2D43D",
-    "done":     "#5DB851",
+    "update":   "#7C3FAA",
+    "cert":     "#5DB851",
 }
 
 
 @dataclass
 class Cell:
     col: int                # absolute column index in xlsx
-    bucket: str             # original | revised | milestone | hazop | done
+    bucket: str             # original | revised | update | cert | note
     note: Optional[str]     # any text in the cell
 
 
@@ -80,12 +80,11 @@ def classify_color(rgb: Optional[str]) -> Optional[str]:
         return "original"
     if rgb == COLOR_REVISED:
         return "revised"
-    if rgb == COLOR_MILESTONE:
-        return "milestone"
-    if rgb == COLOR_HAZOP:
-        return "hazop"
-    if rgb in (COLOR_DONE_GREEN, COLOR_DONE_DARKGREEN):
-        return "done"
+    if rgb == COLOR_UPDATE:
+        return "update"
+    if rgb in (COLOR_CERT_GREEN, COLOR_CERT_DARKGREEN):
+        return "cert"
+    # Yellow (HAZOP) and any other colors -> intentionally ignored
     return None
 
 
@@ -238,38 +237,11 @@ SECTION_LABEL_ZH = {
     "On Site Installing": "现场安装与开车（UK 端）",
 }
 
-# Item-level detail / context that won't fit on the bar itself but should
-# appear in the per-row tooltip / drawer.
-ITEM_NOTES = {
-    "PI&D": ("PFD/PID 最新版尚未返回；HAZOP 安排在 6/3-6/4 周。"
-             " 5/9 会议确定：UK HAZOP 必须在 3D 模型冻结后才能开。"),
-    "Equipment datasheets": (
-        "5/9 会议结论：BT06 由 220L → 20-30L、反应柱 DN80/DN65 数据需更新；"
-        " 反应柱 1.5m 是外形尺寸（非床层高度），需向 UK 解释；下周先把单台数据单 update 完。"),
-    "Reactor column specification sheet": (
-        "聂博确认：1.5 m = 反应柱外形高度；UK 反复以为是床层高度。"
-        " 下周（5/12 周）发出解释 + 最新规格。"),
-    "Procurement information confirmation(pump\\insturment\\equipment schedule)": (
-        "和 UK 流程冲突：UK 要求 PO 前看到选型；国内必须比价 3 家。"
-        " 5/9 决议：采购在签合同前由 高宇/对应专业工程师 把首选厂家资料发 Keith 复核；"
-        " 需在采购流程上加这一拦截点。"),
-    "Piping Material Class Specification": (
-        "SGS 早期意见：与 H₂ 接触最低 316L；公用工程可 304；尾气/PSV 后段 304。"),
-    "Main Safety Relief Facilities Data Sheet": (
-        "UK 提出移端方案需重新核算；下周补齐数据。"),
-    "Control Description": (
-        "5/9 决议：减压阀+流量控制器+液位 — 把 Bronkhorst 质量流量控制器视为执行机构，"
-        " DCS 侧按单回路 PID（液位作外环、控制器内置 PID）实施。"
-        " 减压阀改用 Emerson Fisher 自力式机械减压阀（替代电动）。"),
-    "CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed": (
-        "认证范围：MD 2006/42/EC（整撬）+ ATEX 2014/34/EU（按 1区前提，文件接收型）。"
-        " Keith 已收 PED；下周补 ATEX/MD/EMC，报价 ~2 周，内部流程 ~2 周，预计 8/1 周签合同。"),
-    "3D modelling (procurement feedback; UK confirmation of equipment layout)": (
-        "5/9 关键路径：模型不冻结 → HAZOP / 采购 / 防爆分区都做不下去。"
-        " 目标 5月底~6月初冻结；6/2-6/3 推 UK 按属地规范画爆炸危险区域图。"),
-    "Integrated factory acceptance (FAT)": (
-        "原计划 2026/9 进行；按新基线后推到 2027/1。"),
-}
+# Item-level free-form note seeded into the editable row. Kept empty by
+# default so the row备注 stays a clean canvas the user can fill on the page
+# (会议结论 / 决议另外在顶部决议面板里）。每个条目都是可编辑的，修改后会
+# 保存到本浏览器并可以通过工具栏导出 JSON。
+ITEM_NOTES: Dict[str, str] = {}
 
 # Override owner labels for clarity
 OWNER_LABEL = {
@@ -428,14 +400,10 @@ OPEN_RISKS = [
     },
 ]
 
-# Extra bars to add on top of what's in the xlsx (drawn from meeting decisions)
-EXTRA_BARS = {
-    # Row 4: HAZOP（灰色为辅助资源）— add new-baseline HAZOP at 6/2-6/3 weeks
-    # Cols: AT = 46 (2026/6 wk 2), AU = 47 (2026/6 wk 3)
-    "HAZOP （support resource in grey）": [
-        (46, 47, "hazop", "新基线 HAZOP（5/9 会议确定：6/2-6/3 周）"),
-    ],
-}
+# NOTE: Per 5/11 feedback the Gantt now mirrors the xlsx exactly — no
+# extra bars are layered on top of the source data. Meeting-derived
+# scheduling lives in the decisions / actions / risks panels above the
+# chart, not as fake bars.
 
 # Dependency map: deliverable -> list of upstream deliverables it depends on.
 # Names must match exactly the `name_en` keys used in the xlsx.
@@ -532,9 +500,8 @@ TEAM = [
 LEGEND = [
     ("original",  "浅蓝", "原计划（旧基线）"),
     ("revised",   "橙黄", "本次更新后的新计划"),
-    ("milestone", "紫色", "关键里程碑 / 硬节点"),
-    ("hazop",     "黄色", "HAZOP 分析点"),
-    ("done",      "绿色", "已完成 / 责任色"),
+    ("update",    "紫色", "需要更新的时间节点"),
+    ("cert",      "绿色", "CE 认证公司介入节点"),
 ]
 
 
@@ -548,12 +515,6 @@ def slugify(name: str) -> str:
 
 
 def render(items: List[Item], col_start: int, col_end: int) -> str:
-    # Apply EXTRA_BARS (meeting-driven additions on top of xlsx data)
-    for it in items:
-        for (s, e, bucket, note) in EXTRA_BARS.get(it.name_en, []):
-            for c in range(s, e + 1):
-                it.cells.append(Cell(col=c, bucket=bucket, note=note if c == s else None))
-
     # Build month header info
     month_headers: List[Tuple[int, int, int]] = []  # (year, month, span)
     cur_y, cur_m, _ = col_to_month_week(col_start)
@@ -640,7 +601,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
 
             bucket_label = {
                 "original": "原计划", "revised": "新计划",
-                "milestone": "里程碑", "hazop": "HAZOP", "done": "完成",
+                "update": "需更新", "cert": "CE 介入",
             }
 
             # Build bar elements
@@ -678,15 +639,6 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                     f'data-item="{key}"></div>'
                 )
 
-            dep_html = ""
-            if deps:
-                links = " / ".join(
-                    f'<a class="dep-link" data-target="{item_key[d]}">'
-                    f'{html.escape(ITEM_LABEL_ZH.get(d, d))}</a>'
-                    for d in deps if d in item_key
-                )
-                dep_html = f'<div class="row-deps">↳ 依赖：{links}</div>'
-
             note_html = (
                 f'<div class="row-note" contenteditable="true" '
                 f'data-item="{key}" data-default="{html.escape(note)}" '
@@ -697,14 +649,24 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
             first_bar_attr = (
                 f' data-first-bar="{first_bar_left}"' if first_bar_left is not None else ""
             )
+            # deps / influence containers are filled at page-load by JS so
+            # user edits show consistently across "影响" (reverse) lines.
             rows_html.append(
                 f'<div class="item-row" id="row-{key}" data-item="{key}"'
-                f' data-deps="{html.escape(",".join(dep_keys))}"{first_bar_attr}>'
-                f'  <div class="item-label" data-item="{key}" title="点击：滚动到该项的时间段并高亮其依赖项">'
+                f' data-default-deps="{html.escape(",".join(dep_keys))}"{first_bar_attr}>'
+                f'  <div class="item-label" data-item="{key}" title="点击空白处：滚动到该项的时间段并高亮其依赖项">'
                 f'    <div class="item-zh">{html.escape(zh)}</div>'
                 f'    <div class="item-en">{html.escape(it.name_en)}</div>'
                 f'    <div class="item-owner">负责：{html.escape(owner_label)}</div>'
-                f'    {dep_html}'
+                f'    <div class="row-deps">'
+                f'      <span class="rel-label dep-label">↳ 依赖：</span>'
+                f'      <span class="rel-list deps-list" data-kind="deps"></span>'
+                f'      <button class="rel-edit-btn" data-kind="deps" title="编辑依赖">✏️</button>'
+                f'    </div>'
+                f'    <div class="row-influence">'
+                f'      <span class="rel-label inf-label">↗ 影响：</span>'
+                f'      <span class="rel-list inf-list"></span>'
+                f'    </div>'
                 f'    {note_html}'
                 f'  </div>'
                 f'  <div class="item-track" style="width:{track_w}px" data-item="{key}">'
@@ -765,6 +727,28 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
             f'<span class="leg"><span class="leg-swatch" '
             f'style="background:{PALETTE[lkey]}"></span>{color_zh} — {desc}</span>'
         )
+    minimap_legend_html = []
+    for (lkey, color_zh, desc) in LEGEND:
+        minimap_legend_html.append(
+            f'<span><i style="background:{PALETTE[lkey]}"></i>{color_zh}</span>'
+        )
+
+    # Serialize per-item metadata so the JS can build pickers/influence maps.
+    items_meta = []
+    default_deps_map: Dict[str, List[str]] = {}
+    for it in items:
+        k = item_key[it.name_en]
+        items_meta.append({
+            "key": k,
+            "zh":  ITEM_LABEL_ZH.get(it.name_en, it.name_en),
+            "en":  it.name_en,
+            "section": SECTION_LABEL_ZH.get(it.section or "", it.section or ""),
+        })
+        default_deps_map[k] = [
+            item_key[d] for d in DEPENDENCIES.get(it.name_en, []) if d in item_key
+        ]
+    items_meta_json = json.dumps(items_meta, ensure_ascii=False)
+    default_deps_json = json.dumps(default_deps_map, ensure_ascii=False)
 
     css = """
     :root { --label-w: %(label_w)dpx; --week-w: %(week_w)dpx; }
@@ -897,12 +881,11 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                   box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 3; }
     .bar.bar-revised  { box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
     .bar.bar-original { opacity: 0.5; height: 7px; top: 29px; border-radius: 2px; }
-    .bar.bar-milestone { width: 7px !important; height: 38px !important; top:0;
+    .bar.bar-update   { width: 7px !important; height: 38px !important; top:0;
                           border-radius: 2px; box-shadow: 0 0 0 1px #4c1d95; }
-    .bar.bar-hazop { box-shadow: 0 0 0 1px #b45309 inset; }
-    .bar.bar-done  { box-shadow: 0 0 0 1px #166534 inset; }
-    .row-selected .bar.bar-revised, .row-selected .bar.bar-hazop,
-    .row-selected .bar.bar-done {
+    .bar.bar-cert     { box-shadow: 0 0 0 1px #166534 inset; }
+    .row-selected .bar.bar-revised, .row-selected .bar.bar-update,
+    .row-selected .bar.bar-cert {
         box-shadow: 0 0 0 2px #d97706; transform: translateY(-1px);
     }
 
@@ -920,8 +903,105 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
              background: #0f3460; color: #fff; padding: 8px 16px;
              border-radius: 6px; font-size: 13px; opacity: 0;
              transition: opacity 0.2s ease, transform 0.2s ease;
-             pointer-events: none; z-index: 100; }
+             pointer-events: none; z-index: 1000; }
     .toast.show { opacity: 1; transform: translateX(-50%%) translateY(0); }
+
+    /* ---- deps / influence chips ---- */
+    .row-deps, .row-influence { font-size: 11px; color: #6b7280;
+                                 margin-top: 3px; line-height: 1.7;
+                                 display: flex; flex-wrap: wrap; align-items: center;
+                                 gap: 4px; }
+    .rel-label { color: #6b7280; flex-shrink: 0; }
+    .dep-label { color: #0369a1; }
+    .inf-label { color: #be185d; }
+    .rel-list  { display: inline-flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+    .chip { display: inline-flex; align-items: center; gap: 2px;
+            background: #e0f2fe; color: #075985; padding: 1px 7px;
+            border-radius: 9px; cursor: pointer; font-size: 11px;
+            border: 1px solid transparent; }
+    .chip:hover { background: #bae6fd; border-color: #0284c7; }
+    .chip-inf { background: #fce7f3; color: #9d174d; }
+    .chip-inf:hover { background: #fbcfe8; border-color: #db2777; }
+    .chip-empty { color: #cbd5e1; font-style: italic; cursor: default; }
+    .chip-empty:hover { background: transparent; border-color: transparent; }
+    .chip-remove { color: #94a3b8; font-size: 13px; line-height: 1;
+                   padding: 0 0 0 2px; }
+    .chip-remove:hover { color: #dc2626; }
+    .rel-edit-btn { background: none; border: 1px dashed #cbd5e1;
+                    border-radius: 9px; padding: 1px 6px; cursor: pointer;
+                    font-size: 11px; color: #64748b; }
+    .rel-edit-btn:hover { background: #f1f5f9; border-color: #94a3b8;
+                          color: #0f3460; }
+    .rel-edit-btn.editing { background: #fef3c7; border-color: #d97706;
+                            color: #92400e; }
+
+    /* ---- dependency editor popover ---- */
+    .dep-editor { position: absolute; z-index: 50; background: #fff;
+                  border: 1px solid #cbd5e1; border-radius: 8px;
+                  box-shadow: 0 8px 24px rgba(15,52,96,0.18);
+                  padding: 10px 12px; width: 360px; font-size: 12px;
+                  color: #1f2937; }
+    .dep-editor .de-title { font-weight: 600; color: #0f3460;
+                            margin-bottom: 6px; font-size: 12px; }
+    .dep-editor .de-current { display: flex; flex-wrap: wrap; gap: 4px;
+                              min-height: 22px; margin-bottom: 8px;
+                              padding-bottom: 6px;
+                              border-bottom: 1px dashed #e2e8f0; }
+    .dep-editor .de-add-row { display: flex; gap: 6px; }
+    .dep-editor select { flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1;
+                         border-radius: 4px; font-size: 12px; min-width: 0; }
+    .dep-editor .de-actions { display: flex; justify-content: space-between;
+                              margin-top: 8px; gap: 6px; }
+    .dep-editor button.de-btn { background: #0f3460; color: #fff;
+                                 border: none; padding: 4px 10px;
+                                 border-radius: 4px; cursor: pointer;
+                                 font-size: 12px; }
+    .dep-editor button.de-btn.secondary { background: #fff; color: #0f3460;
+                                           border: 1px solid #cbd5e1; }
+    .dep-editor button.de-btn.danger    { background: #fff; color: #b91c1c;
+                                           border: 1px solid #fecaca; }
+    .dep-editor button.de-btn:hover { opacity: 0.9; }
+    .dep-editor .de-empty { color: #94a3b8; font-style: italic; font-size: 11px; }
+
+    /* ---- minimap (draggable overview) ---- */
+    .minimap { position: fixed; right: 20px; bottom: 20px;
+               width: 360px; background: #fff;
+               border: 1px solid #cbd5e1; border-radius: 8px;
+               box-shadow: 0 10px 30px rgba(15,52,96,0.20);
+               z-index: 200; user-select: none;
+               transition: opacity 0.2s ease; }
+    .minimap.collapsed .mm-body { display: none; }
+    .minimap .mm-header { display: flex; align-items: center;
+                           justify-content: space-between;
+                           background: #0f3460; color: #fff;
+                           padding: 6px 10px;
+                           border-radius: 8px 8px 0 0;
+                           cursor: grab; font-size: 12px; }
+    .minimap.dragging .mm-header { cursor: grabbing; }
+    .minimap.collapsed .mm-header { border-radius: 8px; }
+    .minimap .mm-title { display: flex; align-items: center; gap: 6px;
+                          font-weight: 600; }
+    .minimap .mm-icons { display: flex; gap: 4px; }
+    .minimap .mm-icons button {
+      background: rgba(255,255,255,0.15); color: #fff; border: none;
+      padding: 2px 8px; border-radius: 4px; cursor: pointer;
+      font-size: 11px;
+    }
+    .minimap .mm-icons button:hover { background: rgba(255,255,255,0.3); }
+    .minimap .mm-body { padding: 8px; }
+    .minimap .mm-canvas { position: relative; background: #f8fafc;
+                           border: 1px solid #e2e8f0; border-radius: 4px;
+                           overflow: hidden; }
+    .minimap .mm-canvas svg { display: block; width: 100%%; height: 100%%; }
+    .minimap .mm-viewport { position: absolute; border: 1.5px solid #dc2626;
+                             background: rgba(220,38,38,0.10);
+                             pointer-events: none; }
+    .minimap .mm-canvas.draggable { cursor: crosshair; }
+    .minimap .mm-legend { display: flex; flex-wrap: wrap; gap: 8px;
+                           font-size: 10px; color: #475569; margin-top: 6px; }
+    .minimap .mm-legend span { display: inline-flex; align-items: center; gap: 3px; }
+    .minimap .mm-legend i { display: inline-block; width: 9px; height: 9px;
+                             border-radius: 2px; }
 
     .footer { font-size: 11px; color: #94a3b8; text-align: center;
               margin: 18px 0; }
@@ -964,18 +1044,20 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     <div class="right">
       <button class="toolbar-btn secondary" id="btn-scroll-today">⤴ 跳到"今天"</button>
       <button class="toolbar-btn secondary" id="btn-clear-sel">清除高亮</button>
-      <button class="toolbar-btn" id="btn-export-notes">⇩ 导出我的备注修改</button>
-      <button class="toolbar-btn secondary" id="btn-reset-notes">重置备注</button>
+      <button class="toolbar-btn secondary" id="btn-show-mm">🗺 缩略图</button>
+      <button class="toolbar-btn" id="btn-export-notes">⇩ 导出修改</button>
+      <button class="toolbar-btn secondary" id="btn-reset-all">重置全部</button>
     </div>
   </div>
   <div class="toolbar-hint">
-    每行有上下两条：上方粗条（橙/紫/黄/绿）是新基线（5/9 会议确认），下方细的浅蓝是原计划。
-    悬停时间段可看完整信息；点击左侧交付项可滚动到对应时间段并高亮其依赖项；黄色备注框可直接编辑（自动保存到本浏览器，可"导出"分享给团队）。
+    每行有上下两条：上方粗条（橙=新计划 / 紫=需更新节点 / 绿=CE 介入节点）是当前基线，下方细的浅蓝是原计划。
+    悬停时间段可看完整信息；点击左侧交付项滚动并高亮其依赖项；✏️ 按钮可编辑依赖（"影响"会自动同步重算）；
+    黄色备注框可直接编辑（自动保存到本浏览器，可"导出修改"分享给团队）。
   </div>
 
   <div class="gantt">
     <div class="gantt-scroll" id="ganttScroll">
-      <div class="gantt-grid" style="min-width: calc(var(--label-w) + {n_cols*week_w}px);">
+      <div class="gantt-grid" id="ganttGrid" style="min-width: calc(var(--label-w) + {n_cols*week_w}px);">
         <div class="month-row">
           <div class="header-spacer" style="top:0;"></div>
           {"".join(month_header_html)}
@@ -991,7 +1073,31 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
   </div>
 </div>
 
+<!-- Draggable mini-map / overview -->
+<div class="minimap" id="minimap">
+  <div class="mm-header" id="mmHeader">
+    <div class="mm-title">🗺 全景缩略图</div>
+    <div class="mm-icons">
+      <button id="mmToggleBtn" title="折叠/展开">—</button>
+      <button id="mmHideBtn" title="隐藏（可在工具栏重新打开）">×</button>
+    </div>
+  </div>
+  <div class="mm-body">
+    <div class="mm-canvas draggable" id="mmCanvas" style="height: 220px;">
+      <svg id="mmSvg" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="mm-viewport" id="mmViewport"></div>
+    </div>
+    <div class="mm-legend">
+      {"".join(minimap_legend_html)}
+      <span style="margin-left:auto;color:#94a3b8;">拖标题移动 · 点画布跳转</span>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
+
+<script id="items-meta" type="application/json">{items_meta_json}</script>
+<script id="default-deps" type="application/json">{default_deps_json}</script>
 
 <div class="footer">
   生成于 {TODAY.isoformat()} ｜ 自动从 xlsx + 会议转写抽取，下次会议或基线变更后请重新运行 <code>scripts/build_timeline_view.py</code> 即可刷新本页。
@@ -999,89 +1105,259 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
 
 <script>
 (function() {{
-  var LS_PREFIX = "sandwich-note:";
+  // ===== Constants ========================================================
+  var LS_NOTE = "sandwich-note:";
+  var LS_DEPS = "sandwich-deps:";
   var scroller = document.getElementById('ganttScroll');
-  var labelW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--label-w'), 10) || 380;
+  var grid     = document.getElementById('ganttGrid');
+  var labelW   = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--label-w'), 10) || 380;
+  var weekW    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--week-w'), 10) || 18;
   var todayLeftPx = {today_left_px:.1f};
+  var trackW   = {track_w};
+  var ITEMS    = JSON.parse(document.getElementById('items-meta').textContent);
+  var DEFAULTS = JSON.parse(document.getElementById('default-deps').textContent);
+  var itemByKey = {{}}; ITEMS.forEach(function(it) {{ itemByKey[it.key] = it; }});
 
-  function toast(msg) {{
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(function() {{ t.classList.remove('show'); }}, 1800);
+  // ===== State: per-item effective dependencies ===========================
+  var effDeps = {{}};         // key -> array of upstream keys
+  var infMap  = {{}};         // key -> array of downstream keys
+  function loadDeps() {{
+    ITEMS.forEach(function(it) {{
+      var saved = null;
+      try {{ saved = localStorage.getItem(LS_DEPS + it.key); }} catch(e) {{}}
+      if (saved !== null) {{
+        try {{ effDeps[it.key] = JSON.parse(saved); }}
+        catch(e) {{ effDeps[it.key] = (DEFAULTS[it.key] || []).slice(); }}
+      }} else {{
+        effDeps[it.key] = (DEFAULTS[it.key] || []).slice();
+      }}
+    }});
+    recomputeInfluence();
+  }}
+  function recomputeInfluence() {{
+    infMap = {{}};
+    Object.keys(effDeps).forEach(function(k) {{
+      effDeps[k].forEach(function(d) {{
+        if (!infMap[d]) infMap[d] = [];
+        if (infMap[d].indexOf(k) < 0) infMap[d].push(k);
+      }});
+    }});
+  }}
+  function saveDeps(key) {{
+    var def = (DEFAULTS[key] || []).slice().sort().join(',');
+    var cur = (effDeps[key] || []).slice().sort().join(',');
+    try {{
+      if (def === cur) localStorage.removeItem(LS_DEPS + key);
+      else localStorage.setItem(LS_DEPS + key, JSON.stringify(effDeps[key]));
+    }} catch(e) {{}}
   }}
 
-  // ----- Restore edited notes from localStorage --------------------------
-  document.querySelectorAll('.row-note').forEach(function(el) {{
-    var key = el.getAttribute('data-item');
-    var def = el.getAttribute('data-default') || '';
-    var saved = null;
-    try {{ saved = localStorage.getItem(LS_PREFIX + key); }} catch(e) {{}}
-    if (saved !== null && saved !== def) {{
-      el.textContent = saved;
-      el.classList.add('edited');
-    }}
-    el.addEventListener('blur', function() {{
-      var txt = el.innerText.trim();
-      var dflt = (el.getAttribute('data-default') || '').trim();
-      try {{
-        if (txt === dflt) {{
-          localStorage.removeItem(LS_PREFIX + key);
-          el.classList.remove('edited');
-        }} else {{
-          localStorage.setItem(LS_PREFIX + key, txt);
-          el.classList.add('edited');
-        }}
-      }} catch(e) {{}}
-    }});
-    // Prevent click-to-scroll from triggering when editing
-    el.addEventListener('click', function(ev) {{ ev.stopPropagation(); }});
-  }});
+  // ===== Rendering deps/influence chips ===================================
+  function chipHTML(key, kind) {{
+    var meta = itemByKey[key];
+    if (!meta) return '';
+    var label = meta.zh;
+    var cls = (kind === 'inf' ? 'chip chip-inf' : 'chip');
+    return '<span class="' + cls + '" data-target="' + key + '">' +
+            label + '</span>';
+  }}
+  function renderRowRel(rowEl) {{
+    var key = rowEl.getAttribute('data-item');
+    var depsList = rowEl.querySelector('.deps-list');
+    var infList  = rowEl.querySelector('.inf-list');
+    var deps = effDeps[key] || [];
+    var infs = (infMap[key] || []);
+    depsList.innerHTML = deps.length
+      ? deps.map(function(k) {{ return chipHTML(k, 'dep'); }}).join('')
+      : '<span class="chip chip-empty">无</span>';
+    infList.innerHTML = infs.length
+      ? infs.map(function(k) {{ return chipHTML(k, 'inf'); }}).join('')
+      : '<span class="chip chip-empty">无</span>';
+    // Mark edited state
+    var defKey = (DEFAULTS[key] || []).slice().sort().join(',');
+    var curKey = deps.slice().sort().join(',');
+    var btn = rowEl.querySelector('.rel-edit-btn');
+    if (btn) btn.classList.toggle('editing', defKey !== curKey);
+  }}
+  function renderAllRel() {{
+    document.querySelectorAll('.item-row').forEach(renderRowRel);
+  }}
 
-  // ----- Click on item label -> scroll & highlight deps ------------------
-  function scrollToItem(key) {{
-    var row = document.getElementById('row-' + key);
-    if (!row) return;
-    // Clear previous selection
+  // ===== Click-to-jump + highlight deps ===================================
+  function clearHighlights() {{
     document.querySelectorAll('.item-row').forEach(function(r) {{
       r.classList.remove('row-selected'); r.classList.remove('row-dep');
     }});
+  }}
+  function scrollToItem(key) {{
+    var row = document.getElementById('row-' + key);
+    if (!row) return;
+    clearHighlights();
     row.classList.add('row-selected');
-    // Highlight dependencies
-    var depAttr = row.getAttribute('data-deps') || '';
-    depAttr.split(',').filter(Boolean).forEach(function(k) {{
-      var dr = document.getElementById('row-' + k);
+    (effDeps[key] || []).forEach(function(d) {{
+      var dr = document.getElementById('row-' + d);
       if (dr) dr.classList.add('row-dep');
     }});
-    // Scroll horizontally to first bar
     var firstBar = row.getAttribute('data-first-bar');
     if (firstBar !== null && firstBar !== '') {{
       var targetLeft = labelW + parseFloat(firstBar) - scroller.clientWidth * 0.30;
       scroller.scrollTo({{ left: Math.max(0, targetLeft), behavior: 'smooth' }});
     }}
-    // Scroll vertically into view
     row.scrollIntoView({{ block: 'nearest', behavior: 'smooth' }});
+    updateMinimapViewport();
   }}
+
+  // ===== Notes (contenteditable, localStorage) ============================
+  function restoreNotes() {{
+    document.querySelectorAll('.row-note').forEach(function(el) {{
+      var key = el.getAttribute('data-item');
+      var def = el.getAttribute('data-default') || '';
+      var saved = null;
+      try {{ saved = localStorage.getItem(LS_NOTE + key); }} catch(e) {{}}
+      if (saved !== null && saved !== def) {{
+        el.textContent = saved;
+        el.classList.add('edited');
+      }}
+    }});
+  }}
+  document.querySelectorAll('.row-note').forEach(function(el) {{
+    var key = el.getAttribute('data-item');
+    el.addEventListener('blur', function() {{
+      var txt = el.innerText.trim();
+      var dflt = (el.getAttribute('data-default') || '').trim();
+      try {{
+        if (txt === dflt) {{
+          localStorage.removeItem(LS_NOTE + key);
+          el.classList.remove('edited');
+        }} else {{
+          localStorage.setItem(LS_NOTE + key, txt);
+          el.classList.add('edited');
+        }}
+      }} catch(e) {{}}
+    }});
+    el.addEventListener('click', function(ev) {{ ev.stopPropagation(); }});
+  }});
+
+  // ===== Dependency editor popover ========================================
+  var editorEl = null;
+  function closeEditor() {{
+    if (editorEl && editorEl.parentNode) editorEl.parentNode.removeChild(editorEl);
+    editorEl = null;
+    document.querySelectorAll('.rel-edit-btn').forEach(function(b) {{ b.disabled = false; }});
+  }}
+  function openEditor(rowEl, btn) {{
+    closeEditor();
+    var key = rowEl.getAttribute('data-item');
+    var current = (effDeps[key] || []).slice();
+    var meta = itemByKey[key];
+    editorEl = document.createElement('div');
+    editorEl.className = 'dep-editor';
+    editorEl.innerHTML =
+      '<div class="de-title">编辑 "' + meta.zh + '" 的依赖项</div>' +
+      '<div class="de-current"></div>' +
+      '<div class="de-add-row">' +
+      '  <select class="de-add-select"><option value="">-- 选择要新增的上游 --</option></select>' +
+      '  <button class="de-btn de-add-btn">+ 添加</button>' +
+      '</div>' +
+      '<div class="de-actions">' +
+      '  <button class="de-btn danger de-reset-btn">恢复默认</button>' +
+      '  <button class="de-btn secondary de-close-btn">完成</button>' +
+      '</div>';
+    document.body.appendChild(editorEl);
+    btn.disabled = true;
+    // Position the popover under the edit button
+    var rect = btn.getBoundingClientRect();
+    editorEl.style.top  = (window.scrollY + rect.bottom + 6) + 'px';
+    var left = window.scrollX + rect.left;
+    if (left + 360 > window.innerWidth - 12) left = window.innerWidth - 372;
+    editorEl.style.left = Math.max(12, left) + 'px';
+
+    var curBox    = editorEl.querySelector('.de-current');
+    var selectEl  = editorEl.querySelector('.de-add-select');
+    var addBtn    = editorEl.querySelector('.de-add-btn');
+    var closeBtn  = editorEl.querySelector('.de-close-btn');
+    var resetBtn  = editorEl.querySelector('.de-reset-btn');
+
+    function refreshEditor() {{
+      var cur = effDeps[key] || [];
+      curBox.innerHTML = '';
+      if (cur.length === 0) {{
+        curBox.innerHTML = '<span class="de-empty">（无依赖）</span>';
+      }} else {{
+        cur.forEach(function(k) {{
+          var c = document.createElement('span');
+          c.className = 'chip';
+          c.innerHTML = (itemByKey[k] ? itemByKey[k].zh : k) +
+                         '<span class="chip-remove" title="移除">✕</span>';
+          c.querySelector('.chip-remove').addEventListener('click', function() {{
+            effDeps[key] = (effDeps[key] || []).filter(function(x) {{ return x !== k; }});
+            saveDeps(key);
+            recomputeInfluence(); renderAllRel(); refreshEditor();
+          }});
+          curBox.appendChild(c);
+        }});
+      }}
+      // Populate select with items not currently in cur and not self
+      selectEl.innerHTML = '<option value="">-- 选择要新增的上游 --</option>';
+      ITEMS.filter(function(it) {{ return it.key !== key && cur.indexOf(it.key) < 0; }})
+           .forEach(function(it) {{
+             var o = document.createElement('option');
+             o.value = it.key; o.textContent = it.zh;
+             selectEl.appendChild(o);
+           }});
+    }}
+    refreshEditor();
+
+    addBtn.addEventListener('click', function() {{
+      var v = selectEl.value;
+      if (!v) return;
+      if ((effDeps[key] || []).indexOf(v) >= 0) return;
+      effDeps[key] = (effDeps[key] || []).concat([v]);
+      saveDeps(key);
+      recomputeInfluence(); renderAllRel(); refreshEditor();
+    }});
+    resetBtn.addEventListener('click', function() {{
+      if (!confirm('恢复该项的默认依赖？')) return;
+      effDeps[key] = (DEFAULTS[key] || []).slice();
+      saveDeps(key);
+      recomputeInfluence(); renderAllRel(); refreshEditor();
+    }});
+    closeBtn.addEventListener('click', closeEditor);
+  }}
+  // Close editor when clicking outside
+  document.addEventListener('mousedown', function(ev) {{
+    if (!editorEl) return;
+    if (ev.target.closest('.dep-editor')) return;
+    if (ev.target.classList && ev.target.classList.contains('rel-edit-btn')) return;
+    closeEditor();
+  }});
+
+  // ===== Click handlers ===================================================
+  document.body.addEventListener('click', function(ev) {{
+    var chip = ev.target.closest('.chip[data-target]');
+    if (chip) {{
+      ev.stopPropagation();
+      scrollToItem(chip.getAttribute('data-target'));
+      return;
+    }}
+    var editBtn = ev.target.closest('.rel-edit-btn');
+    if (editBtn) {{
+      ev.stopPropagation();
+      var rowEl = editBtn.closest('.item-row');
+      openEditor(rowEl, editBtn);
+      return;
+    }}
+  }});
 
   document.querySelectorAll('.item-label').forEach(function(lbl) {{
     lbl.addEventListener('click', function(ev) {{
-      // Don't trigger on contenteditable note clicks
       if (ev.target.closest('.row-note')) return;
-      if (ev.target.classList.contains('dep-link')) return;
-      var key = lbl.getAttribute('data-item');
-      scrollToItem(key);
+      if (ev.target.closest('.chip')) return;
+      if (ev.target.closest('.rel-edit-btn')) return;
+      scrollToItem(lbl.getAttribute('data-item'));
     }});
   }});
 
-  // Click on a dependency chip jumps to that row
-  document.querySelectorAll('.dep-link').forEach(function(a) {{
-    a.addEventListener('click', function(ev) {{
-      ev.stopPropagation();
-      scrollToItem(a.getAttribute('data-target'));
-    }});
-  }});
-
-  // Click on a bar selects its row too
   document.querySelectorAll('.bar').forEach(function(b) {{
     b.addEventListener('click', function(ev) {{
       ev.stopPropagation();
@@ -1089,55 +1365,217 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     }});
   }});
 
-  // ----- Toolbar buttons -------------------------------------------------
+  // ===== Toolbar buttons =================================================
+  function toast(msg) {{
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() {{ t.classList.remove('show'); }}, 1800);
+  }}
+
   document.getElementById('btn-scroll-today').addEventListener('click', function() {{
     var target = todayLeftPx - scroller.clientWidth * 0.30;
     scroller.scrollTo({{ left: Math.max(0, target), behavior: 'smooth' }});
   }});
-
-  document.getElementById('btn-clear-sel').addEventListener('click', function() {{
-    document.querySelectorAll('.item-row').forEach(function(r) {{
-      r.classList.remove('row-selected'); r.classList.remove('row-dep');
-    }});
-  }});
+  document.getElementById('btn-clear-sel').addEventListener('click', clearHighlights);
 
   document.getElementById('btn-export-notes').addEventListener('click', function() {{
-    var out = {{}};
-    var keys = [];
+    var notes = {{}}, deps = {{}};
     try {{
-      for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+      for (var i = 0; i < localStorage.length; i++) {{
+        var k = localStorage.key(i);
+        if (!k) continue;
+        if (k.indexOf(LS_NOTE) === 0) notes[k.slice(LS_NOTE.length)] = localStorage.getItem(k);
+        if (k.indexOf(LS_DEPS) === 0) {{
+          try {{ deps[k.slice(LS_DEPS.length)] = JSON.parse(localStorage.getItem(k)); }} catch(e){{}}
+        }}
+      }}
     }} catch(e) {{}}
-    keys.filter(function(k) {{ return k && k.indexOf(LS_PREFIX) === 0; }})
-        .forEach(function(k) {{ out[k.slice(LS_PREFIX.length)] = localStorage.getItem(k); }});
-    if (Object.keys(out).length === 0) {{
-      toast('当前没有修改过的备注');
-      return;
-    }}
-    var blob = new Blob([JSON.stringify(out, null, 2)], {{ type: 'application/json' }});
+    var nCount = Object.keys(notes).length;
+    var dCount = Object.keys(deps).length;
+    if (nCount === 0 && dCount === 0) {{ toast('当前没有修改'); return; }}
+    var blob = new Blob([JSON.stringify({{ notes: notes, deps: deps }}, null, 2)],
+                       {{ type: 'application/json' }});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = 'sandwich-notes-' + new Date().toISOString().slice(0,10) + '.json';
+    a.href = url;
+    a.download = 'sandwich-edits-' + new Date().toISOString().slice(0,10) + '.json';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast('已导出 ' + Object.keys(out).length + ' 条备注');
+    toast('已导出：备注 ' + nCount + ' 条 / 依赖 ' + dCount + ' 项');
   }});
 
-  document.getElementById('btn-reset-notes').addEventListener('click', function() {{
-    if (!confirm('确定要清除所有本浏览器中的备注修改吗？（默认备注会保留）')) return;
+  document.getElementById('btn-reset-all').addEventListener('click', function() {{
+    if (!confirm('确定要清除所有本浏览器中的备注与依赖修改吗？')) return;
+    try {{
+      var rm = [];
+      for (var i = 0; i < localStorage.length; i++) {{
+        var k = localStorage.key(i);
+        if (k && (k.indexOf(LS_NOTE) === 0 || k.indexOf(LS_DEPS) === 0)) rm.push(k);
+      }}
+      rm.forEach(function(k) {{ localStorage.removeItem(k); }});
+    }} catch(e) {{}}
     document.querySelectorAll('.row-note').forEach(function(el) {{
-      var key = el.getAttribute('data-item');
-      var def = el.getAttribute('data-default') || '';
-      try {{ localStorage.removeItem(LS_PREFIX + key); }} catch(e) {{}}
-      el.textContent = def;
+      el.textContent = el.getAttribute('data-default') || '';
       el.classList.remove('edited');
     }});
-    toast('已重置所有备注');
+    loadDeps(); renderAllRel();
+    toast('已重置所有修改');
   }});
 
-  // ----- Initial scroll to "today" ----------------------------------------
+  // ===== Minimap (draggable overview) =====================================
+  var mm        = document.getElementById('minimap');
+  var mmHeader  = document.getElementById('mmHeader');
+  var mmCanvas  = document.getElementById('mmCanvas');
+  var mmSvg     = document.getElementById('mmSvg');
+  var mmViewport= document.getElementById('mmViewport');
+  var mmToggleBtn = document.getElementById('mmToggleBtn');
+  var mmHideBtn   = document.getElementById('mmHideBtn');
+  document.getElementById('btn-show-mm').addEventListener('click', function() {{
+    mm.style.display = 'block';
+  }});
+  mmHideBtn.addEventListener('click', function() {{ mm.style.display = 'none'; }});
+  mmToggleBtn.addEventListener('click', function() {{
+    mm.classList.toggle('collapsed');
+    mmToggleBtn.textContent = mm.classList.contains('collapsed') ? '+' : '—';
+  }});
+
+  // Build minimap SVG from current Gantt DOM. We pick the top of each
+  // .item-row relative to grid; track-only area starts at x = labelW
+  // (which we ignore -> we shift bars left by -labelW).
+  function buildMinimap() {{
+    var rows = grid.querySelectorAll('.item-row, .section-row');
+    var gridRect = grid.getBoundingClientRect();
+    var totalH = grid.offsetHeight;
+    // Cap minimum/maximum dimensions
+    var canvasW = mmCanvas.clientWidth || 340;
+    var canvasH = mmCanvas.clientHeight || 220;
+    mmSvg.setAttribute('viewBox', '0 0 ' + trackW + ' ' + totalH);
+    mmSvg.setAttribute('width',  canvasW);
+    mmSvg.setAttribute('height', canvasH);
+    var parts = [];
+    // month boundaries: 4 weeks
+    for (var m = 0; m <= {n_cols}; m += 4) {{
+      var x = m * weekW;
+      parts.push('<line x1="' + x + '" y1="0" x2="' + x + '" y2="' + totalH +
+                 '" stroke="#e2e8f0" stroke-width="3" />');
+    }}
+    // section rows + item rows
+    rows.forEach(function(row) {{
+      var top = row.offsetTop;
+      var h   = row.offsetHeight;
+      if (row.classList.contains('section-row')) {{
+        parts.push('<rect x="0" y="' + top + '" width="' + trackW +
+                    '" height="' + h + '" fill="#dbeafe" />');
+        return;
+      }}
+      // bars within row
+      var bars = row.querySelectorAll('.bar');
+      bars.forEach(function(b) {{
+        var left = parseFloat(b.style.left) || 0;
+        var w    = parseFloat(b.style.width) || 0;
+        var bg   = b.style.background || '#888';
+        var bH   = h - 6;
+        var bY   = top + 3;
+        if (b.classList.contains('bar-original')) {{
+          bH = 4; bY = top + h - 8;
+        }}
+        if (b.classList.contains('bar-update')) {{
+          w = Math.max(w, 6);
+        }}
+        parts.push('<rect x="' + left + '" y="' + bY + '" width="' + w +
+                    '" height="' + bH + '" fill="' + bg + '" opacity="0.85" />');
+      }});
+    }});
+    // today line
+    parts.push('<line x1="' + (todayLeftPx - labelW) + '" y1="0" x2="' +
+               (todayLeftPx - labelW) + '" y2="' + totalH +
+               '" stroke="#dc2626" stroke-width="6" />');
+    mmSvg.innerHTML = parts.join('');
+    updateMinimapViewport();
+  }}
+
+  function updateMinimapViewport() {{
+    var canvasW = mmCanvas.clientWidth || 340;
+    var canvasH = mmCanvas.clientHeight || 220;
+    var scaleX = canvasW / trackW;
+    var scaleY = canvasH / (grid.offsetHeight || 1);
+    var vpLeft = Math.max(0, scroller.scrollLeft - labelW) * scaleX;
+    var vpTop  = scroller.scrollTop * scaleY;
+    var vpW    = (scroller.clientWidth - labelW) * scaleX;
+    var vpH    = scroller.clientHeight * scaleY;
+    mmViewport.style.left   = vpLeft + 'px';
+    mmViewport.style.top    = vpTop  + 'px';
+    mmViewport.style.width  = Math.max(20, vpW) + 'px';
+    mmViewport.style.height = Math.max(20, vpH) + 'px';
+  }}
+
+  function scrollFromMinimap(ev) {{
+    var rect = mmCanvas.getBoundingClientRect();
+    var x = ev.clientX - rect.left;
+    var y = ev.clientY - rect.top;
+    var canvasW = mmCanvas.clientWidth || 340;
+    var canvasH = mmCanvas.clientHeight || 220;
+    var scaleX = canvasW / trackW;
+    var scaleY = canvasH / (grid.offsetHeight || 1);
+    var targetLeft = x / scaleX + labelW - scroller.clientWidth / 2;
+    var targetTop  = y / scaleY - scroller.clientHeight / 2;
+    scroller.scrollTo({{ left: Math.max(0, targetLeft),
+                        top: Math.max(0, targetTop),
+                        behavior: 'auto' }});
+  }}
+  var mmDragging = false;
+  mmCanvas.addEventListener('mousedown', function(ev) {{
+    mmDragging = true; scrollFromMinimap(ev); ev.preventDefault();
+  }});
+  document.addEventListener('mousemove', function(ev) {{
+    if (mmDragging) scrollFromMinimap(ev);
+  }});
+  document.addEventListener('mouseup', function() {{ mmDragging = false; }});
+
+  scroller.addEventListener('scroll', updateMinimapViewport);
+  window.addEventListener('resize', function() {{
+    buildMinimap();
+  }});
+
+  // ----- Drag the minimap panel itself ------------------------------------
+  (function() {{
+    var dragX = 0, dragY = 0, startL = 0, startT = 0, dragging = false;
+    mmHeader.addEventListener('mousedown', function(ev) {{
+      if (ev.target.tagName === 'BUTTON') return;
+      dragging = true;
+      mm.classList.add('dragging');
+      dragX = ev.clientX; dragY = ev.clientY;
+      var r = mm.getBoundingClientRect();
+      startL = r.left; startT = r.top;
+      mm.style.right = 'auto'; mm.style.bottom = 'auto';
+      mm.style.left = startL + 'px'; mm.style.top = startT + 'px';
+      ev.preventDefault();
+    }});
+    document.addEventListener('mousemove', function(ev) {{
+      if (!dragging) return;
+      var nx = startL + (ev.clientX - dragX);
+      var ny = startT + (ev.clientY - dragY);
+      nx = Math.max(0, Math.min(window.innerWidth - mm.offsetWidth, nx));
+      ny = Math.max(0, Math.min(window.innerHeight - 40, ny));
+      mm.style.left = nx + 'px';
+      mm.style.top  = ny + 'px';
+    }});
+    document.addEventListener('mouseup', function() {{
+      dragging = false;
+      mm.classList.remove('dragging');
+    }});
+  }})();
+
+  // ===== Init =============================================================
+  loadDeps();
+  renderAllRel();
+  restoreNotes();
+  buildMinimap();
   (function() {{
     var target = todayLeftPx - scroller.clientWidth * 0.30;
     scroller.scrollLeft = Math.max(0, target);
+    updateMinimapViewport();
   }})();
 }})();
 </script>
