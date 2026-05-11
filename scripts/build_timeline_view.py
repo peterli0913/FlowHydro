@@ -604,7 +604,8 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                 "update": "需更新", "cert": "CE 介入",
             }
 
-            # Build bar elements
+            # Build bar elements (each xlsx-sourced bar gets a stable id so JS
+            # can hide / replace / supplement it from user edits).
             bar_html = []
             first_bar_left = None
             for (s, e, bucket, notes) in bars:
@@ -632,11 +633,14 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                     tip_lines.append("💬 " + note)
                 tip = "&#10;".join(html.escape(t) for t in tip_lines)
                 color = PALETTE.get(bucket, "#888")
+                bar_id = f"xlsx-{s}-{e}-{bucket}"
                 bar_html.append(
                     f'<div class="bar bar-{bucket}" '
                     f'style="left:{left}px;width:{width}px;background:{color}" '
                     f'title="{tip}" data-bucket="{bucket_label.get(bucket, "")}" '
-                    f'data-item="{key}"></div>'
+                    f'data-item="{key}" data-bar-id="{bar_id}" '
+                    f'data-start-col="{s}" data-end-col="{e}" data-bucket-key="{bucket}" '
+                    f'data-source="xlsx"></div>'
                 )
 
             note_html = (
@@ -662,6 +666,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
                 f'      <span class="rel-label dep-label">↳ 依赖：</span>'
                 f'      <span class="rel-list deps-list" data-kind="deps"></span>'
                 f'      <button class="rel-edit-btn" data-kind="deps" title="编辑依赖">✏️</button>'
+                f'      <button class="rel-edit-btn" data-kind="bars" title="新增 / 修改 / 删除时间段">🕓</button>'
                 f'    </div>'
                 f'    <div class="row-influence">'
                 f'      <span class="rel-label inf-label">↗ 影响：</span>'
@@ -749,6 +754,15 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
         ]
     items_meta_json = json.dumps(items_meta, ensure_ascii=False)
     default_deps_json = json.dumps(default_deps_map, ensure_ascii=False)
+
+    # Enumerate all timeline columns so the bar editor can offer a clean
+    # picker of "year/month wk-N" choices.
+    time_slots = []
+    for c in range(col_start, col_end + 1):
+        y, m, w = col_to_month_week(c)
+        time_slots.append({"col": c, "y": y, "m": m, "w": w,
+                            "label": f"{y}/{m:02d} 第{w}周"})
+    time_slots_json = json.dumps(time_slots, ensure_ascii=False)
 
     css = """
     :root { --label-w: %(label_w)dpx; --week-w: %(week_w)dpx; }
@@ -963,6 +977,33 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     .dep-editor button.de-btn:hover { opacity: 0.9; }
     .dep-editor .de-empty { color: #94a3b8; font-style: italic; font-size: 11px; }
 
+    /* ---- bar editor (extends dep-editor) ---- */
+    .bar-editor .be-list { max-height: 240px; overflow-y: auto;
+                            padding-right: 4px; margin-bottom: 8px;
+                            padding-bottom: 6px;
+                            border-bottom: 1px dashed #e2e8f0; }
+    .bar-editor .be-row { display: flex; align-items: center; gap: 4px;
+                           margin-bottom: 4px; font-size: 11px;
+                           flex-wrap: nowrap; }
+    .bar-editor .be-row select { padding: 3px 4px; border: 1px solid #cbd5e1;
+                                  border-radius: 4px; font-size: 11px;
+                                  min-width: 0; }
+    .bar-editor .be-row .be-bucket, .bar-editor .be-row .be-row-bucket { width: 100px; flex-shrink: 0; }
+    .bar-editor .be-row .be-start,  .bar-editor .be-row .be-row-start  { flex: 1; }
+    .bar-editor .be-row .be-end,    .bar-editor .be-row .be-row-end    { flex: 1; }
+    .bar-editor .be-arrow { color: #94a3b8; font-size: 10px; flex-shrink: 0; }
+    .bar-editor .be-del-btn { padding: 2px 6px !important; flex-shrink: 0; font-size: 11px; }
+    .bar-editor .be-add-btn { padding: 3px 8px !important; flex-shrink: 0; font-size: 11px; }
+    .bar-editor .be-add { padding-top: 6px; border-top: 1px dashed #e2e8f0; }
+    .bar-editor .be-src-tag { display: inline-block; font-size: 9px;
+                               padding: 1px 4px; border-radius: 3px;
+                               flex-shrink: 0; }
+    .bar-editor .be-src-tag.tag-xlsx { background: #dbeafe; color: #1d4ed8; }
+    .bar-editor .be-src-tag.tag-user { background: #fef3c7; color: #b45309; }
+
+    /* User-added bars get a dashed outline to distinguish from xlsx */
+    .bar.bar-user { outline: 1px dashed rgba(0,0,0,0.35); outline-offset: -1px; }
+
     /* ---- minimap (draggable overview) ---- */
     .minimap { position: fixed; right: 20px; bottom: 20px;
                width: 360px; background: #fff;
@@ -1096,12 +1137,10 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
 
 <div id="toast" class="toast"></div>
 
-<script id="items-meta" type="application/json">{items_meta_json}</script>
-<script id="default-deps" type="application/json">{default_deps_json}</script>
-
-<div class="footer">
-  生成于 {TODAY.isoformat()} ｜ 自动从 xlsx + 会议转写抽取，下次会议或基线变更后请重新运行 <code>scripts/build_timeline_view.py</code> 即可刷新本页。
-</div>
+<script id="items-meta"     type="application/json">{items_meta_json}</script>
+<script id="default-deps"   type="application/json">{default_deps_json}</script>
+<script id="time-slots"     type="application/json">{time_slots_json}</script>
+<script id="bucket-palette" type="application/json">{json.dumps(PALETTE)}</script>
 
 <script>
 (function() {{
@@ -1114,9 +1153,20 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
   var weekW    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--week-w'), 10) || 18;
   var todayLeftPx = {today_left_px:.1f};
   var trackW   = {track_w};
-  var ITEMS    = JSON.parse(document.getElementById('items-meta').textContent);
-  var DEFAULTS = JSON.parse(document.getElementById('default-deps').textContent);
+  var ITEMS     = JSON.parse(document.getElementById('items-meta').textContent);
+  var DEFAULTS  = JSON.parse(document.getElementById('default-deps').textContent);
+  var TIMESLOTS = JSON.parse(document.getElementById('time-slots').textContent);
+  var PALETTE   = JSON.parse(document.getElementById('bucket-palette').textContent);
   var itemByKey = {{}}; ITEMS.forEach(function(it) {{ itemByKey[it.key] = it; }});
+  var slotByCol = {{}}; TIMESLOTS.forEach(function(s) {{ slotByCol[s.col] = s; }});
+  var BUCKETS = [
+    {{key: 'original', zh: '原计划'}},
+    {{key: 'revised',  zh: '新计划'}},
+    {{key: 'update',   zh: '需更新节点'}},
+    {{key: 'cert',     zh: 'CE 介入'}},
+  ];
+  var bucketByKey = {{}}; BUCKETS.forEach(function(b) {{ bucketByKey[b.key] = b; }});
+  var LS_BARS = "sandwich-bars:";
 
   // ===== State: per-item effective dependencies ===========================
   var effDeps = {{}};         // key -> array of upstream keys
@@ -1324,13 +1374,287 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     }});
     closeBtn.addEventListener('click', closeEditor);
   }}
-  // Close editor when clicking outside
+  // Close editor when clicking outside (deps OR bars popover)
   document.addEventListener('mousedown', function(ev) {{
     if (!editorEl) return;
     if (ev.target.closest('.dep-editor')) return;
+    if (ev.target.closest('.bar-editor')) return;
     if (ev.target.classList && ev.target.classList.contains('rel-edit-btn')) return;
+    closeBarEditor();
     closeEditor();
   }});
+
+  // ===== Bar state ========================================================
+  // On page load, snapshot xlsx bars per row into JS memory so we can
+  // re-render them after user edits.
+  var xlsxBars = {{}}; // key -> [{{id, startCol, endCol, bucket, tip}}]
+  var userBars = {{}}; // key -> {{hidden: [id...], added: [{{id, startCol, endCol, bucket}}]}}
+
+  function snapshotXlsxBars() {{
+    document.querySelectorAll('.item-row').forEach(function(row) {{
+      var key = row.getAttribute('data-item');
+      var list = [];
+      row.querySelectorAll('.bar[data-source="xlsx"]').forEach(function(b) {{
+        list.push({{
+          id:        b.getAttribute('data-bar-id'),
+          startCol:  parseInt(b.getAttribute('data-start-col'), 10),
+          endCol:    parseInt(b.getAttribute('data-end-col'), 10),
+          bucket:    b.getAttribute('data-bucket-key'),
+          tip:       b.getAttribute('title') || '',
+        }});
+      }});
+      xlsxBars[key] = list;
+    }});
+  }}
+  function loadUserBars() {{
+    ITEMS.forEach(function(it) {{
+      var saved = null;
+      try {{ saved = localStorage.getItem(LS_BARS + it.key); }} catch(e) {{}}
+      if (saved) {{
+        try {{ userBars[it.key] = JSON.parse(saved); }}
+        catch(e) {{ userBars[it.key] = {{hidden: [], added: []}}; }}
+      }} else {{
+        userBars[it.key] = {{hidden: [], added: []}};
+      }}
+    }});
+  }}
+  function saveUserBars(key) {{
+    var ub = userBars[key];
+    var isDefault = (!ub || (ub.hidden.length === 0 && ub.added.length === 0));
+    try {{
+      if (isDefault) localStorage.removeItem(LS_BARS + key);
+      else           localStorage.setItem(LS_BARS + key, JSON.stringify(ub));
+    }} catch(e) {{}}
+  }}
+
+  // Get full ordered list of effective bars for a row (xlsx-visible + user-added)
+  function effectiveBars(key) {{
+    var ub = userBars[key] || {{hidden: [], added: []}};
+    var hidden = new Set(ub.hidden);
+    var xl = (xlsxBars[key] || []).filter(function(b) {{ return !hidden.has(b.id); }})
+                                  .map(function(b) {{ return Object.assign({{source:'xlsx'}}, b); }});
+    var ua = (ub.added || []).map(function(b) {{ return Object.assign({{source:'user'}}, b); }});
+    return xl.concat(ua).sort(function(a, b) {{ return a.startCol - b.startCol; }});
+  }}
+
+  function buildTip(rowEl, b) {{
+    var key = rowEl.getAttribute('data-item');
+    var meta = itemByKey[key];
+    var owner = (rowEl.querySelector('.item-owner') || {{}}).innerText || '';
+    var s = slotByCol[b.startCol], e = slotByCol[b.endCol];
+    var dateLabel = (s.col === e.col)
+      ? s.label : (s.label + '  →  ' + e.label);
+    var lines = ['📌 ' + meta.zh,
+                 '⏱ ' + dateLabel + ' · ' + (bucketByKey[b.bucket] ? bucketByKey[b.bucket].zh : b.bucket),
+                 '👥 ' + owner];
+    if (b.source === 'user') lines.push('✎ 用户新增');
+    return lines.join('\\n');
+  }}
+
+  function renderRowBars(rowEl) {{
+    var key   = rowEl.getAttribute('data-item');
+    var track = rowEl.querySelector('.item-track');
+    // Clear existing bars
+    track.querySelectorAll('.bar').forEach(function(b) {{ b.remove(); }});
+    var bars = effectiveBars(key);
+    var firstLeft = null;
+    bars.forEach(function(b) {{
+      var s = slotByCol[b.startCol], e = slotByCol[b.endCol];
+      if (!s || !e) return;
+      var left = (b.startCol - {col_start}) * weekW;
+      var width = (b.endCol - b.startCol + 1) * weekW;
+      if (firstLeft === null || left < firstLeft) firstLeft = left;
+      var el = document.createElement('div');
+      el.className = 'bar bar-' + b.bucket + (b.source === 'user' ? ' bar-user' : '');
+      el.style.left  = left  + 'px';
+      el.style.width = width + 'px';
+      el.style.background = PALETTE[b.bucket] || '#888';
+      el.setAttribute('title', b.tip || buildTip(rowEl, b));
+      el.setAttribute('data-item', key);
+      el.setAttribute('data-bar-id', b.id);
+      el.setAttribute('data-start-col', b.startCol);
+      el.setAttribute('data-end-col',   b.endCol);
+      el.setAttribute('data-bucket-key', b.bucket);
+      el.setAttribute('data-source', b.source);
+      track.appendChild(el);
+    }});
+    if (firstLeft !== null) rowEl.setAttribute('data-first-bar', firstLeft);
+    else                    rowEl.removeAttribute('data-first-bar');
+  }}
+  function renderAllRowBars() {{
+    document.querySelectorAll('.item-row').forEach(renderRowBars);
+  }}
+
+  // ===== Bar editor popover ==============================================
+  var barEditorEl = null;
+  function closeBarEditor() {{
+    if (barEditorEl && barEditorEl.parentNode) barEditorEl.parentNode.removeChild(barEditorEl);
+    barEditorEl = null;
+    document.querySelectorAll('.rel-edit-btn[data-kind="bars"]').forEach(function(b) {{ b.disabled = false; }});
+  }}
+  function openBarEditor(rowEl, btn) {{
+    closeEditor(); closeBarEditor();
+    var key = rowEl.getAttribute('data-item');
+    var meta = itemByKey[key];
+    barEditorEl = document.createElement('div');
+    barEditorEl.className = 'dep-editor bar-editor';
+    barEditorEl.innerHTML =
+      '<div class="de-title">编辑 "' + meta.zh + '" 的时间段</div>' +
+      '<div class="be-list"></div>' +
+      '<div class="be-add">' +
+      '  <div class="be-row">' +
+      '    <select class="be-bucket"></select>' +
+      '    <select class="be-start"></select>' +
+      '    <span class="be-arrow">→</span>' +
+      '    <select class="be-end"></select>' +
+      '    <button class="de-btn be-add-btn">+ 添加</button>' +
+      '  </div>' +
+      '</div>' +
+      '<div class="de-actions">' +
+      '  <button class="de-btn danger be-reset-btn">恢复默认</button>' +
+      '  <button class="de-btn secondary be-close-btn">完成</button>' +
+      '</div>';
+    document.body.appendChild(barEditorEl);
+    btn.disabled = true;
+    barEditorEl.style.width = '460px';
+    var rect = btn.getBoundingClientRect();
+    barEditorEl.style.top = (window.scrollY + rect.bottom + 6) + 'px';
+    var left = window.scrollX + rect.left;
+    if (left + 460 > window.innerWidth - 12) left = window.innerWidth - 472;
+    barEditorEl.style.left = Math.max(12, left) + 'px';
+
+    var listBox    = barEditorEl.querySelector('.be-list');
+    var bucketSel  = barEditorEl.querySelector('.be-bucket');
+    var startSel   = barEditorEl.querySelector('.be-start');
+    var endSel     = barEditorEl.querySelector('.be-end');
+    var addBtn     = barEditorEl.querySelector('.be-add-btn');
+    var closeBtn   = barEditorEl.querySelector('.be-close-btn');
+    var resetBtn   = barEditorEl.querySelector('.be-reset-btn');
+
+    function fillBucketSelect(sel, value) {{
+      sel.innerHTML = '';
+      BUCKETS.forEach(function(b) {{
+        var o = document.createElement('option');
+        o.value = b.key; o.textContent = b.zh;
+        if (value === b.key) o.selected = true;
+        sel.appendChild(o);
+      }});
+    }}
+    function fillSlotSelect(sel, value) {{
+      sel.innerHTML = '';
+      TIMESLOTS.forEach(function(s) {{
+        var o = document.createElement('option');
+        o.value = s.col; o.textContent = s.label;
+        if (parseInt(value, 10) === s.col) o.selected = true;
+        sel.appendChild(o);
+      }});
+    }}
+    fillBucketSelect(bucketSel, 'revised');
+    fillSlotSelect(startSel, '');
+    fillSlotSelect(endSel, '');
+
+    function makeId() {{
+      return 'user-' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+    }}
+    function ensureUB() {{
+      if (!userBars[key]) userBars[key] = {{hidden: [], added: []}};
+      return userBars[key];
+    }}
+    function refreshList() {{
+      listBox.innerHTML = '';
+      var bars = effectiveBars(key);
+      if (bars.length === 0) {{
+        listBox.innerHTML = '<div class="de-empty">（无时间段）</div>';
+        return;
+      }}
+      bars.forEach(function(b) {{
+        var row = document.createElement('div');
+        row.className = 'be-row be-existing';
+        var rowBucket = document.createElement('select'); rowBucket.className = 'be-row-bucket';
+        var rowStart  = document.createElement('select'); rowStart.className  = 'be-row-start';
+        var rowEnd    = document.createElement('select'); rowEnd.className    = 'be-row-end';
+        fillBucketSelect(rowBucket, b.bucket);
+        fillSlotSelect(rowStart, b.startCol);
+        fillSlotSelect(rowEnd,   b.endCol);
+        var del = document.createElement('button');
+        del.className = 'de-btn danger be-del-btn'; del.textContent = '✕';
+        del.title = (b.source === 'xlsx' ? '隐藏此 xlsx 时间段' : '删除此用户新增时间段');
+        var srcTag = document.createElement('span'); srcTag.className = 'be-src-tag';
+        srcTag.textContent = (b.source === 'xlsx' ? 'xlsx' : '用户');
+        srcTag.classList.add(b.source === 'xlsx' ? 'tag-xlsx' : 'tag-user');
+
+        function applyEdit() {{
+          var newBucket = rowBucket.value;
+          var newStart  = parseInt(rowStart.value, 10);
+          var newEnd    = parseInt(rowEnd.value, 10);
+          if (newEnd < newStart) {{ var t=newStart; newStart=newEnd; newEnd=t; }}
+          if (newBucket === b.bucket && newStart === b.startCol && newEnd === b.endCol) return;
+          var ub = ensureUB();
+          if (b.source === 'xlsx') {{
+            if (ub.hidden.indexOf(b.id) < 0) ub.hidden.push(b.id);
+            ub.added.push({{id: makeId(), startCol: newStart, endCol: newEnd, bucket: newBucket}});
+          }} else {{
+            // Update the user-added bar in place
+            ub.added = ub.added.map(function(x) {{
+              return x.id === b.id
+                ? {{id: x.id, startCol: newStart, endCol: newEnd, bucket: newBucket}}
+                : x;
+            }});
+          }}
+          saveUserBars(key);
+          renderRowBars(rowEl);
+          buildMinimap();
+          refreshList();
+        }}
+        rowBucket.addEventListener('change', applyEdit);
+        rowStart.addEventListener('change',  applyEdit);
+        rowEnd.addEventListener('change',    applyEdit);
+        del.addEventListener('click', function() {{
+          var ub = ensureUB();
+          if (b.source === 'xlsx') {{
+            if (ub.hidden.indexOf(b.id) < 0) ub.hidden.push(b.id);
+          }} else {{
+            ub.added = ub.added.filter(function(x) {{ return x.id !== b.id; }});
+          }}
+          saveUserBars(key);
+          renderRowBars(rowEl);
+          buildMinimap();
+          refreshList();
+        }});
+
+        row.appendChild(srcTag);
+        row.appendChild(rowBucket);
+        row.appendChild(rowStart);
+        var arr = document.createElement('span'); arr.className='be-arrow'; arr.textContent='→';
+        row.appendChild(arr);
+        row.appendChild(rowEnd);
+        row.appendChild(del);
+        listBox.appendChild(row);
+      }});
+    }}
+    refreshList();
+
+    addBtn.addEventListener('click', function() {{
+      if (!startSel.value || !endSel.value) {{ toast('请选择起止周'); return; }}
+      var sCol = parseInt(startSel.value, 10), eCol = parseInt(endSel.value, 10);
+      if (eCol < sCol) {{ var t=sCol; sCol=eCol; eCol=t; }}
+      var ub = ensureUB();
+      ub.added.push({{id: makeId(), startCol: sCol, endCol: eCol, bucket: bucketSel.value}});
+      saveUserBars(key);
+      renderRowBars(rowEl);
+      buildMinimap();
+      refreshList();
+    }});
+    resetBtn.addEventListener('click', function() {{
+      if (!confirm('恢复该项的默认时间段？所有用户编辑（新增 / 修改 / 删除）将丢弃。')) return;
+      userBars[key] = {{hidden: [], added: []}};
+      saveUserBars(key);
+      renderRowBars(rowEl);
+      buildMinimap();
+      refreshList();
+    }});
+    closeBtn.addEventListener('click', closeBarEditor);
+  }}
 
   // ===== Click handlers ===================================================
   document.body.addEventListener('click', function(ev) {{
@@ -1344,25 +1668,26 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     if (editBtn) {{
       ev.stopPropagation();
       var rowEl = editBtn.closest('.item-row');
-      openEditor(rowEl, editBtn);
+      var kind  = editBtn.getAttribute('data-kind');
+      if (kind === 'bars') openBarEditor(rowEl, editBtn);
+      else                 openEditor(rowEl, editBtn);
       return;
     }}
-  }});
-
-  document.querySelectorAll('.item-label').forEach(function(lbl) {{
-    lbl.addEventListener('click', function(ev) {{
+    // Bar click (delegated so dynamically-rendered user bars also work)
+    var bar = ev.target.closest('.bar');
+    if (bar && bar.getAttribute('data-item')) {{
+      ev.stopPropagation();
+      scrollToItem(bar.getAttribute('data-item'));
+      return;
+    }}
+    // Item label click (only when clicking the empty space, not a chip/note/btn)
+    var lbl = ev.target.closest('.item-label');
+    if (lbl) {{
       if (ev.target.closest('.row-note')) return;
       if (ev.target.closest('.chip')) return;
       if (ev.target.closest('.rel-edit-btn')) return;
       scrollToItem(lbl.getAttribute('data-item'));
-    }});
-  }});
-
-  document.querySelectorAll('.bar').forEach(function(b) {{
-    b.addEventListener('click', function(ev) {{
-      ev.stopPropagation();
-      scrollToItem(b.getAttribute('data-item'));
-    }});
+    }}
   }});
 
   // ===== Toolbar buttons =================================================
@@ -1380,7 +1705,7 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
   document.getElementById('btn-clear-sel').addEventListener('click', clearHighlights);
 
   document.getElementById('btn-export-notes').addEventListener('click', function() {{
-    var notes = {{}}, deps = {{}};
+    var notes = {{}}, deps = {{}}, bars = {{}};
     try {{
       for (var i = 0; i < localStorage.length; i++) {{
         var k = localStorage.key(i);
@@ -1389,12 +1714,16 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
         if (k.indexOf(LS_DEPS) === 0) {{
           try {{ deps[k.slice(LS_DEPS.length)] = JSON.parse(localStorage.getItem(k)); }} catch(e){{}}
         }}
+        if (k.indexOf(LS_BARS) === 0) {{
+          try {{ bars[k.slice(LS_BARS.length)] = JSON.parse(localStorage.getItem(k)); }} catch(e){{}}
+        }}
       }}
     }} catch(e) {{}}
     var nCount = Object.keys(notes).length;
     var dCount = Object.keys(deps).length;
-    if (nCount === 0 && dCount === 0) {{ toast('当前没有修改'); return; }}
-    var blob = new Blob([JSON.stringify({{ notes: notes, deps: deps }}, null, 2)],
+    var bCount = Object.keys(bars).length;
+    if (nCount === 0 && dCount === 0 && bCount === 0) {{ toast('当前没有修改'); return; }}
+    var blob = new Blob([JSON.stringify({{ notes: notes, deps: deps, bars: bars }}, null, 2)],
                        {{ type: 'application/json' }});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -1402,16 +1731,16 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
     a.download = 'sandwich-edits-' + new Date().toISOString().slice(0,10) + '.json';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast('已导出：备注 ' + nCount + ' 条 / 依赖 ' + dCount + ' 项');
+    toast('已导出：备注 ' + nCount + ' · 依赖 ' + dCount + ' · 时间段 ' + bCount);
   }});
 
   document.getElementById('btn-reset-all').addEventListener('click', function() {{
-    if (!confirm('确定要清除所有本浏览器中的备注与依赖修改吗？')) return;
+    if (!confirm('确定要清除所有本浏览器中的备注 / 依赖 / 时间段修改吗？')) return;
     try {{
       var rm = [];
       for (var i = 0; i < localStorage.length; i++) {{
         var k = localStorage.key(i);
-        if (k && (k.indexOf(LS_NOTE) === 0 || k.indexOf(LS_DEPS) === 0)) rm.push(k);
+        if (k && (k.indexOf(LS_NOTE) === 0 || k.indexOf(LS_DEPS) === 0 || k.indexOf(LS_BARS) === 0)) rm.push(k);
       }}
       rm.forEach(function(k) {{ localStorage.removeItem(k); }});
     }} catch(e) {{}}
@@ -1419,7 +1748,10 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
       el.textContent = el.getAttribute('data-default') || '';
       el.classList.remove('edited');
     }});
+    loadUserBars();
+    renderAllRowBars();
     loadDeps(); renderAllRel();
+    buildMinimap();
     toast('已重置所有修改');
   }});
 
@@ -1568,6 +1900,9 @@ def render(items: List[Item], col_start: int, col_end: int) -> str:
   }})();
 
   // ===== Init =============================================================
+  snapshotXlsxBars();
+  loadUserBars();
+  renderAllRowBars();
   loadDeps();
   renderAllRel();
   restoreNotes();
