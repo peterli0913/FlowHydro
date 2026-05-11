@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sandwich Continuous Hydrogenation — Project Schedule</title>
+<style>
+    :root { --label-w: 380px; --week-w: 18px; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif;
+           margin: 0; color: #1f2937; background: #f5f7fa; }
+    h1 { font-size: 18px; margin: 0; }
+    .container { max-width: 1480px; margin: 0 auto; padding: 18px; }
+    .page-head { background: linear-gradient(120deg, #0f3460, #16213e);
+                  color: #fff; padding: 14px 18px; border-radius: 10px;
+                  margin-bottom: 14px; }
+    .page-head .sub { font-size: 12px; color: #cbd5e1; margin-top: 4px; }
+    .panel { background: #fff; border-radius: 10px; padding: 14px;
+             box-shadow: 0 1px 3px rgba(15,52,96,0.06); margin-bottom: 14px; }
+    h2 { font-size: 14px; margin: 0 0 8px 0; color: #0f3460; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px;
+              color: #475569; align-items: center; }
+    .leg { display: flex; align-items: center; gap: 6px; }
+    .leg-swatch { width: 14px; height: 14px; border-radius: 3px;
+                  display: inline-block; }
+
+    .gantt-toolbar { display: flex; gap: 12px; flex-wrap: wrap;
+                     align-items: center; justify-content: space-between;
+                     padding: 4px 6px 10px 6px;
+                     border-bottom: 1px solid #e2e8f0; margin-bottom: 8px; }
+    .gantt-toolbar .left  { display: flex; gap: 16px; flex-wrap: wrap;
+                            align-items: center; font-size: 12px; color: #475569; }
+    .gantt-toolbar .right { display: flex; gap: 6px; }
+    .toolbar-btn { background: #0f3460; color: #fff; border: none;
+                   padding: 5px 10px; border-radius: 6px; cursor: pointer;
+                   font-size: 12px; }
+    .toolbar-btn:hover { background: #16213e; }
+    .toolbar-btn.secondary { background: #fff; color: #0f3460;
+                              border: 1px solid #cbd5e1; }
+    .toolbar-btn.secondary:hover { background: #f1f5f9; }
+    .toolbar-hint { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+    .gantt { background: #fff; border-radius: 10px; overflow: hidden;
+             box-shadow: 0 1px 3px rgba(15,52,96,0.06); }
+    .gantt-scroll { overflow: auto; max-height: 78vh; position: relative; }
+    .gantt-grid { position: relative; }
+
+    .month-row, .week-row { display: flex; position: sticky; z-index: 8;
+                            background: #f1f5f9; }
+    .month-row { top: 0; font-weight: 600; color: #0f3460; }
+    .week-row  { top: 28px; color: #64748b; font-size: 11px; }
+    .header-spacer { width: var(--label-w); flex-shrink: 0;
+                      background: #e2e8f0; border-right: 1px solid #cbd5e1;
+                      position: sticky; left: 0; z-index: 10; }
+    .month-cell { padding: 6px 8px; border-right: 1px solid #cbd5e1;
+                  text-align: center; flex-shrink: 0; }
+    .month-cell.mh-cur { background: #fde68a; color: #92400e; }
+    .month-cell .m { font-size: 13px; }
+    .week-cell { border-right: 1px dashed #e2e8f0; padding: 2px 0;
+                 text-align: center; flex-shrink: 0; }
+
+    .section-row { display: flex; align-items: stretch; background: #eef2f7; }
+    .section-label { width: var(--label-w); padding: 6px 10px;
+                     font-weight: 600; color: #0f3460; flex-shrink: 0;
+                     border-right: 1px solid #cbd5e1;
+                     position: sticky; left: 0; z-index: 7;
+                     background: #eef2f7; }
+    .section-bar { flex-shrink: 0; }
+
+    .item-row { display: flex; border-bottom: 1px solid #f1f5f9;
+                min-height: 40px; position: relative; }
+    .item-row:hover .item-label { background: #f1f5f9; }
+    .item-row.row-selected { background: #fff7ed; }
+    .item-row.row-selected .item-label { background: #ffedd5;
+                                          box-shadow: inset 3px 0 0 #d97706; }
+    .item-row.row-dep { background: #fef9c3; }
+    .item-row.row-dep .item-label { background: #fef08a;
+                                     box-shadow: inset 3px 0 0 #facc15; }
+    .item-label { width: var(--label-w); padding: 8px 10px;
+                  border-right: 1px solid #e2e8f0; flex-shrink: 0;
+                  position: sticky; left: 0; z-index: 6;
+                  background: #fff; cursor: pointer;
+                  transition: background 0.15s ease; }
+    .item-en { font-size: 13px; font-weight: 600; color: #0f172a;
+                line-height: 1.35; word-break: break-word; }
+    .item-owner { font-size: 11px; color: #0f766e; margin-top: 3px; }
+
+    .row-deps, .row-influence { font-size: 11px; color: #6b7280;
+                                 margin-top: 3px; line-height: 1.7;
+                                 display: flex; flex-wrap: wrap; align-items: center;
+                                 gap: 4px; }
+    .rel-label { color: #6b7280; flex-shrink: 0; }
+    .dep-label { color: #0369a1; }
+    .inf-label { color: #be185d; }
+    .rel-list  { display: inline-flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+    .chip { display: inline-flex; align-items: center; gap: 2px;
+            background: #e0f2fe; color: #075985; padding: 1px 7px;
+            border-radius: 9px; cursor: pointer; font-size: 11px;
+            border: 1px solid transparent; }
+    .chip:hover { background: #bae6fd; border-color: #0284c7; }
+    .chip-inf { background: #fce7f3; color: #9d174d; }
+    .chip-inf:hover { background: #fbcfe8; border-color: #db2777; }
+    .chip-empty { color: #cbd5e1; font-style: italic; cursor: default; }
+    .chip-empty:hover { background: transparent; border-color: transparent; }
+    .chip-remove { color: #94a3b8; font-size: 13px; line-height: 1;
+                   padding: 0 0 0 2px; }
+    .chip-remove:hover { color: #dc2626; }
+    .rel-edit-btn { background: none; border: 1px dashed #cbd5e1;
+                    border-radius: 9px; padding: 1px 6px; cursor: pointer;
+                    font-size: 11px; color: #64748b; }
+    .rel-edit-btn:hover { background: #f1f5f9; border-color: #94a3b8;
+                          color: #0f3460; }
+    .rel-edit-btn.editing { background: #fef3c7; border-color: #d97706;
+                            color: #92400e; }
+
+    .row-note { font-size: 11px; color: #475569; background: #fefce8;
+                padding: 4px 6px; border-left: 2px solid #facc15;
+                margin-top: 4px; line-height: 1.55;
+                border-radius: 0 4px 4px 0; outline: none;
+                white-space: pre-wrap; min-height: 20px; }
+    .row-note:focus { background: #fef3c7; border-left-color: #d97706;
+                      box-shadow: 0 0 0 2px rgba(217,119,6,0.15); }
+    .row-note.edited { background: #fef3c7; border-left-color: #ea580c; }
+    .row-note:empty::before { content: attr(data-placeholder);
+                               color: #cbd5e1; font-style: italic; }
+
+    .item-track { position: relative; flex-shrink: 0; }
+    .bar { position: absolute; top: 8px; height: 22px; border-radius: 3px;
+           opacity: 0.92; cursor: help;
+           transition: transform 0.1s ease, box-shadow 0.1s ease; }
+    .bar:hover { transform: translateY(-1px);
+                  box-shadow: 0 4px 8px rgba(0,0,0,0.15); z-index: 3; }
+    .bar.bar-revised  { box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+    .bar.bar-original { opacity: 0.5; height: 7px; top: 29px; border-radius: 2px; }
+    .bar.bar-update   { width: 7px !important; height: 38px !important; top:0;
+                          border-radius: 2px; box-shadow: 0 0 0 1px #4c1d95; }
+    .bar.bar-cert     { box-shadow: 0 0 0 1px #166534 inset; }
+    .bar.bar-user     { outline: 1px dashed rgba(0,0,0,0.35); outline-offset: -1px; }
+    .row-selected .bar.bar-revised, .row-selected .bar.bar-update,
+    .row-selected .bar.bar-cert {
+        box-shadow: 0 0 0 2px #d97706; transform: translateY(-1px);
+    }
+
+    .today-marker {
+       position: absolute; top: 0; bottom: 0; width: 2px; background: #dc2626;
+       left: 1048.6px;
+       z-index: 4; pointer-events: none;
+    }
+    .today-label { position: absolute; top: 30px; transform: translateX(-50%);
+                   background: #dc2626; color: #fff; font-size: 11px;
+                   padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+
+    /* ---- popovers (deps + bars editor share the .dep-editor base) ---- */
+    .dep-editor { position: absolute; z-index: 50; background: #fff;
+                  border: 1px solid #cbd5e1; border-radius: 8px;
+                  box-shadow: 0 8px 24px rgba(15,52,96,0.18);
+                  padding: 10px 12px; width: 360px; font-size: 12px;
+                  color: #1f2937; }
+    .dep-editor .de-title { font-weight: 600; color: #0f3460;
+                            margin-bottom: 6px; font-size: 12px; }
+    .dep-editor .de-current { display: flex; flex-wrap: wrap; gap: 4px;
+                              min-height: 22px; margin-bottom: 8px;
+                              padding-bottom: 6px;
+                              border-bottom: 1px dashed #e2e8f0; }
+    .dep-editor .de-add-row { display: flex; gap: 6px; }
+    .dep-editor select { flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1;
+                         border-radius: 4px; font-size: 12px; min-width: 0; }
+    .dep-editor .de-actions { display: flex; justify-content: space-between;
+                              margin-top: 8px; gap: 6px; }
+    .dep-editor button.de-btn { background: #0f3460; color: #fff;
+                                 border: none; padding: 4px 10px;
+                                 border-radius: 4px; cursor: pointer;
+                                 font-size: 12px; }
+    .dep-editor button.de-btn.secondary { background: #fff; color: #0f3460;
+                                           border: 1px solid #cbd5e1; }
+    .dep-editor button.de-btn.danger    { background: #fff; color: #b91c1c;
+                                           border: 1px solid #fecaca; }
+    .dep-editor .de-empty { color: #94a3b8; font-style: italic; font-size: 11px; }
+
+    .bar-editor .be-list { max-height: 240px; overflow-y: auto;
+                            padding-right: 4px; margin-bottom: 8px;
+                            padding-bottom: 6px;
+                            border-bottom: 1px dashed #e2e8f0; }
+    .bar-editor .be-row { display: flex; align-items: center; gap: 4px;
+                           margin-bottom: 4px; font-size: 11px;
+                           flex-wrap: nowrap; }
+    .bar-editor .be-row select { padding: 3px 4px; border: 1px solid #cbd5e1;
+                                  border-radius: 4px; font-size: 11px;
+                                  min-width: 0; }
+    .bar-editor .be-row .be-bucket, .bar-editor .be-row .be-row-bucket { width: 110px; flex-shrink: 0; }
+    .bar-editor .be-row .be-start, .bar-editor .be-row .be-row-start { flex: 1; }
+    .bar-editor .be-row .be-end,   .bar-editor .be-row .be-row-end   { flex: 1; }
+    .bar-editor .be-arrow { color: #94a3b8; font-size: 10px; flex-shrink: 0; }
+    .bar-editor .be-del-btn { padding: 2px 6px !important; flex-shrink: 0; font-size: 11px; }
+    .bar-editor .be-add-btn { padding: 3px 8px !important; flex-shrink: 0; font-size: 11px; }
+    .bar-editor .be-add { padding-top: 6px; border-top: 1px dashed #e2e8f0; }
+    .bar-editor .be-src-tag { display: inline-block; font-size: 9px;
+                               padding: 1px 4px; border-radius: 3px;
+                               flex-shrink: 0; }
+    .bar-editor .be-src-tag.tag-xlsx { background: #dbeafe; color: #1d4ed8; }
+    .bar-editor .be-src-tag.tag-user { background: #fef3c7; color: #b45309; }
+
+    /* ---- minimap ---- */
+    .minimap { position: fixed; right: 20px; bottom: 20px;
+               width: 360px; background: #fff;
+               border: 1px solid #cbd5e1; border-radius: 8px;
+               box-shadow: 0 10px 30px rgba(15,52,96,0.20);
+               z-index: 200; user-select: none; }
+    .minimap.collapsed .mm-body { display: none; }
+    .minimap .mm-header { display: flex; align-items: center;
+                           justify-content: space-between;
+                           background: #0f3460; color: #fff;
+                           padding: 6px 10px; border-radius: 8px 8px 0 0;
+                           cursor: grab; font-size: 12px; }
+    .minimap.dragging .mm-header { cursor: grabbing; }
+    .minimap.collapsed .mm-header { border-radius: 8px; }
+    .minimap .mm-title { display: flex; align-items: center; gap: 6px;
+                          font-weight: 600; }
+    .minimap .mm-icons { display: flex; gap: 4px; }
+    .minimap .mm-icons button {
+      background: rgba(255,255,255,0.15); color: #fff; border: none;
+      padding: 2px 8px; border-radius: 4px; cursor: pointer;
+      font-size: 11px;
+    }
+    .minimap .mm-icons button:hover { background: rgba(255,255,255,0.3); }
+    .minimap .mm-body { padding: 8px; }
+    .minimap .mm-canvas { position: relative; background: #f8fafc;
+                           border: 1px solid #e2e8f0; border-radius: 4px;
+                           overflow: hidden; }
+    .minimap .mm-canvas svg { display: block; width: 100%; height: 100%; }
+    .minimap .mm-viewport { position: absolute; border: 1.5px solid #dc2626;
+                             background: rgba(220,38,38,0.10);
+                             pointer-events: none; }
+    .minimap .mm-canvas.draggable { cursor: crosshair; }
+    .minimap .mm-legend { display: flex; flex-wrap: wrap; gap: 8px;
+                           font-size: 10px; color: #475569; margin-top: 6px; }
+    .minimap .mm-legend span { display: inline-flex; align-items: center; gap: 3px; }
+    .minimap .mm-legend i { display: inline-block; width: 9px; height: 9px;
+                             border-radius: 2px; }
+
+    .toast { position: fixed; bottom: 20px; left: 50%;
+             transform: translateX(-50%) translateY(20px);
+             background: #0f3460; color: #fff; padding: 8px 16px;
+             border-radius: 6px; font-size: 13px; opacity: 0;
+             transition: opacity 0.2s ease, transform 0.2s ease;
+             pointer-events: none; z-index: 1000; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="page-head">
+  <h1>Sandwich Continuous Hydrogenation Skid — Project Schedule</h1>
+  <div class="sub">
+    Asymchem UK Sandwich site · Pilot plant retrofit ·
+    Source: <code>0509-Sandwich Continuous Hydrogen Timeline.xlsx</code> ·
+    Report date: 2026-05-09
+  </div>
+</div>
+
+<div class="panel" id="ganttPanel">
+  <h2>Schedule (deliverables × weeks)</h2>
+  <div class="gantt-toolbar">
+    <div class="left">
+      <div class="legend"><span class="leg"><span class="leg-swatch" style="background:#7DCBED"></span>Light blue — Original plan (previous baseline)</span><span class="leg"><span class="leg-swatch" style="background:#F0A93B"></span>Orange — Current revised plan</span><span class="leg"><span class="leg-swatch" style="background:#7C3FAA"></span>Purple — Time node needing update</span><span class="leg"><span class="leg-swatch" style="background:#5DB851"></span>Green — CE notified body involvement</span></div>
+    </div>
+    <div class="right">
+      <button class="toolbar-btn secondary" id="btn-scroll-today">⤴ Jump to today</button>
+      <button class="toolbar-btn secondary" id="btn-clear-sel">Clear highlights</button>
+      <button class="toolbar-btn secondary" id="btn-show-mm">🗺 Mini-map</button>
+      <button class="toolbar-btn" id="btn-export-notes">⇩ Export edits</button>
+      <button class="toolbar-btn secondary" id="btn-reset-all">Reset all</button>
+    </div>
+  </div>
+  <div class="toolbar-hint">
+    Each row shows two bands. Top band (orange / purple / green) is the current baseline (revised plan / update node / CE involvement).
+    Bottom thin light-blue band is the original (previous) baseline.
+    Hover a bar for full detail. Click an item label to scroll to its first period and highlight its upstream items.
+    Use the ✏️ button to edit dependencies, the 🕓 button to add / modify / delete time periods, and the yellow box to add a free-form note (all saved in your browser; use "Export edits" to share).
+  </div>
+
+  <div class="gantt">
+    <div class="gantt-scroll" id="ganttScroll">
+      <div class="gantt-grid" id="ganttGrid" style="min-width: calc(var(--label-w) + 1908px);">
+        <div class="month-row">
+          <div class="header-spacer" style="top:0;"></div>
+          <div class="month-cell " style="width:72px">2025/<span class="m">08</span></div><div class="month-cell " style="width:72px">2025/<span class="m">09</span></div><div class="month-cell " style="width:72px">2025/<span class="m">10</span></div><div class="month-cell " style="width:72px">2025/<span class="m">11</span></div><div class="month-cell " style="width:72px">2025/<span class="m">12</span></div><div class="month-cell " style="width:72px">2026/<span class="m">01</span></div><div class="month-cell " style="width:72px">2026/<span class="m">02</span></div><div class="month-cell " style="width:72px">2026/<span class="m">03</span></div><div class="month-cell " style="width:72px">2026/<span class="m">04</span></div><div class="month-cell mh-cur" style="width:72px">2026/<span class="m">05</span></div><div class="month-cell " style="width:72px">2026/<span class="m">06</span></div><div class="month-cell " style="width:72px">2026/<span class="m">07</span></div><div class="month-cell " style="width:72px">2026/<span class="m">08</span></div><div class="month-cell " style="width:72px">2026/<span class="m">09</span></div><div class="month-cell " style="width:72px">2026/<span class="m">10</span></div><div class="month-cell " style="width:72px">2026/<span class="m">11</span></div><div class="month-cell " style="width:72px">2026/<span class="m">12</span></div><div class="month-cell " style="width:72px">2027/<span class="m">01</span></div><div class="month-cell " style="width:72px">2027/<span class="m">02</span></div><div class="month-cell " style="width:72px">2027/<span class="m">03</span></div><div class="month-cell " style="width:72px">2027/<span class="m">04</span></div><div class="month-cell " style="width:72px">2027/<span class="m">05</span></div><div class="month-cell " style="width:72px">2027/<span class="m">06</span></div><div class="month-cell " style="width:72px">2027/<span class="m">07</span></div><div class="month-cell " style="width:72px">2027/<span class="m">08</span></div><div class="month-cell " style="width:72px">2027/<span class="m">09</span></div><div class="month-cell " style="width:36px">2027/<span class="m">10</span></div>
+        </div>
+        <div class="week-row">
+          <div class="header-spacer" style="top:28px;"></div>
+          <div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div><div class="week-cell" style="width:18px">w3</div><div class="week-cell" style="width:18px">w4</div><div class="week-cell" style="width:18px">w1</div><div class="week-cell" style="width:18px">w2</div>
+        </div>
+        <div class="section-row"><div class="section-label">Design</div><div class="section-bar" style="width:1908px"></div></div><div class="item-row" id="row-hazop-support-resource-in-grey" data-item="hazop-support-resource-in-grey" data-default-deps="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l,pi-d,control-description,equipment-datasheets" data-first-bar="324">  <div class="item-label" data-item="hazop-support-resource-in-grey" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">HAZOP （support resource in grey）</div>    <div class="item-owner">Owner: UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="hazop-support-resource-in-grey" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="hazop-support-resource-in-grey">    <div class="bar bar-original" style="left:324px;width:18px;background:#7DCBED" title="[ITEM] HAZOP （support resource in grey）&#10;[TIME] 2025/12 W3 - Original&#10;[OWNER] UK&#10;[DEPENDS ON] 3D modelling (procurement feedback; UK confirmation of equipment layout) / PI&amp;D / Control Description / Equipment datasheets" data-bucket="Original" data-item="hazop-support-resource-in-grey" data-bar-id="xlsx-23-23-original" data-start-col="23" data-end-col="23" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:378px;width:90px;background:#7DCBED" title="[ITEM] HAZOP （support resource in grey）&#10;[TIME] 2026/01 W2 -&gt; 2026/02 W2 - Original&#10;[OWNER] UK&#10;[DEPENDS ON] 3D modelling (procurement feedback; UK confirmation of equipment layout) / PI&amp;D / Control Description / Equipment datasheets" data-bucket="Original" data-item="hazop-support-resource-in-grey" data-bar-id="xlsx-26-30-original" data-start-col="26" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-control-description" data-item="control-description" data-default-deps="" data-first-bar="738">  <div class="item-label" data-item="control-description" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Control Description</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="control-description" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="control-description">    <div class="bar bar-revised" style="left:738px;width:54px;background:#F0A93B" title="[ITEM] Control Description&#10;[TIME] 2026/06 W2 -&gt; 2026/06 W4 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="control-description" data-bar-id="xlsx-46-48-revised" data-start-col="46" data-end-col="48" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:792px;width:18px;background:#7C3FAA" title="[ITEM] Control Description&#10;[TIME] 2026/07 W1 - Update needed&#10;[OWNER] IEPE" data-bucket="Update needed" data-item="control-description" data-bar-id="xlsx-49-49-update" data-start-col="49" data-end-col="49" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-pfd-and-mass-balance-data-sheet" data-item="pfd-and-mass-balance-data-sheet" data-default-deps="" data-first-bar="666">  <div class="item-label" data-item="pfd-and-mass-balance-data-sheet" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">PFD and Mass Balance Data Sheet</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="pfd-and-mass-balance-data-sheet" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="pfd-and-mass-balance-data-sheet">    <div class="bar bar-revised" style="left:666px;width:18px;background:#F0A93B" title="[ITEM] PFD and Mass Balance Data Sheet&#10;[TIME] 2026/05 W2 - Revised&#10;[OWNER] UK Sandwich (SW)" data-bucket="Revised" data-item="pfd-and-mass-balance-data-sheet" data-bar-id="xlsx-42-42-revised" data-start-col="42" data-end-col="42" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-pi-d" data-item="pi-d" data-default-deps="" data-first-bar="180">  <div class="item-label" data-item="pi-d" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">PI&amp;D</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="pi-d" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="pi-d">    <div class="bar bar-original" style="left:180px;width:72px;background:#7DCBED" title="[ITEM] PI&amp;D&#10;[TIME] 2025/10 W3 -&gt; 2025/11 W2 - Original&#10;[OWNER] UK Sandwich (SW)" data-bucket="Original" data-item="pi-d" data-bar-id="xlsx-15-18-original" data-start-col="15" data-end-col="18" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:378px;width:36px;background:#7DCBED" title="[ITEM] PI&amp;D&#10;[TIME] 2026/01 W2 -&gt; 2026/01 W3 - Original&#10;[OWNER] UK Sandwich (SW)" data-bucket="Original" data-item="pi-d" data-bar-id="xlsx-26-27-original" data-start-col="26" data-end-col="27" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:450px;width:18px;background:#7DCBED" title="[ITEM] PI&amp;D&#10;[TIME] 2026/02 W2 - Original&#10;[OWNER] UK Sandwich (SW)" data-bucket="Original" data-item="pi-d" data-bar-id="xlsx-30-30-original" data-start-col="30" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:594px;width:126px;background:#F0A93B" title="[ITEM] PI&amp;D&#10;[TIME] 2026/04 W2 -&gt; 2026/05 W4 - Revised&#10;[OWNER] UK Sandwich (SW)" data-bucket="Revised" data-item="pi-d" data-bar-id="xlsx-38-44-revised" data-start-col="38" data-end-col="44" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-process-equipment-list" data-item="process-equipment-list" data-default-deps="" data-first-bar="648">  <div class="item-label" data-item="process-equipment-list" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Process Equipment List</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="process-equipment-list" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="process-equipment-list">    <div class="bar bar-revised" style="left:648px;width:72px;background:#F0A93B" title="[ITEM] Process Equipment List&#10;[TIME] 2026/05 W1 -&gt; 2026/05 W4 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="process-equipment-list" data-bar-id="xlsx-41-44-revised" data-start-col="41" data-end-col="44" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-equipment-datasheets" data-item="equipment-datasheets" data-default-deps="pi-d,reactor-column-specification-sheet" data-first-bar="180">  <div class="item-label" data-item="equipment-datasheets" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Equipment datasheets</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="equipment-datasheets" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="equipment-datasheets">    <div class="bar bar-original" style="left:180px;width:72px;background:#7DCBED" title="[ITEM] Equipment datasheets&#10;[TIME] 2025/10 W3 -&gt; 2025/11 W2 - Original&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Reactor column specification sheet" data-bucket="Original" data-item="equipment-datasheets" data-bar-id="xlsx-15-18-original" data-start-col="15" data-end-col="18" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:324px;width:144px;background:#7DCBED" title="[ITEM] Equipment datasheets&#10;[TIME] 2025/12 W3 -&gt; 2026/02 W2 - Original&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Reactor column specification sheet" data-bucket="Original" data-item="equipment-datasheets" data-bar-id="xlsx-23-30-original" data-start-col="23" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:648px;width:72px;background:#F0A93B" title="[ITEM] Equipment datasheets&#10;[TIME] 2026/05 W1 -&gt; 2026/05 W4 - Revised&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Reactor column specification sheet" data-bucket="Revised" data-item="equipment-datasheets" data-bar-id="xlsx-41-44-revised" data-start-col="41" data-end-col="44" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-battery-limit-condition-sheet-tie-in-point-sheet" data-item="battery-limit-condition-sheet-tie-in-point-sheet" data-default-deps="" data-first-bar="648">  <div class="item-label" data-item="battery-limit-condition-sheet-tie-in-point-sheet" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Battery Limit Condition Sheet (Tie-in point sheet)</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="battery-limit-condition-sheet-tie-in-point-sheet" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="battery-limit-condition-sheet-tie-in-point-sheet">    <div class="bar bar-revised" style="left:648px;width:18px;background:#F0A93B" title="[ITEM] Battery Limit Condition Sheet (Tie-in point sheet)&#10;[TIME] 2026/05 W1 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="battery-limit-condition-sheet-tie-in-point-sheet" data-bar-id="xlsx-41-41-revised" data-start-col="41" data-end-col="41" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-revised" style="left:702px;width:18px;background:#F0A93B" title="[ITEM] Battery Limit Condition Sheet (Tie-in point sheet)&#10;[TIME] 2026/05 W4 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="battery-limit-condition-sheet-tie-in-point-sheet" data-bar-id="xlsx-44-44-revised" data-start-col="44" data-end-col="44" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:720px;width:18px;background:#7C3FAA" title="[ITEM] Battery Limit Condition Sheet (Tie-in point sheet)&#10;[TIME] 2026/06 W1 - Update needed&#10;[OWNER] IEPE" data-bucket="Update needed" data-item="battery-limit-condition-sheet-tie-in-point-sheet" data-bar-id="xlsx-45-45-update" data-start-col="45" data-end-col="45" data-bucket-key="update" data-source="xlsx"></div><div class="bar bar-update" style="left:792px;width:18px;background:#7C3FAA" title="[ITEM] Battery Limit Condition Sheet (Tie-in point sheet)&#10;[TIME] 2026/07 W1 - Update needed&#10;[OWNER] IEPE" data-bucket="Update needed" data-item="battery-limit-condition-sheet-tie-in-point-sheet" data-bar-id="xlsx-49-49-update" data-start-col="49" data-end-col="49" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-instrumentation-condition-table" data-item="instrumentation-condition-table" data-default-deps="" data-first-bar="648">  <div class="item-label" data-item="instrumentation-condition-table" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Instrumentation Condition Table</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="instrumentation-condition-table" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="instrumentation-condition-table">    <div class="bar bar-revised" style="left:648px;width:18px;background:#F0A93B" title="[ITEM] Instrumentation Condition Table&#10;[TIME] 2026/05 W1 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="instrumentation-condition-table" data-bar-id="xlsx-41-41-revised" data-start-col="41" data-end-col="41" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-revised" style="left:702px;width:18px;background:#F0A93B" title="[ITEM] Instrumentation Condition Table&#10;[TIME] 2026/05 W4 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="instrumentation-condition-table" data-bar-id="xlsx-44-44-revised" data-start-col="44" data-end-col="44" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:720px;width:18px;background:#7C3FAA" title="[ITEM] Instrumentation Condition Table&#10;[TIME] 2026/06 W1 - Update needed&#10;[OWNER] IEPE" data-bucket="Update needed" data-item="instrumentation-condition-table" data-bar-id="xlsx-45-45-update" data-start-col="45" data-end-col="45" data-bucket-key="update" data-source="xlsx"></div><div class="bar bar-update" style="left:792px;width:18px;background:#7C3FAA" title="[ITEM] Instrumentation Condition Table&#10;[TIME] 2026/07 W1 - Update needed&#10;[OWNER] IEPE" data-bucket="Update needed" data-item="instrumentation-condition-table" data-bar-id="xlsx-49-49-update" data-start-col="49" data-end-col="49" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-piping-material-class-specification" data-item="piping-material-class-specification" data-default-deps="" data-first-bar="558">  <div class="item-label" data-item="piping-material-class-specification" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Piping Material Class Specification</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="piping-material-class-specification" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="piping-material-class-specification">    <div class="bar bar-cert" style="left:558px;width:18px;background:#5DB851" title="[ITEM] Piping Material Class Specification&#10;[TIME] 2026/03 W4 - CE involvement&#10;[OWNER] IEPE" data-bucket="CE involvement" data-item="piping-material-class-specification" data-bar-id="xlsx-36-36-cert" data-start-col="36" data-end-col="36" data-bucket-key="cert" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-process-piping-list" data-item="process-piping-list" data-default-deps="" data-first-bar="702">  <div class="item-label" data-item="process-piping-list" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Process Piping List</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="process-piping-list" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="process-piping-list">    <div class="bar bar-revised" style="left:702px;width:54px;background:#F0A93B" title="[ITEM] Process Piping List&#10;[TIME] 2026/05 W4 -&gt; 2026/06 W2 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="process-piping-list" data-bar-id="xlsx-44-46-revised" data-start-col="44" data-end-col="46" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:792px;width:18px;background:#7C3FAA" title="[ITEM] Process Piping List&#10;[TIME] 2026/07 W1 - Update needed&#10;[OWNER] IEPE" data-bucket="Update needed" data-item="process-piping-list" data-bar-id="xlsx-49-49-update" data-start-col="49" data-end-col="49" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-special-piping-accessories-data-sheet" data-item="special-piping-accessories-data-sheet" data-default-deps="" data-first-bar="702">  <div class="item-label" data-item="special-piping-accessories-data-sheet" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Special Piping Accessories Data Sheet</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="special-piping-accessories-data-sheet" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="special-piping-accessories-data-sheet">    <div class="bar bar-revised" style="left:702px;width:54px;background:#F0A93B" title="[ITEM] Special Piping Accessories Data Sheet&#10;[TIME] 2026/05 W4 -&gt; 2026/06 W2 - Revised&#10;[OWNER] IEPE" data-bucket="Revised" data-item="special-piping-accessories-data-sheet" data-bar-id="xlsx-44-46-revised" data-start-col="44" data-end-col="46" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-main-safety-relief-facilities-data-sheet" data-item="main-safety-relief-facilities-data-sheet" data-default-deps="pi-d,equipment-datasheets" data-first-bar="630">  <div class="item-label" data-item="main-safety-relief-facilities-data-sheet" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Main Safety Relief Facilities Data Sheet</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="main-safety-relief-facilities-data-sheet" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="main-safety-relief-facilities-data-sheet">    <div class="bar bar-revised" style="left:630px;width:54px;background:#F0A93B" title="[ITEM] Main Safety Relief Facilities Data Sheet&#10;[TIME] 2026/04 W4 -&gt; 2026/05 W2 - Revised&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Equipment datasheets" data-bucket="Revised" data-item="main-safety-relief-facilities-data-sheet" data-bar-id="xlsx-40-42-revised" data-start-col="40" data-end-col="42" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:702px;width:36px;background:#7C3FAA" title="[ITEM] Main Safety Relief Facilities Data Sheet&#10;[TIME] 2026/05 W4 -&gt; 2026/06 W1 - Update needed&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Equipment datasheets" data-bucket="Update needed" data-item="main-safety-relief-facilities-data-sheet" data-bar-id="xlsx-44-45-update" data-start-col="44" data-end-col="45" data-bucket-key="update" data-source="xlsx"></div><div class="bar bar-update" style="left:792px;width:18px;background:#7C3FAA" title="[ITEM] Main Safety Relief Facilities Data Sheet&#10;[TIME] 2026/07 W1 - Update needed&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Equipment datasheets" data-bucket="Update needed" data-item="main-safety-relief-facilities-data-sheet" data-bar-id="xlsx-49-49-update" data-start-col="49" data-end-col="49" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-instrument-datasheets" data-item="instrument-datasheets" data-default-deps="pi-d,instrumentation-condition-table" data-first-bar="180">  <div class="item-label" data-item="instrument-datasheets" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Instrument datasheets</div>    <div class="item-owner">Owner: IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="instrument-datasheets" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="instrument-datasheets">    <div class="bar bar-original" style="left:180px;width:72px;background:#7DCBED" title="[ITEM] Instrument datasheets&#10;[TIME] 2025/10 W3 -&gt; 2025/11 W2 - Original&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Instrumentation Condition Table" data-bucket="Original" data-item="instrument-datasheets" data-bar-id="xlsx-15-18-original" data-start-col="15" data-end-col="18" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:396px;width:72px;background:#7DCBED" title="[ITEM] Instrument datasheets&#10;[TIME] 2026/01 W3 -&gt; 2026/02 W2 - Original&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Instrumentation Condition Table" data-bucket="Original" data-item="instrument-datasheets" data-bar-id="xlsx-27-30-original" data-start-col="27" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:720px;width:36px;background:#F0A93B" title="[ITEM] Instrument datasheets&#10;[TIME] 2026/06 W1 -&gt; 2026/06 W2 - Revised&#10;[OWNER] IEPE&#10;[DEPENDS ON] PI&amp;D / Instrumentation Condition Table" data-bucket="Revised" data-item="instrument-datasheets" data-bar-id="xlsx-45-46-revised" data-start-col="45" data-end-col="46" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-interlock-logic" data-item="interlock-logic" data-default-deps="pi-d,control-description" data-first-bar="180">  <div class="item-label" data-item="interlock-logic" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Interlock logic</div>    <div class="item-owner">Owner: IEPE + UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="interlock-logic" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="interlock-logic">    <div class="bar bar-original" style="left:180px;width:72px;background:#7DCBED" title="[ITEM] Interlock logic&#10;[TIME] 2025/10 W3 -&gt; 2025/11 W2 - Original&#10;[OWNER] IEPE + UK&#10;[DEPENDS ON] PI&amp;D / Control Description" data-bucket="Original" data-item="interlock-logic" data-bar-id="xlsx-15-18-original" data-start-col="15" data-end-col="18" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:396px;width:18px;background:#7DCBED" title="[ITEM] Interlock logic&#10;[TIME] 2026/01 W3 - Original&#10;[OWNER] IEPE + UK&#10;[DEPENDS ON] PI&amp;D / Control Description" data-bucket="Original" data-item="interlock-logic" data-bar-id="xlsx-27-27-original" data-start-col="27" data-end-col="27" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:450px;width:18px;background:#7DCBED" title="[ITEM] Interlock logic&#10;[TIME] 2026/02 W2 - Original&#10;[OWNER] IEPE + UK&#10;[DEPENDS ON] PI&amp;D / Control Description" data-bucket="Original" data-item="interlock-logic" data-bar-id="xlsx-30-30-original" data-start-col="30" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:720px;width:36px;background:#F0A93B" title="[ITEM] Interlock logic&#10;[TIME] 2026/06 W1 -&gt; 2026/06 W2 - Revised&#10;[OWNER] IEPE + UK&#10;[DEPENDS ON] PI&amp;D / Control Description" data-bucket="Revised" data-item="interlock-logic" data-bar-id="xlsx-45-46-revised" data-start-col="45" data-end-col="46" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-pump-specification-sheet" data-item="pump-specification-sheet" data-default-deps="pi-d,process-equipment-list" data-first-bar="378">  <div class="item-label" data-item="pump-specification-sheet" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Pump specification sheet</div>    <div class="item-owner">Owner: IEPE + UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="pump-specification-sheet" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="pump-specification-sheet">    <div class="bar bar-original" style="left:378px;width:36px;background:#7DCBED" title="[ITEM] Pump specification sheet&#10;[TIME] 2026/01 W2 -&gt; 2026/01 W3 - Original&#10;[OWNER] IEPE + UK&#10;[DEPENDS ON] PI&amp;D / Process Equipment List" data-bucket="Original" data-item="pump-specification-sheet" data-bar-id="xlsx-26-27-original" data-start-col="26" data-end-col="27" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:432px;width:36px;background:#7DCBED" title="[ITEM] Pump specification sheet&#10;[TIME] 2026/02 W1 -&gt; 2026/02 W2 - Original&#10;[OWNER] IEPE + UK&#10;[DEPENDS ON] PI&amp;D / Process Equipment List" data-bucket="Original" data-item="pump-specification-sheet" data-bar-id="xlsx-29-30-original" data-start-col="29" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:648px;width:36px;background:#F0A93B" title="[ITEM] Pump specification sheet&#10;[TIME] 2026/05 W1 -&gt; 2026/05 W2 - Revised&#10;[OWNER] IEPE + UK&#10;[DEPENDS ON] PI&amp;D / Process Equipment List" data-bucket="Revised" data-item="pump-specification-sheet" data-bar-id="xlsx-41-42-revised" data-start-col="41" data-end-col="42" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-operating-instructions" data-item="operating-instructions" data-default-deps="" data-first-bar="378">  <div class="item-label" data-item="operating-instructions" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Operating instructions</div>    <div class="item-owner">Owner: IEPE + UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="operating-instructions" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="operating-instructions">    <div class="bar bar-original" style="left:378px;width:54px;background:#7DCBED" title="[ITEM] Operating instructions&#10;[TIME] 2026/01 W2 -&gt; 2026/01 W4 - Original&#10;[OWNER] IEPE + UK" data-bucket="Original" data-item="operating-instructions" data-bar-id="xlsx-26-28-original" data-start-col="26" data-end-col="28" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:450px;width:18px;background:#7DCBED" title="[ITEM] Operating instructions&#10;[TIME] 2026/02 W2 - Original&#10;[OWNER] IEPE + UK" data-bucket="Original" data-item="operating-instructions" data-bar-id="xlsx-30-30-original" data-start-col="30" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:810px;width:54px;background:#F0A93B" title="[ITEM] Operating instructions&#10;[TIME] 2026/07 W2 -&gt; 2026/07 W4 - Revised&#10;[OWNER] IEPE + UK" data-bucket="Revised" data-item="operating-instructions" data-bar-id="xlsx-50-52-revised" data-start-col="50" data-end-col="52" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-preliminary-equipment-layout" data-item="preliminary-equipment-layout" data-default-deps="pi-d,process-equipment-list" data-first-bar="396">  <div class="item-label" data-item="preliminary-equipment-layout" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Preliminary equipment layout</div>    <div class="item-owner">Owner: IEPE + CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="preliminary-equipment-layout" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="preliminary-equipment-layout">    <div class="bar bar-original" style="left:396px;width:36px;background:#7DCBED" title="[ITEM] Preliminary equipment layout&#10;[TIME] 2026/01 W3 -&gt; 2026/01 W4 - Original&#10;[OWNER] IEPE + CFCT&#10;[DEPENDS ON] PI&amp;D / Process Equipment List" data-bucket="Original" data-item="preliminary-equipment-layout" data-bar-id="xlsx-27-28-original" data-start-col="27" data-end-col="28" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:594px;width:18px;background:#F0A93B" title="[ITEM] Preliminary equipment layout&#10;[TIME] 2026/04 W2 - Revised&#10;[OWNER] IEPE + CFCT&#10;[DEPENDS ON] PI&amp;D / Process Equipment List" data-bucket="Revised" data-item="preliminary-equipment-layout" data-bar-id="xlsx-38-38-revised" data-start-col="38" data-end-col="38" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-structural-design-of-static-equipment-pink" data-item="structural-design-of-static-equipment-pink" data-default-deps="" data-first-bar="414">  <div class="item-label" data-item="structural-design-of-static-equipment-pink" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">structural design of static equipment（pink）</div>    <div class="item-owner">Owner: IEPE + CFCT + UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="structural-design-of-static-equipment-pink" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="structural-design-of-static-equipment-pink">    <div class="bar bar-original" style="left:414px;width:54px;background:#7DCBED" title="[ITEM] structural design of static equipment（pink）&#10;[TIME] 2026/01 W4 -&gt; 2026/02 W2 - Original&#10;[OWNER] IEPE + CFCT + UK" data-bucket="Original" data-item="structural-design-of-static-equipment-pink" data-bar-id="xlsx-28-30-original" data-start-col="28" data-end-col="30" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-reactor-column-specification-sheet" data-item="reactor-column-specification-sheet" data-default-deps="pi-d" data-first-bar="414">  <div class="item-label" data-item="reactor-column-specification-sheet" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Reactor column specification sheet</div>    <div class="item-owner">Owner: IEPE + CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="reactor-column-specification-sheet" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="reactor-column-specification-sheet">    <div class="bar bar-original" style="left:414px;width:18px;background:#7DCBED" title="[ITEM] Reactor column specification sheet&#10;[TIME] 2026/01 W4 - Original&#10;[OWNER] IEPE + CFCT&#10;[DEPENDS ON] PI&amp;D" data-bucket="Original" data-item="reactor-column-specification-sheet" data-bar-id="xlsx-28-28-original" data-start-col="28" data-end-col="28" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:666px;width:18px;background:#F0A93B" title="[ITEM] Reactor column specification sheet&#10;[TIME] 2026/05 W2 - Revised&#10;[OWNER] IEPE + CFCT&#10;[DEPENDS ON] PI&amp;D" data-bucket="Revised" data-item="reactor-column-specification-sheet" data-bar-id="xlsx-42-42-revised" data-start-col="42" data-end-col="42" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:702px;width:18px;background:#7C3FAA" title="[ITEM] Reactor column specification sheet&#10;[TIME] 2026/05 W4 - Update needed&#10;[OWNER] IEPE + CFCT&#10;[DEPENDS ON] PI&amp;D" data-bucket="Update needed" data-item="reactor-column-specification-sheet" data-bar-id="xlsx-44-44-update" data-start-col="44" data-end-col="44" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-procurement-information-confirmation-pump-insturment-equipment-s" data-item="procurement-information-confirmation-pump-insturment-equipment-s" data-default-deps="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l,hazop-support-resource-in-grey,equipment-datasheets,instrument-datasheets,pump-specification-sheet" data-first-bar="414">  <div class="item-label" data-item="procurement-information-confirmation-pump-insturment-equipment-s" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Procurement information confirmation(pump\insturment\equipment schedule)</div>    <div class="item-owner">Owner: CFCT + IEPE + UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="procurement-information-confirmation-pump-insturment-equipment-s" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="procurement-information-confirmation-pump-insturment-equipment-s">    <div class="bar bar-original" style="left:414px;width:162px;background:#7DCBED" title="[ITEM] Procurement information confirmation(pump\insturment\equipment schedule)&#10;[TIME] 2026/01 W4 -&gt; 2026/03 W4 - Original&#10;[OWNER] CFCT + IEPE + UK&#10;[DEPENDS ON] 3D modelling (procurement feedback; UK confirmation of equipment layout) / HAZOP （support resource in grey） / Equipment datasheets / Instrument datasheets / Pump specification sheet" data-bucket="Original" data-item="procurement-information-confirmation-pump-insturment-equipment-s" data-bar-id="xlsx-28-36-original" data-start-col="28" data-end-col="36" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:810px;width:72px;background:#F0A93B" title="[ITEM] Procurement information confirmation(pump\insturment\equipment schedule)&#10;[TIME] 2026/07 W2 -&gt; 2026/08 W1 - Revised&#10;[OWNER] CFCT + IEPE + UK&#10;[DEPENDS ON] 3D modelling (procurement feedback; UK confirmation of equipment layout) / HAZOP （support resource in grey） / Equipment datasheets / Instrument datasheets / Pump specification sheet" data-bucket="Revised" data-item="procurement-information-confirmation-pump-insturment-equipment-s" data-bar-id="xlsx-50-53-revised" data-start-col="50" data-end-col="53" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-fds-cs-in-fds-sds-hds" data-item="fds-cs-in-fds-sds-hds" data-default-deps="" data-first-bar="720">  <div class="item-label" data-item="fds-cs-in-fds-sds-hds" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">FDS(CS in FDS)/SDS/HDS</div>    <div class="item-owner">Owner: IEPE + CFCT + CIMT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="fds-cs-in-fds-sds-hds" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="fds-cs-in-fds-sds-hds">    <div class="bar bar-revised" style="left:720px;width:72px;background:#F0A93B" title="[ITEM] FDS(CS in FDS)/SDS/HDS&#10;[TIME] 2026/06 W1 -&gt; 2026/06 W4 - Revised&#10;[OWNER] IEPE + CFCT + CIMT" data-bucket="Revised" data-item="fds-cs-in-fds-sds-hds" data-bar-id="xlsx-45-48-revised" data-start-col="45" data-end-col="48" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:792px;width:18px;background:#7C3FAA" title="[ITEM] FDS(CS in FDS)/SDS/HDS&#10;[TIME] 2026/07 W1 - Update needed&#10;[OWNER] IEPE + CFCT + CIMT" data-bucket="Update needed" data-item="fds-cs-in-fds-sds-hds" data-bar-id="xlsx-49-49-update" data-start-col="49" data-end-col="49" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-urs" data-item="urs" data-default-deps="">  <div class="item-label" data-item="urs" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">URS</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="urs" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="urs">      </div></div><div class="item-row" id="row-instrument-schedule-including-instrument-ranges-and-set-values" data-item="instrument-schedule-including-instrument-ranges-and-set-values" data-default-deps="">  <div class="item-label" data-item="instrument-schedule-including-instrument-ranges-and-set-values" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Instrument Schedule  (including instrument ranges and set values)</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="instrument-schedule-including-instrument-ranges-and-set-values" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="instrument-schedule-including-instrument-ranges-and-set-values">      </div></div><div class="item-row" id="row-i-o-schedule-including-i-o-type-ranges-and-alarm-settings" data-item="i-o-schedule-including-i-o-type-ranges-and-alarm-settings" data-default-deps="">  <div class="item-label" data-item="i-o-schedule-including-i-o-type-ranges-and-alarm-settings" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">I/O schedule (including I/O type, ranges and alarm settings)</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="i-o-schedule-including-i-o-type-ranges-and-alarm-settings" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="i-o-schedule-including-i-o-type-ranges-and-alarm-settings">      </div></div><div class="item-row" id="row-trip-and-interlock-schedules-for-plc-interlocks" data-item="trip-and-interlock-schedules-for-plc-interlocks" data-default-deps="">  <div class="item-label" data-item="trip-and-interlock-schedules-for-plc-interlocks" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">trip and interlock schedules for PLC interlocks</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="trip-and-interlock-schedules-for-plc-interlocks" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="trip-and-interlock-schedules-for-plc-interlocks">      </div></div><div class="item-row" id="row-pcs-interlocks-and-hardwired-interlocks" data-item="pcs-interlocks-and-hardwired-interlocks" data-default-deps="">  <div class="item-label" data-item="pcs-interlocks-and-hardwired-interlocks" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">PCS interlocks and hardwired interlocks</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="pcs-interlocks-and-hardwired-interlocks" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="pcs-interlocks-and-hardwired-interlocks">      </div></div><div class="item-row" id="row-sil-assessments-for-safety-environmental-interlocks-and-lopa-ass" data-item="sil-assessments-for-safety-environmental-interlocks-and-lopa-ass" data-default-deps="">  <div class="item-label" data-item="sil-assessments-for-safety-environmental-interlocks-and-lopa-ass" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">SIL assessments for safety/environmental interlocks and LOPA assessments for potential SIL rated SIFs</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="sil-assessments-for-safety-environmental-interlocks-and-lopa-ass" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="sil-assessments-for-safety-environmental-interlocks-and-lopa-ass">      </div></div><div class="item-row" id="row-alarm-list" data-item="alarm-list" data-default-deps="">  <div class="item-label" data-item="alarm-list" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Alarm list</div>    <div class="item-owner">Owner: UK Sandwich (SW)</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="alarm-list" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="alarm-list">      </div></div><div class="item-row" id="row-hardware-drawing-of-plc" data-item="hardware-drawing-of-plc" data-default-deps="" data-first-bar="756">  <div class="item-label" data-item="hardware-drawing-of-plc" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Hardware drawing of PLC</div>    <div class="item-owner">Owner: CIMT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="hardware-drawing-of-plc" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="hardware-drawing-of-plc">    <div class="bar bar-revised" style="left:756px;width:144px;background:#F0A93B" title="[ITEM] Hardware drawing of PLC&#10;[TIME] 2026/06 W3 -&gt; 2026/08 W2 - Revised&#10;[OWNER] CIMT" data-bucket="Revised" data-item="hardware-drawing-of-plc" data-bar-id="xlsx-47-54-revised" data-start-col="47" data-end-col="54" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-ioa-of-plc" data-item="ioa-of-plc" data-default-deps="" data-first-bar="864">  <div class="item-label" data-item="ioa-of-plc" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">IOA of PLC</div>    <div class="item-owner">Owner: CIMT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="ioa-of-plc" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="ioa-of-plc">    <div class="bar bar-revised" style="left:864px;width:72px;background:#F0A93B" title="[ITEM] IOA of PLC&#10;[TIME] 2026/08 W1 -&gt; 2026/08 W4 - Revised&#10;[OWNER] CIMT" data-bucket="Revised" data-item="ioa-of-plc" data-bar-id="xlsx-53-56-revised" data-start-col="53" data-end-col="56" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-cable-schedule" data-item="cable-schedule" data-default-deps="" data-first-bar="630">  <div class="item-label" data-item="cable-schedule" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Cable schedule</div>    <div class="item-owner">Owner: CIMT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="cable-schedule" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="cable-schedule">    <div class="bar bar-revised" style="left:630px;width:72px;background:#F0A93B" title="[ITEM] Cable schedule&#10;[TIME] 2026/04 W4 -&gt; 2026/05 W3 - Revised&#10;[OWNER] CIMT" data-bucket="Revised" data-item="cable-schedule" data-bar-id="xlsx-40-43-revised" data-start-col="40" data-end-col="43" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="section-row"><div class="section-label">Skid</div><div class="section-bar" style="width:1908px"></div></div><div class="item-row" id="row-3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-item="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-default-deps="equipment-datasheets,preliminary-equipment-layout,main-safety-relief-facilities-data-sheet,pump-specification-sheet,reactor-column-specification-sheet" data-first-bar="486">  <div class="item-label" data-item="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">3D modelling (procurement feedback; UK confirmation of equipment layout)</div>    <div class="item-owner">Owner: CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l">    <div class="bar bar-original" style="left:486px;width:72px;background:#7DCBED" title="[ITEM] 3D modelling (procurement feedback; UK confirmation of equipment layout)&#10;[TIME] 2026/02 W4 -&gt; 2026/03 W3 - Original&#10;[OWNER] CFCT&#10;[DEPENDS ON] Equipment datasheets / Preliminary equipment layout / Main Safety Relief Facilities Data Sheet / Pump specification sheet / Reactor column specification sheet" data-bucket="Original" data-item="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-bar-id="xlsx-32-35-original" data-start-col="32" data-end-col="35" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:684px;width:54px;background:#F0A93B" title="[ITEM] 3D modelling (procurement feedback; UK confirmation of equipment layout)&#10;[TIME] 2026/05 W3 -&gt; 2026/06 W1 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Equipment datasheets / Preliminary equipment layout / Main Safety Relief Facilities Data Sheet / Pump specification sheet / Reactor column specification sheet" data-bucket="Revised" data-item="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-bar-id="xlsx-43-45-revised" data-start-col="43" data-end-col="45" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:738px;width:18px;background:#7C3FAA" title="[ITEM] 3D modelling (procurement feedback; UK confirmation of equipment layout)&#10;[TIME] 2026/06 W2 - Update needed&#10;[OWNER] CFCT&#10;[DEPENDS ON] Equipment datasheets / Preliminary equipment layout / Main Safety Relief Facilities Data Sheet / Pump specification sheet / Reactor column specification sheet" data-bucket="Update needed" data-item="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-bar-id="xlsx-46-46-update" data-start-col="46" data-end-col="46" data-bucket-key="update" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-bom" data-item="bom" data-default-deps="fabrication-drawings,3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-first-bar="558">  <div class="item-label" data-item="bom" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">BOM</div>    <div class="item-owner">Owner: CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="bom" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="bom">    <div class="bar bar-original" style="left:558px;width:36px;background:#7DCBED" title="[ITEM] BOM&#10;[TIME] 2026/03 W4 -&gt; 2026/04 W1 - Original&#10;[OWNER] CFCT&#10;[DEPENDS ON] Fabrication drawings / 3D modelling (procurement feedback; UK confirmation of equipment layout)" data-bucket="Original" data-item="bom" data-bar-id="xlsx-36-37-original" data-start-col="36" data-end-col="37" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:756px;width:36px;background:#F0A93B" title="[ITEM] BOM&#10;[TIME] 2026/06 W3 -&gt; 2026/06 W4 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Fabrication drawings / 3D modelling (procurement feedback; UK confirmation of equipment layout)" data-bucket="Revised" data-item="bom" data-bar-id="xlsx-47-48-revised" data-start-col="47" data-end-col="48" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-fabrication-drawings" data-item="fabrication-drawings" data-default-deps="3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l" data-first-bar="594">  <div class="item-label" data-item="fabrication-drawings" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Fabrication drawings</div>    <div class="item-owner">Owner: CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="fabrication-drawings" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="fabrication-drawings">    <div class="bar bar-original" style="left:594px;width:36px;background:#7DCBED" title="[ITEM] Fabrication drawings&#10;[TIME] 2026/04 W2 -&gt; 2026/04 W3 - Original&#10;[OWNER] CFCT&#10;[DEPENDS ON] 3D modelling (procurement feedback; UK confirmation of equipment layout)" data-bucket="Original" data-item="fabrication-drawings" data-bar-id="xlsx-38-39-original" data-start-col="38" data-end-col="39" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:756px;width:18px;background:#F0A93B" title="[ITEM] Fabrication drawings&#10;[TIME] 2026/06 W3 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] 3D modelling (procurement feedback; UK confirmation of equipment layout)" data-bucket="Revised" data-item="fabrication-drawings" data-bar-id="xlsx-47-47-revised" data-start-col="47" data-end-col="47" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-engineering-procurement-valves-instruments-static-equipment-pump" data-item="engineering-procurement-valves-instruments-static-equipment-pump" data-default-deps="procurement-information-confirmation-pump-insturment-equipment-s,bom" data-first-bar="540">  <div class="item-label" data-item="engineering-procurement-valves-instruments-static-equipment-pump" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Engineering procurement (valves &amp; instruments, static equipment, pumps, piping and fittings; within the skid)</div>    <div class="item-owner">Owner: CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="engineering-procurement-valves-instruments-static-equipment-pump" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="engineering-procurement-valves-instruments-static-equipment-pump">    <div class="bar bar-original" style="left:540px;width:216px;background:#7DCBED" title="[ITEM] Engineering procurement (valves &amp; instruments, static equipment, pumps, piping and fittings; within the skid)&#10;[TIME] 2026/03 W3 -&gt; 2026/06 W2 - Original&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / BOM" data-bucket="Original" data-item="engineering-procurement-valves-instruments-static-equipment-pump" data-bar-id="xlsx-35-46-original" data-start-col="35" data-end-col="46" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:756px;width:36px;background:#F0A93B" title="[ITEM] Engineering procurement (valves &amp; instruments, static equipment, pumps, piping and fittings; within the skid)&#10;[TIME] 2026/06 W3 -&gt; 2026/06 W4 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / BOM" data-bucket="Revised" data-item="engineering-procurement-valves-instruments-static-equipment-pump" data-bar-id="xlsx-47-48-revised" data-start-col="47" data-end-col="48" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-update" style="left:792px;width:18px;background:#7C3FAA" title="[ITEM] Engineering procurement (valves &amp; instruments, static equipment, pumps, piping and fittings; within the skid)&#10;[TIME] 2026/07 W1 - Update needed&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / BOM" data-bucket="Update needed" data-item="engineering-procurement-valves-instruments-static-equipment-pump" data-bar-id="xlsx-49-49-update" data-start-col="49" data-end-col="49" data-bucket-key="update" data-source="xlsx"></div><div class="bar bar-revised" style="left:810px;width:360px;background:#F0A93B" title="[ITEM] Engineering procurement (valves &amp; instruments, static equipment, pumps, piping and fittings; within the skid)&#10;[TIME] 2026/07 W2 -&gt; 2026/12 W1 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / BOM" data-bucket="Revised" data-item="engineering-procurement-valves-instruments-static-equipment-pump" data-bar-id="xlsx-50-69-revised" data-start-col="50" data-end-col="69" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-control-system-procurement-and-configuration" data-item="control-system-procurement-and-configuration" data-default-deps="hardware-drawing-of-plc,ioa-of-plc,cable-schedule" data-first-bar="486">  <div class="item-label" data-item="control-system-procurement-and-configuration" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Control system procurement and configuration</div>    <div class="item-owner">Owner: CFCT + CIMT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="control-system-procurement-and-configuration" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="control-system-procurement-and-configuration">    <div class="bar bar-original" style="left:486px;width:306px;background:#7DCBED" title="[ITEM] Control system procurement and configuration&#10;[TIME] 2026/02 W4 -&gt; 2026/06 W4 - Original&#10;[OWNER] CFCT + CIMT&#10;[DEPENDS ON] Hardware drawing of PLC / IOA of PLC / Cable schedule" data-bucket="Original" data-item="control-system-procurement-and-configuration" data-bar-id="xlsx-32-48-original" data-start-col="32" data-end-col="48" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:810px;width:306px;background:#F0A93B" title="[ITEM] Control system procurement and configuration&#10;[TIME] 2026/07 W2 -&gt; 2026/11 W2 - Revised&#10;[OWNER] CFCT + CIMT&#10;[DEPENDS ON] Hardware drawing of PLC / IOA of PLC / Cable schedule" data-bucket="Revised" data-item="control-system-procurement-and-configuration" data-bar-id="xlsx-50-66-revised" data-start-col="50" data-end-col="66" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-equipment-fabrication-assembly-and-debugging" data-item="equipment-fabrication-assembly-and-debugging" data-default-deps="engineering-procurement-valves-instruments-static-equipment-pump,control-system-procurement-and-configuration,bom,fabrication-drawings" data-first-bar="828">  <div class="item-label" data-item="equipment-fabrication-assembly-and-debugging" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Equipment fabrication, assembly and debugging</div>    <div class="item-owner">Owner: CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="equipment-fabrication-assembly-and-debugging" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="equipment-fabrication-assembly-and-debugging">    <div class="bar bar-original" style="left:828px;width:126px;background:#7DCBED" title="[ITEM] Equipment fabrication, assembly and debugging&#10;[TIME] 2026/07 W3 -&gt; 2026/09 W1 - Original&#10;[OWNER] CFCT&#10;[DEPENDS ON] Engineering procurement (valves &amp; instruments, static equipment, pumps, piping and fittings; within the skid) / Control system procurement and configuration / BOM / Fabrication drawings" data-bucket="Original" data-item="equipment-fabrication-assembly-and-debugging" data-bar-id="xlsx-51-57-original" data-start-col="51" data-end-col="57" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1116px;width:126px;background:#F0A93B" title="[ITEM] Equipment fabrication, assembly and debugging&#10;[TIME] 2026/11 W3 -&gt; 2027/01 W1 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Engineering procurement (valves &amp; instruments, static equipment, pumps, piping and fittings; within the skid) / Control system procurement and configuration / BOM / Fabrication drawings" data-bucket="Revised" data-item="equipment-fabrication-assembly-and-debugging" data-bar-id="xlsx-67-73-revised" data-start-col="67" data-end-col="73" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-integrated-factory-acceptance-fat" data-item="integrated-factory-acceptance-fat" data-default-deps="equipment-fabrication-assembly-and-debugging,ce-certification-individual-equipment-whole-skid-certification-p" data-first-bar="936">  <div class="item-label" data-item="integrated-factory-acceptance-fat" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Integrated factory acceptance (FAT)</div>    <div class="item-owner">Owner: UK + CFCT + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="integrated-factory-acceptance-fat" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="integrated-factory-acceptance-fat">    <div class="bar bar-original" style="left:936px;width:54px;background:#7DCBED" title="[ITEM] Integrated factory acceptance (FAT)&#10;[TIME] 2026/09 W1 -&gt; 2026/09 W3 - Original&#10;[OWNER] UK + CFCT + IEPE&#10;[DEPENDS ON] Equipment fabrication, assembly and debugging / CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed" data-bucket="Original" data-item="integrated-factory-acceptance-fat" data-bar-id="xlsx-57-59-original" data-start-col="57" data-end-col="59" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1242px;width:72px;background:#F0A93B" title="[ITEM] Integrated factory acceptance (FAT)&#10;[TIME] 2027/01 W2 -&gt; 2027/02 W1 - Revised&#10;[OWNER] UK + CFCT + IEPE&#10;[DEPENDS ON] Equipment fabrication, assembly and debugging / CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed" data-bucket="Revised" data-item="integrated-factory-acceptance-fat" data-bar-id="xlsx-74-77-revised" data-start-col="74" data-end-col="77" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-ce-certification-individual-equipment-whole-skid-certification-p" data-item="ce-certification-individual-equipment-whole-skid-certification-p" data-default-deps="procurement-information-confirmation-pump-insturment-equipment-s,hazop-support-resource-in-grey" data-first-bar="756">  <div class="item-label" data-item="ce-certification-individual-equipment-whole-skid-certification-p" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed</div>    <div class="item-owner">Owner: CFCT</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="ce-certification-individual-equipment-whole-skid-certification-p" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="ce-certification-individual-equipment-whole-skid-certification-p">    <div class="bar bar-revised" style="left:756px;width:108px;background:#F0A93B" title="[ITEM] CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed&#10;[TIME] 2026/06 W3 -&gt; 2026/07 W4 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / HAZOP （support resource in grey）" data-bucket="Revised" data-item="ce-certification-individual-equipment-whole-skid-certification-p" data-bar-id="xlsx-47-52-revised" data-start-col="47" data-end-col="52" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-cert" style="left:864px;width:18px;background:#5DB851" title="[ITEM] CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed&#10;[TIME] 2026/08 W1 - CE involvement&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / HAZOP （support resource in grey）" data-bucket="CE involvement" data-item="ce-certification-individual-equipment-whole-skid-certification-p" data-bar-id="xlsx-53-53-cert" data-start-col="53" data-end-col="53" data-bucket-key="cert" data-source="xlsx"></div><div class="bar bar-revised" style="left:882px;width:108px;background:#F0A93B" title="[ITEM] CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed&#10;[TIME] 2026/08 W2 -&gt; 2026/09 W3 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / HAZOP （support resource in grey）" data-bucket="Revised" data-item="ce-certification-individual-equipment-whole-skid-certification-p" data-bar-id="xlsx-54-59-revised" data-start-col="54" data-end-col="59" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-revised" style="left:1152px;width:234px;background:#F0A93B" title="[ITEM] CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed&#10;[TIME] 2026/12 W1 -&gt; 2027/03 W1 - Revised&#10;[OWNER] CFCT&#10;[DEPENDS ON] Procurement information confirmation(pump\insturment\equipment schedule) / HAZOP （support resource in grey）" data-bucket="Revised" data-item="ce-certification-individual-equipment-whole-skid-certification-p" data-bar-id="xlsx-69-81-revised" data-start-col="69" data-end-col="81" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-export-formalities-transport-inspection-certification-and-packin" data-item="export-formalities-transport-inspection-certification-and-packin" data-default-deps="integrated-factory-acceptance-fat,ce-certification-individual-equipment-whole-skid-certification-p" data-first-bar="1116">  <div class="item-label" data-item="export-formalities-transport-inspection-certification-and-packin" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Export formalities, transport inspection/certification and packing</div>    <div class="item-owner">Owner: Import / Export</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="export-formalities-transport-inspection-certification-and-packin" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="export-formalities-transport-inspection-certification-and-packin">    <div class="bar bar-original" style="left:1116px;width:36px;background:#7DCBED" title="[ITEM] Export formalities, transport inspection/certification and packing&#10;[TIME] 2026/11 W3 -&gt; 2026/11 W4 - Original&#10;[OWNER] Import / Export&#10;[DEPENDS ON] Integrated factory acceptance (FAT) / CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed" data-bucket="Original" data-item="export-formalities-transport-inspection-certification-and-packin" data-bar-id="xlsx-67-68-original" data-start-col="67" data-end-col="68" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1386px;width:36px;background:#F0A93B" title="[ITEM] Export formalities, transport inspection/certification and packing&#10;[TIME] 2027/03 W2 -&gt; 2027/03 W3 - Revised&#10;[OWNER] Import / Export&#10;[DEPENDS ON] Integrated factory acceptance (FAT) / CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed" data-bucket="Revised" data-item="export-formalities-transport-inspection-certification-and-packin" data-bar-id="xlsx-82-83-revised" data-start-col="82" data-end-col="83" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-export-shipment-europe" data-item="export-shipment-europe" data-default-deps="export-formalities-transport-inspection-certification-and-packin" data-first-bar="1152">  <div class="item-label" data-item="export-shipment-europe" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Export shipment (Europe)</div>    <div class="item-owner">Owner: Import / Export</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="export-shipment-europe" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="export-shipment-europe">    <div class="bar bar-original" style="left:1152px;width:216px;background:#7DCBED" title="[ITEM] Export shipment (Europe)&#10;[TIME] 2026/12 W1 -&gt; 2027/02 W4 - Original&#10;[OWNER] Import / Export&#10;[DEPENDS ON] Export formalities, transport inspection/certification and packing" data-bucket="Original" data-item="export-shipment-europe" data-bar-id="xlsx-69-80-original" data-start-col="69" data-end-col="80" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1422px;width:216px;background:#F0A93B" title="[ITEM] Export shipment (Europe)&#10;[TIME] 2027/03 W4 -&gt; 2027/06 W3 - Revised&#10;[OWNER] Import / Export&#10;[DEPENDS ON] Export formalities, transport inspection/certification and packing" data-bucket="Revised" data-item="export-shipment-europe" data-bar-id="xlsx-84-95-revised" data-start-col="84" data-end-col="95" data-bucket-key="revised" data-source="xlsx"></div><div class="bar bar-revised" style="left:1728px;width:54px;background:#F0A93B" title="[ITEM] Export shipment (Europe)&#10;[TIME] 2027/08 W1 -&gt; 2027/08 W3 - Revised&#10;[OWNER] Import / Export&#10;[DEPENDS ON] Export formalities, transport inspection/certification and packing" data-bucket="Revised" data-item="export-shipment-europe" data-bar-id="xlsx-101-103-revised" data-start-col="101" data-end-col="103" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="section-row"><div class="section-label">On Site Engineering Design</div><div class="section-bar" style="width:1908px"></div></div><div class="item-row" id="row-pid" data-item="pid" data-default-deps="" data-first-bar="198">  <div class="item-label" data-item="pid" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">PID</div>    <div class="item-owner">Owner: UK + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="pid" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="pid">    <div class="bar bar-original" style="left:198px;width:54px;background:#7DCBED" title="[ITEM] PID&#10;[TIME] 2025/10 W4 -&gt; 2025/11 W2 - Original&#10;[OWNER] UK + IEPE" data-bucket="Original" data-item="pid" data-bar-id="xlsx-16-18-original" data-start-col="16" data-end-col="18" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-engineering-design-documents" data-item="engineering-design-documents" data-default-deps="" data-first-bar="198">  <div class="item-label" data-item="engineering-design-documents" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Engineering design documents</div>    <div class="item-owner">Owner: UK + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="engineering-design-documents" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="engineering-design-documents">    <div class="bar bar-original" style="left:198px;width:216px;background:#7DCBED" title="[ITEM] Engineering design documents&#10;[TIME] 2025/10 W4 -&gt; 2026/01 W3 - Original&#10;[OWNER] UK + IEPE" data-bucket="Original" data-item="engineering-design-documents" data-bar-id="xlsx-16-27-original" data-start-col="16" data-end-col="27" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-hazop" data-item="hazop" data-default-deps="" data-first-bar="144">  <div class="item-label" data-item="hazop" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">HAZOP</div>    <div class="item-owner">Owner: UK + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="hazop" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="hazop">    <div class="bar bar-original" style="left:144px;width:18px;background:#7DCBED" title="[ITEM] HAZOP&#10;[TIME] 2025/10 W1 - Original&#10;[OWNER] UK + IEPE" data-bucket="Original" data-item="hazop" data-bar-id="xlsx-13-13-original" data-start-col="13" data-end-col="13" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:252px;width:36px;background:#7DCBED" title="[ITEM] HAZOP&#10;[TIME] 2025/11 W3 -&gt; 2025/11 W4 - Original&#10;[OWNER] UK + IEPE" data-bucket="Original" data-item="hazop" data-bar-id="xlsx-19-20-original" data-start-col="19" data-end-col="20" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-detailed-design" data-item="detailed-design" data-default-deps="" data-first-bar="270">  <div class="item-label" data-item="detailed-design" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Detailed design</div>    <div class="item-owner">Owner: UK + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="detailed-design" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="detailed-design">    <div class="bar bar-original" style="left:270px;width:216px;background:#7DCBED" title="[ITEM] Detailed design&#10;[TIME] 2025/11 W4 -&gt; 2026/02 W3 - Original&#10;[OWNER] UK + IEPE" data-bucket="Original" data-item="detailed-design" data-bar-id="xlsx-20-31-original" data-start-col="20" data-end-col="31" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-procurement" data-item="procurement" data-default-deps="" data-first-bar="216">  <div class="item-label" data-item="procurement" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Procurement</div>    <div class="item-owner">Owner: UK + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="procurement" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="procurement">    <div class="bar bar-original" style="left:216px;width:342px;background:#7DCBED" title="[ITEM] Procurement&#10;[TIME] 2025/11 W1 -&gt; 2026/03 W3 - Original&#10;[OWNER] UK + IEPE" data-bucket="Original" data-item="procurement" data-bar-id="xlsx-17-35-original" data-start-col="17" data-end-col="35" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="section-row"><div class="section-label">On Site Installing</div><div class="section-bar" style="width:1908px"></div></div><div class="item-row" id="row-off-skid-peripheral-installation" data-item="off-skid-peripheral-installation" data-default-deps="" data-first-bar="558">  <div class="item-label" data-item="off-skid-peripheral-installation" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Off-skid/peripheral installation</div>    <div class="item-owner">Owner: UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="off-skid-peripheral-installation" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="off-skid-peripheral-installation">    <div class="bar bar-original" style="left:558px;width:144px;background:#7DCBED" title="[ITEM] Off-skid/peripheral installation&#10;[TIME] 2026/03 W4 -&gt; 2026/05 W3 - Original&#10;[OWNER] UK" data-bucket="Original" data-item="off-skid-peripheral-installation" data-bar-id="xlsx-36-43-original" data-start-col="36" data-end-col="43" data-bucket-key="original" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-skid-installation" data-item="skid-installation" data-default-deps="export-shipment-europe,off-skid-peripheral-installation" data-first-bar="1368">  <div class="item-label" data-item="skid-installation" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Skid installation</div>    <div class="item-owner">Owner: UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="skid-installation" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="skid-installation">    <div class="bar bar-original" style="left:1368px;width:36px;background:#7DCBED" title="[ITEM] Skid installation&#10;[TIME] 2027/03 W1 -&gt; 2027/03 W2 - Original&#10;[OWNER] UK&#10;[DEPENDS ON] Export shipment (Europe) / Off-skid/peripheral installation" data-bucket="Original" data-item="skid-installation" data-bar-id="xlsx-81-82-original" data-start-col="81" data-end-col="82" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1638px;width:36px;background:#F0A93B" title="[ITEM] Skid installation&#10;[TIME] 2027/06 W4 -&gt; 2027/07 W1 - Revised&#10;[OWNER] UK&#10;[DEPENDS ON] Export shipment (Europe) / Off-skid/peripheral installation" data-bucket="Revised" data-item="skid-installation" data-bar-id="xlsx-96-97-revised" data-start-col="96" data-end-col="97" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-mechanical-electrical-instrumentation-piping-meip-installation" data-item="mechanical-electrical-instrumentation-piping-meip-installation" data-default-deps="skid-installation" data-first-bar="702">  <div class="item-label" data-item="mechanical-electrical-instrumentation-piping-meip-installation" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Mechanical, electrical, instrumentation &amp; piping (MEIP) installation</div>    <div class="item-owner">Owner: UK</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="mechanical-electrical-instrumentation-piping-meip-installation" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="mechanical-electrical-instrumentation-piping-meip-installation">    <div class="bar bar-original" style="left:702px;width:36px;background:#7DCBED" title="[ITEM] Mechanical, electrical, instrumentation &amp; piping (MEIP) installation&#10;[TIME] 2026/05 W4 -&gt; 2026/06 W1 - Original&#10;[OWNER] UK&#10;[DEPENDS ON] Skid installation" data-bucket="Original" data-item="mechanical-electrical-instrumentation-piping-meip-installation" data-bar-id="xlsx-44-45-original" data-start-col="44" data-end-col="45" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-original" style="left:1404px;width:108px;background:#7DCBED" title="[ITEM] Mechanical, electrical, instrumentation &amp; piping (MEIP) installation&#10;[TIME] 2027/03 W3 -&gt; 2027/04 W4 - Original&#10;[OWNER] UK&#10;[DEPENDS ON] Skid installation" data-bucket="Original" data-item="mechanical-electrical-instrumentation-piping-meip-installation" data-bar-id="xlsx-83-88-original" data-start-col="83" data-end-col="88" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1674px;width:108px;background:#F0A93B" title="[ITEM] Mechanical, electrical, instrumentation &amp; piping (MEIP) installation&#10;[TIME] 2027/07 W2 -&gt; 2027/08 W3 - Revised&#10;[OWNER] UK&#10;[DEPENDS ON] Skid installation" data-bucket="Revised" data-item="mechanical-electrical-instrumentation-piping-meip-installation" data-bar-id="xlsx-98-103-revised" data-start-col="98" data-end-col="103" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-qualification-acceptance-testing-dq-iq-oq" data-item="qualification-acceptance-testing-dq-iq-oq" data-default-deps="mechanical-electrical-instrumentation-piping-meip-installation" data-first-bar="1512">  <div class="item-label" data-item="qualification-acceptance-testing-dq-iq-oq" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Qualification &amp; acceptance testing (DQ / IQ / OQ)</div>    <div class="item-owner">Owner: UK + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="qualification-acceptance-testing-dq-iq-oq" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="qualification-acceptance-testing-dq-iq-oq">    <div class="bar bar-original" style="left:1512px;width:54px;background:#7DCBED" title="[ITEM] Qualification &amp; acceptance testing (DQ / IQ / OQ)&#10;[TIME] 2027/05 W1 -&gt; 2027/05 W3 - Original&#10;[OWNER] UK + IEPE&#10;[DEPENDS ON] Mechanical, electrical, instrumentation &amp; piping (MEIP) installation" data-bucket="Original" data-item="qualification-acceptance-testing-dq-iq-oq" data-bar-id="xlsx-89-91-original" data-start-col="89" data-end-col="91" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1782px;width:54px;background:#F0A93B" title="[ITEM] Qualification &amp; acceptance testing (DQ / IQ / OQ)&#10;[TIME] 2027/08 W4 -&gt; 2027/09 W2 - Revised&#10;[OWNER] UK + IEPE&#10;[DEPENDS ON] Mechanical, electrical, instrumentation &amp; piping (MEIP) installation" data-bucket="Revised" data-item="qualification-acceptance-testing-dq-iq-oq" data-bar-id="xlsx-104-106-revised" data-start-col="104" data-end-col="106" data-bucket-key="revised" data-source="xlsx"></div>  </div></div><div class="item-row" id="row-commissioning-and-start-up" data-item="commissioning-and-start-up" data-default-deps="qualification-acceptance-testing-dq-iq-oq" data-first-bar="1566">  <div class="item-label" data-item="commissioning-and-start-up" title="Click empty area to scroll to this row's time period and highlight its dependencies">    <div class="item-en">Commissioning and start-up</div>    <div class="item-owner">Owner: UK + IEPE</div>    <div class="row-deps">      <span class="rel-label dep-label">↳ Depends on:</span>      <span class="rel-list deps-list" data-kind="deps"></span>      <button class="rel-edit-btn" data-kind="deps" title="Edit dependencies">✏️</button>      <button class="rel-edit-btn" data-kind="bars" title="Add / modify / delete time periods">🕓</button>    </div>    <div class="row-influence">      <span class="rel-label inf-label">↗ Impacts:</span>      <span class="rel-list inf-list"></span>    </div>    <div class="row-note" contenteditable="true" data-item="commissioning-and-start-up" data-default="" data-placeholder="(click to add a note — saved in your browser)"></div>  </div>  <div class="item-track" style="width:1908px" data-item="commissioning-and-start-up">    <div class="bar bar-original" style="left:1566px;width:18px;background:#7DCBED" title="[ITEM] Commissioning and start-up&#10;[TIME] 2027/05 W4 - Original&#10;[OWNER] UK + IEPE&#10;[DEPENDS ON] Qualification &amp; acceptance testing (DQ / IQ / OQ)" data-bucket="Original" data-item="commissioning-and-start-up" data-bar-id="xlsx-92-92-original" data-start-col="92" data-end-col="92" data-bucket-key="original" data-source="xlsx"></div><div class="bar bar-revised" style="left:1836px;width:18px;background:#F0A93B" title="[ITEM] Commissioning and start-up&#10;[TIME] 2027/09 W3 - Revised&#10;[OWNER] UK + IEPE&#10;[DEPENDS ON] Qualification &amp; acceptance testing (DQ / IQ / OQ)" data-bucket="Revised" data-item="commissioning-and-start-up" data-bar-id="xlsx-107-107-revised" data-start-col="107" data-end-col="107" data-bucket-key="revised" data-source="xlsx"></div>  </div></div>
+        <div class="today-marker"><div class="today-label">Today 5/9</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Draggable mini-map -->
+<div class="minimap" id="minimap">
+  <div class="mm-header" id="mmHeader">
+    <div class="mm-title">🗺 Project overview</div>
+    <div class="mm-icons">
+      <button id="mmToggleBtn" title="Collapse / expand">—</button>
+      <button id="mmHideBtn"  title="Hide (re-open from toolbar)">×</button>
+    </div>
+  </div>
+  <div class="mm-body">
+    <div class="mm-canvas draggable" id="mmCanvas" style="height: 220px;">
+      <svg id="mmSvg" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="mm-viewport" id="mmViewport"></div>
+    </div>
+    <div class="mm-legend">
+      <span><i style="background:#7DCBED"></i>Light blue</span><span><i style="background:#F0A93B"></i>Orange</span><span><i style="background:#7C3FAA"></i>Purple</span><span><i style="background:#5DB851"></i>Green</span>
+      <span style="margin-left:auto;color:#94a3b8;">Drag header to move · click canvas to jump</span>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script id="items-meta"     type="application/json">[{"key": "hazop-support-resource-in-grey", "en": "HAZOP （support resource in grey）", "zh": "HAZOP （support resource in grey）", "section": "Design"}, {"key": "control-description", "en": "Control Description", "zh": "Control Description", "section": "Design"}, {"key": "pfd-and-mass-balance-data-sheet", "en": "PFD and Mass Balance Data Sheet", "zh": "PFD and Mass Balance Data Sheet", "section": "Design"}, {"key": "pi-d", "en": "PI&D", "zh": "PI&D", "section": "Design"}, {"key": "process-equipment-list", "en": "Process Equipment List", "zh": "Process Equipment List", "section": "Design"}, {"key": "equipment-datasheets", "en": "Equipment datasheets", "zh": "Equipment datasheets", "section": "Design"}, {"key": "battery-limit-condition-sheet-tie-in-point-sheet", "en": "Battery Limit Condition Sheet (Tie-in point sheet)", "zh": "Battery Limit Condition Sheet (Tie-in point sheet)", "section": "Design"}, {"key": "instrumentation-condition-table", "en": "Instrumentation Condition Table", "zh": "Instrumentation Condition Table", "section": "Design"}, {"key": "piping-material-class-specification", "en": "Piping Material Class Specification", "zh": "Piping Material Class Specification", "section": "Design"}, {"key": "process-piping-list", "en": "Process Piping List", "zh": "Process Piping List", "section": "Design"}, {"key": "special-piping-accessories-data-sheet", "en": "Special Piping Accessories Data Sheet", "zh": "Special Piping Accessories Data Sheet", "section": "Design"}, {"key": "main-safety-relief-facilities-data-sheet", "en": "Main Safety Relief Facilities Data Sheet", "zh": "Main Safety Relief Facilities Data Sheet", "section": "Design"}, {"key": "instrument-datasheets", "en": "Instrument datasheets", "zh": "Instrument datasheets", "section": "Design"}, {"key": "interlock-logic", "en": "Interlock logic", "zh": "Interlock logic", "section": "Design"}, {"key": "pump-specification-sheet", "en": "Pump specification sheet", "zh": "Pump specification sheet", "section": "Design"}, {"key": "operating-instructions", "en": "Operating instructions", "zh": "Operating instructions", "section": "Design"}, {"key": "preliminary-equipment-layout", "en": "Preliminary equipment layout", "zh": "Preliminary equipment layout", "section": "Design"}, {"key": "structural-design-of-static-equipment-pink", "en": "structural design of static equipment（pink）", "zh": "structural design of static equipment（pink）", "section": "Design"}, {"key": "reactor-column-specification-sheet", "en": "Reactor column specification sheet", "zh": "Reactor column specification sheet", "section": "Design"}, {"key": "procurement-information-confirmation-pump-insturment-equipment-s", "en": "Procurement information confirmation(pump\\insturment\\equipment schedule)", "zh": "Procurement information confirmation(pump\\insturment\\equipment schedule)", "section": "Design"}, {"key": "fds-cs-in-fds-sds-hds", "en": "FDS(CS in FDS)/SDS/HDS", "zh": "FDS(CS in FDS)/SDS/HDS", "section": "Design"}, {"key": "urs", "en": "URS", "zh": "URS", "section": "Design"}, {"key": "instrument-schedule-including-instrument-ranges-and-set-values", "en": "Instrument Schedule  (including instrument ranges and set values)", "zh": "Instrument Schedule  (including instrument ranges and set values)", "section": "Design"}, {"key": "i-o-schedule-including-i-o-type-ranges-and-alarm-settings", "en": "I/O schedule (including I/O type, ranges and alarm settings)", "zh": "I/O schedule (including I/O type, ranges and alarm settings)", "section": "Design"}, {"key": "trip-and-interlock-schedules-for-plc-interlocks", "en": "trip and interlock schedules for PLC interlocks", "zh": "trip and interlock schedules for PLC interlocks", "section": "Design"}, {"key": "pcs-interlocks-and-hardwired-interlocks", "en": "PCS interlocks and hardwired interlocks", "zh": "PCS interlocks and hardwired interlocks", "section": "Design"}, {"key": "sil-assessments-for-safety-environmental-interlocks-and-lopa-ass", "en": "SIL assessments for safety/environmental interlocks and LOPA assessments for potential SIL rated SIFs", "zh": "SIL assessments for safety/environmental interlocks and LOPA assessments for potential SIL rated SIFs", "section": "Design"}, {"key": "alarm-list", "en": "Alarm list", "zh": "Alarm list", "section": "Design"}, {"key": "hardware-drawing-of-plc", "en": "Hardware drawing of PLC", "zh": "Hardware drawing of PLC", "section": "Design"}, {"key": "ioa-of-plc", "en": "IOA of PLC", "zh": "IOA of PLC", "section": "Design"}, {"key": "cable-schedule", "en": "Cable schedule", "zh": "Cable schedule", "section": "Design"}, {"key": "3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l", "en": "3D modelling (procurement feedback; UK confirmation of equipment layout)", "zh": "3D modelling (procurement feedback; UK confirmation of equipment layout)", "section": "Skid"}, {"key": "bom", "en": "BOM", "zh": "BOM", "section": "Skid"}, {"key": "fabrication-drawings", "en": "Fabrication drawings", "zh": "Fabrication drawings", "section": "Skid"}, {"key": "engineering-procurement-valves-instruments-static-equipment-pump", "en": "Engineering procurement (valves & instruments, static equipment, pumps, piping and fittings; within the skid)", "zh": "Engineering procurement (valves & instruments, static equipment, pumps, piping and fittings; within the skid)", "section": "Skid"}, {"key": "control-system-procurement-and-configuration", "en": "Control system procurement and configuration", "zh": "Control system procurement and configuration", "section": "Skid"}, {"key": "equipment-fabrication-assembly-and-debugging", "en": "Equipment fabrication, assembly and debugging", "zh": "Equipment fabrication, assembly and debugging", "section": "Skid"}, {"key": "integrated-factory-acceptance-fat", "en": "Integrated factory acceptance (FAT)", "zh": "Integrated factory acceptance (FAT)", "section": "Skid"}, {"key": "ce-certification-individual-equipment-whole-skid-certification-p", "en": "CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed", "zh": "CE certification (individual equipment + whole-skid certification per Notified Body requirements); full documentation completed", "section": "Skid"}, {"key": "export-formalities-transport-inspection-certification-and-packin", "en": "Export formalities, transport inspection/certification and packing", "zh": "Export formalities, transport inspection/certification and packing", "section": "Skid"}, {"key": "export-shipment-europe", "en": "Export shipment (Europe)", "zh": "Export shipment (Europe)", "section": "Skid"}, {"key": "pid", "en": "PID", "zh": "PID", "section": "On Site Engineering Design"}, {"key": "engineering-design-documents", "en": "Engineering design documents", "zh": "Engineering design documents", "section": "On Site Engineering Design"}, {"key": "hazop", "en": "HAZOP", "zh": "HAZOP", "section": "On Site Engineering Design"}, {"key": "detailed-design", "en": "Detailed design", "zh": "Detailed design", "section": "On Site Engineering Design"}, {"key": "procurement", "en": "Procurement", "zh": "Procurement", "section": "On Site Engineering Design"}, {"key": "off-skid-peripheral-installation", "en": "Off-skid/peripheral installation", "zh": "Off-skid/peripheral installation", "section": "On Site Installing"}, {"key": "skid-installation", "en": "Skid installation", "zh": "Skid installation", "section": "On Site Installing"}, {"key": "mechanical-electrical-instrumentation-piping-meip-installation", "en": "Mechanical, electrical, instrumentation & piping (MEIP) installation", "zh": "Mechanical, electrical, instrumentation & piping (MEIP) installation", "section": "On Site Installing"}, {"key": "qualification-acceptance-testing-dq-iq-oq", "en": "Qualification & acceptance testing (DQ / IQ / OQ)", "zh": "Qualification & acceptance testing (DQ / IQ / OQ)", "section": "On Site Installing"}, {"key": "commissioning-and-start-up", "en": "Commissioning and start-up", "zh": "Commissioning and start-up", "section": "On Site Installing"}]</script>
+<script id="default-deps"   type="application/json">{"hazop-support-resource-in-grey": ["3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l", "pi-d", "control-description", "equipment-datasheets"], "control-description": [], "pfd-and-mass-balance-data-sheet": [], "pi-d": [], "process-equipment-list": [], "equipment-datasheets": ["pi-d", "reactor-column-specification-sheet"], "battery-limit-condition-sheet-tie-in-point-sheet": [], "instrumentation-condition-table": [], "piping-material-class-specification": [], "process-piping-list": [], "special-piping-accessories-data-sheet": [], "main-safety-relief-facilities-data-sheet": ["pi-d", "equipment-datasheets"], "instrument-datasheets": ["pi-d", "instrumentation-condition-table"], "interlock-logic": ["pi-d", "control-description"], "pump-specification-sheet": ["pi-d", "process-equipment-list"], "operating-instructions": [], "preliminary-equipment-layout": ["pi-d", "process-equipment-list"], "structural-design-of-static-equipment-pink": [], "reactor-column-specification-sheet": ["pi-d"], "procurement-information-confirmation-pump-insturment-equipment-s": ["3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l", "hazop-support-resource-in-grey", "equipment-datasheets", "instrument-datasheets", "pump-specification-sheet"], "fds-cs-in-fds-sds-hds": [], "urs": [], "instrument-schedule-including-instrument-ranges-and-set-values": [], "i-o-schedule-including-i-o-type-ranges-and-alarm-settings": [], "trip-and-interlock-schedules-for-plc-interlocks": [], "pcs-interlocks-and-hardwired-interlocks": [], "sil-assessments-for-safety-environmental-interlocks-and-lopa-ass": [], "alarm-list": [], "hardware-drawing-of-plc": [], "ioa-of-plc": [], "cable-schedule": [], "3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l": ["equipment-datasheets", "preliminary-equipment-layout", "main-safety-relief-facilities-data-sheet", "pump-specification-sheet", "reactor-column-specification-sheet"], "bom": ["fabrication-drawings", "3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l"], "fabrication-drawings": ["3d-modelling-procurement-feedback-uk-confirmation-of-equipment-l"], "engineering-procurement-valves-instruments-static-equipment-pump": ["procurement-information-confirmation-pump-insturment-equipment-s", "bom"], "control-system-procurement-and-configuration": ["hardware-drawing-of-plc", "ioa-of-plc", "cable-schedule"], "equipment-fabrication-assembly-and-debugging": ["engineering-procurement-valves-instruments-static-equipment-pump", "control-system-procurement-and-configuration", "bom", "fabrication-drawings"], "integrated-factory-acceptance-fat": ["equipment-fabrication-assembly-and-debugging", "ce-certification-individual-equipment-whole-skid-certification-p"], "ce-certification-individual-equipment-whole-skid-certification-p": ["procurement-information-confirmation-pump-insturment-equipment-s", "hazop-support-resource-in-grey"], "export-formalities-transport-inspection-certification-and-packin": ["integrated-factory-acceptance-fat", "ce-certification-individual-equipment-whole-skid-certification-p"], "export-shipment-europe": ["export-formalities-transport-inspection-certification-and-packin"], "pid": [], "engineering-design-documents": [], "hazop": [], "detailed-design": [], "procurement": [], "off-skid-peripheral-installation": [], "skid-installation": ["export-shipment-europe", "off-skid-peripheral-installation"], "mechanical-electrical-instrumentation-piping-meip-installation": ["skid-installation"], "qualification-acceptance-testing-dq-iq-oq": ["mechanical-electrical-instrumentation-piping-meip-installation"], "commissioning-and-start-up": ["qualification-acceptance-testing-dq-iq-oq"]}</script>
+<script id="time-slots"     type="application/json">[{"col": 5, "y": 2025, "m": 8, "w": 1, "label": "2025/08 W1"}, {"col": 6, "y": 2025, "m": 8, "w": 2, "label": "2025/08 W2"}, {"col": 7, "y": 2025, "m": 8, "w": 3, "label": "2025/08 W3"}, {"col": 8, "y": 2025, "m": 8, "w": 4, "label": "2025/08 W4"}, {"col": 9, "y": 2025, "m": 9, "w": 1, "label": "2025/09 W1"}, {"col": 10, "y": 2025, "m": 9, "w": 2, "label": "2025/09 W2"}, {"col": 11, "y": 2025, "m": 9, "w": 3, "label": "2025/09 W3"}, {"col": 12, "y": 2025, "m": 9, "w": 4, "label": "2025/09 W4"}, {"col": 13, "y": 2025, "m": 10, "w": 1, "label": "2025/10 W1"}, {"col": 14, "y": 2025, "m": 10, "w": 2, "label": "2025/10 W2"}, {"col": 15, "y": 2025, "m": 10, "w": 3, "label": "2025/10 W3"}, {"col": 16, "y": 2025, "m": 10, "w": 4, "label": "2025/10 W4"}, {"col": 17, "y": 2025, "m": 11, "w": 1, "label": "2025/11 W1"}, {"col": 18, "y": 2025, "m": 11, "w": 2, "label": "2025/11 W2"}, {"col": 19, "y": 2025, "m": 11, "w": 3, "label": "2025/11 W3"}, {"col": 20, "y": 2025, "m": 11, "w": 4, "label": "2025/11 W4"}, {"col": 21, "y": 2025, "m": 12, "w": 1, "label": "2025/12 W1"}, {"col": 22, "y": 2025, "m": 12, "w": 2, "label": "2025/12 W2"}, {"col": 23, "y": 2025, "m": 12, "w": 3, "label": "2025/12 W3"}, {"col": 24, "y": 2025, "m": 12, "w": 4, "label": "2025/12 W4"}, {"col": 25, "y": 2026, "m": 1, "w": 1, "label": "2026/01 W1"}, {"col": 26, "y": 2026, "m": 1, "w": 2, "label": "2026/01 W2"}, {"col": 27, "y": 2026, "m": 1, "w": 3, "label": "2026/01 W3"}, {"col": 28, "y": 2026, "m": 1, "w": 4, "label": "2026/01 W4"}, {"col": 29, "y": 2026, "m": 2, "w": 1, "label": "2026/02 W1"}, {"col": 30, "y": 2026, "m": 2, "w": 2, "label": "2026/02 W2"}, {"col": 31, "y": 2026, "m": 2, "w": 3, "label": "2026/02 W3"}, {"col": 32, "y": 2026, "m": 2, "w": 4, "label": "2026/02 W4"}, {"col": 33, "y": 2026, "m": 3, "w": 1, "label": "2026/03 W1"}, {"col": 34, "y": 2026, "m": 3, "w": 2, "label": "2026/03 W2"}, {"col": 35, "y": 2026, "m": 3, "w": 3, "label": "2026/03 W3"}, {"col": 36, "y": 2026, "m": 3, "w": 4, "label": "2026/03 W4"}, {"col": 37, "y": 2026, "m": 4, "w": 1, "label": "2026/04 W1"}, {"col": 38, "y": 2026, "m": 4, "w": 2, "label": "2026/04 W2"}, {"col": 39, "y": 2026, "m": 4, "w": 3, "label": "2026/04 W3"}, {"col": 40, "y": 2026, "m": 4, "w": 4, "label": "2026/04 W4"}, {"col": 41, "y": 2026, "m": 5, "w": 1, "label": "2026/05 W1"}, {"col": 42, "y": 2026, "m": 5, "w": 2, "label": "2026/05 W2"}, {"col": 43, "y": 2026, "m": 5, "w": 3, "label": "2026/05 W3"}, {"col": 44, "y": 2026, "m": 5, "w": 4, "label": "2026/05 W4"}, {"col": 45, "y": 2026, "m": 6, "w": 1, "label": "2026/06 W1"}, {"col": 46, "y": 2026, "m": 6, "w": 2, "label": "2026/06 W2"}, {"col": 47, "y": 2026, "m": 6, "w": 3, "label": "2026/06 W3"}, {"col": 48, "y": 2026, "m": 6, "w": 4, "label": "2026/06 W4"}, {"col": 49, "y": 2026, "m": 7, "w": 1, "label": "2026/07 W1"}, {"col": 50, "y": 2026, "m": 7, "w": 2, "label": "2026/07 W2"}, {"col": 51, "y": 2026, "m": 7, "w": 3, "label": "2026/07 W3"}, {"col": 52, "y": 2026, "m": 7, "w": 4, "label": "2026/07 W4"}, {"col": 53, "y": 2026, "m": 8, "w": 1, "label": "2026/08 W1"}, {"col": 54, "y": 2026, "m": 8, "w": 2, "label": "2026/08 W2"}, {"col": 55, "y": 2026, "m": 8, "w": 3, "label": "2026/08 W3"}, {"col": 56, "y": 2026, "m": 8, "w": 4, "label": "2026/08 W4"}, {"col": 57, "y": 2026, "m": 9, "w": 1, "label": "2026/09 W1"}, {"col": 58, "y": 2026, "m": 9, "w": 2, "label": "2026/09 W2"}, {"col": 59, "y": 2026, "m": 9, "w": 3, "label": "2026/09 W3"}, {"col": 60, "y": 2026, "m": 9, "w": 4, "label": "2026/09 W4"}, {"col": 61, "y": 2026, "m": 10, "w": 1, "label": "2026/10 W1"}, {"col": 62, "y": 2026, "m": 10, "w": 2, "label": "2026/10 W2"}, {"col": 63, "y": 2026, "m": 10, "w": 3, "label": "2026/10 W3"}, {"col": 64, "y": 2026, "m": 10, "w": 4, "label": "2026/10 W4"}, {"col": 65, "y": 2026, "m": 11, "w": 1, "label": "2026/11 W1"}, {"col": 66, "y": 2026, "m": 11, "w": 2, "label": "2026/11 W2"}, {"col": 67, "y": 2026, "m": 11, "w": 3, "label": "2026/11 W3"}, {"col": 68, "y": 2026, "m": 11, "w": 4, "label": "2026/11 W4"}, {"col": 69, "y": 2026, "m": 12, "w": 1, "label": "2026/12 W1"}, {"col": 70, "y": 2026, "m": 12, "w": 2, "label": "2026/12 W2"}, {"col": 71, "y": 2026, "m": 12, "w": 3, "label": "2026/12 W3"}, {"col": 72, "y": 2026, "m": 12, "w": 4, "label": "2026/12 W4"}, {"col": 73, "y": 2027, "m": 1, "w": 1, "label": "2027/01 W1"}, {"col": 74, "y": 2027, "m": 1, "w": 2, "label": "2027/01 W2"}, {"col": 75, "y": 2027, "m": 1, "w": 3, "label": "2027/01 W3"}, {"col": 76, "y": 2027, "m": 1, "w": 4, "label": "2027/01 W4"}, {"col": 77, "y": 2027, "m": 2, "w": 1, "label": "2027/02 W1"}, {"col": 78, "y": 2027, "m": 2, "w": 2, "label": "2027/02 W2"}, {"col": 79, "y": 2027, "m": 2, "w": 3, "label": "2027/02 W3"}, {"col": 80, "y": 2027, "m": 2, "w": 4, "label": "2027/02 W4"}, {"col": 81, "y": 2027, "m": 3, "w": 1, "label": "2027/03 W1"}, {"col": 82, "y": 2027, "m": 3, "w": 2, "label": "2027/03 W2"}, {"col": 83, "y": 2027, "m": 3, "w": 3, "label": "2027/03 W3"}, {"col": 84, "y": 2027, "m": 3, "w": 4, "label": "2027/03 W4"}, {"col": 85, "y": 2027, "m": 4, "w": 1, "label": "2027/04 W1"}, {"col": 86, "y": 2027, "m": 4, "w": 2, "label": "2027/04 W2"}, {"col": 87, "y": 2027, "m": 4, "w": 3, "label": "2027/04 W3"}, {"col": 88, "y": 2027, "m": 4, "w": 4, "label": "2027/04 W4"}, {"col": 89, "y": 2027, "m": 5, "w": 1, "label": "2027/05 W1"}, {"col": 90, "y": 2027, "m": 5, "w": 2, "label": "2027/05 W2"}, {"col": 91, "y": 2027, "m": 5, "w": 3, "label": "2027/05 W3"}, {"col": 92, "y": 2027, "m": 5, "w": 4, "label": "2027/05 W4"}, {"col": 93, "y": 2027, "m": 6, "w": 1, "label": "2027/06 W1"}, {"col": 94, "y": 2027, "m": 6, "w": 2, "label": "2027/06 W2"}, {"col": 95, "y": 2027, "m": 6, "w": 3, "label": "2027/06 W3"}, {"col": 96, "y": 2027, "m": 6, "w": 4, "label": "2027/06 W4"}, {"col": 97, "y": 2027, "m": 7, "w": 1, "label": "2027/07 W1"}, {"col": 98, "y": 2027, "m": 7, "w": 2, "label": "2027/07 W2"}, {"col": 99, "y": 2027, "m": 7, "w": 3, "label": "2027/07 W3"}, {"col": 100, "y": 2027, "m": 7, "w": 4, "label": "2027/07 W4"}, {"col": 101, "y": 2027, "m": 8, "w": 1, "label": "2027/08 W1"}, {"col": 102, "y": 2027, "m": 8, "w": 2, "label": "2027/08 W2"}, {"col": 103, "y": 2027, "m": 8, "w": 3, "label": "2027/08 W3"}, {"col": 104, "y": 2027, "m": 8, "w": 4, "label": "2027/08 W4"}, {"col": 105, "y": 2027, "m": 9, "w": 1, "label": "2027/09 W1"}, {"col": 106, "y": 2027, "m": 9, "w": 2, "label": "2027/09 W2"}, {"col": 107, "y": 2027, "m": 9, "w": 3, "label": "2027/09 W3"}, {"col": 108, "y": 2027, "m": 9, "w": 4, "label": "2027/09 W4"}, {"col": 109, "y": 2027, "m": 10, "w": 1, "label": "2027/10 W1"}, {"col": 110, "y": 2027, "m": 10, "w": 2, "label": "2027/10 W2"}]</script>
+<script id="bucket-palette" type="application/json">{"original": "#7DCBED", "revised": "#F0A93B", "update": "#7C3FAA", "cert": "#5DB851"}</script>
+
+<script>
+(function() {
+  var LS_NOTE = "sandwich-en-note:";
+  var LS_DEPS = "sandwich-en-deps:";
+  var LS_BARS = "sandwich-en-bars:";
+  var scroller = document.getElementById('ganttScroll');
+  var grid     = document.getElementById('ganttGrid');
+  var labelW   = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--label-w'), 10) || 380;
+  var weekW    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--week-w'), 10) || 18;
+  var todayLeftPx = 1048.6;
+  var trackW   = 1908;
+  var colStart = 5;
+  var nCols    = 106;
+  var ITEMS     = JSON.parse(document.getElementById('items-meta').textContent);
+  var DEFAULTS  = JSON.parse(document.getElementById('default-deps').textContent);
+  var TIMESLOTS = JSON.parse(document.getElementById('time-slots').textContent);
+  var PALETTE   = JSON.parse(document.getElementById('bucket-palette').textContent);
+  var itemByKey = {}; ITEMS.forEach(function(it) { itemByKey[it.key] = it; });
+  var slotByCol = {}; TIMESLOTS.forEach(function(s) { slotByCol[s.col] = s; });
+  var BUCKETS = [
+    {key: 'original', en: 'Original plan'},
+    {key: 'revised',  en: 'Revised plan'},
+    {key: 'update',   en: 'Update node'},
+    {key: 'cert',     en: 'CE involvement'},
+  ];
+  var bucketByKey = {}; BUCKETS.forEach(function(b) { bucketByKey[b.key] = b; });
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 1800);
+  }
+
+  // ===== Deps state =======================================================
+  var effDeps = {};
+  var infMap  = {};
+  function loadDeps() {
+    ITEMS.forEach(function(it) {
+      var saved = null;
+      try { saved = localStorage.getItem(LS_DEPS + it.key); } catch(e) {}
+      if (saved !== null) {
+        try { effDeps[it.key] = JSON.parse(saved); }
+        catch(e) { effDeps[it.key] = (DEFAULTS[it.key] || []).slice(); }
+      } else {
+        effDeps[it.key] = (DEFAULTS[it.key] || []).slice();
+      }
+    });
+    recomputeInfluence();
+  }
+  function recomputeInfluence() {
+    infMap = {};
+    Object.keys(effDeps).forEach(function(k) {
+      effDeps[k].forEach(function(d) {
+        if (!infMap[d]) infMap[d] = [];
+        if (infMap[d].indexOf(k) < 0) infMap[d].push(k);
+      });
+    });
+  }
+  function saveDeps(key) {
+    var def = (DEFAULTS[key] || []).slice().sort().join(',');
+    var cur = (effDeps[key] || []).slice().sort().join(',');
+    try {
+      if (def === cur) localStorage.removeItem(LS_DEPS + key);
+      else localStorage.setItem(LS_DEPS + key, JSON.stringify(effDeps[key]));
+    } catch(e) {}
+  }
+
+  function chipHTML(key, kind) {
+    var meta = itemByKey[key];
+    if (!meta) return '';
+    var label = meta.en;
+    var cls = (kind === 'inf' ? 'chip chip-inf' : 'chip');
+    return '<span class="' + cls + '" data-target="' + key + '">' + label + '</span>';
+  }
+  function renderRowRel(rowEl) {
+    var key = rowEl.getAttribute('data-item');
+    var depsList = rowEl.querySelector('.deps-list');
+    var infList  = rowEl.querySelector('.inf-list');
+    var deps = effDeps[key] || [];
+    var infs = (infMap[key] || []);
+    depsList.innerHTML = deps.length
+      ? deps.map(function(k) { return chipHTML(k, 'dep'); }).join('')
+      : '<span class="chip chip-empty">none</span>';
+    infList.innerHTML = infs.length
+      ? infs.map(function(k) { return chipHTML(k, 'inf'); }).join('')
+      : '<span class="chip chip-empty">none</span>';
+    var defKey = (DEFAULTS[key] || []).slice().sort().join(',');
+    var curKey = deps.slice().sort().join(',');
+    var btn = rowEl.querySelector('.rel-edit-btn[data-kind="deps"]');
+    if (btn) btn.classList.toggle('editing', defKey !== curKey);
+  }
+  function renderAllRel() {
+    document.querySelectorAll('.item-row').forEach(renderRowRel);
+  }
+
+  // ===== Click-to-jump ====================================================
+  function clearHighlights() {
+    document.querySelectorAll('.item-row').forEach(function(r) {
+      r.classList.remove('row-selected'); r.classList.remove('row-dep');
+    });
+  }
+  function scrollToItem(key) {
+    var row = document.getElementById('row-' + key);
+    if (!row) return;
+    clearHighlights();
+    row.classList.add('row-selected');
+    (effDeps[key] || []).forEach(function(d) {
+      var dr = document.getElementById('row-' + d);
+      if (dr) dr.classList.add('row-dep');
+    });
+    var firstBar = row.getAttribute('data-first-bar');
+    if (firstBar !== null && firstBar !== '') {
+      var targetLeft = labelW + parseFloat(firstBar) - scroller.clientWidth * 0.30;
+      scroller.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+    }
+    row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    updateMinimapViewport();
+  }
+
+  // ===== Notes (contenteditable) ==========================================
+  function restoreNotes() {
+    document.querySelectorAll('.row-note').forEach(function(el) {
+      var key = el.getAttribute('data-item');
+      var def = el.getAttribute('data-default') || '';
+      var saved = null;
+      try { saved = localStorage.getItem(LS_NOTE + key); } catch(e) {}
+      if (saved !== null && saved !== def) {
+        el.textContent = saved;
+        el.classList.add('edited');
+      }
+    });
+  }
+  document.querySelectorAll('.row-note').forEach(function(el) {
+    var key = el.getAttribute('data-item');
+    el.addEventListener('blur', function() {
+      var txt = el.innerText.trim();
+      var dflt = (el.getAttribute('data-default') || '').trim();
+      try {
+        if (txt === dflt) {
+          localStorage.removeItem(LS_NOTE + key);
+          el.classList.remove('edited');
+        } else {
+          localStorage.setItem(LS_NOTE + key, txt);
+          el.classList.add('edited');
+        }
+      } catch(e) {}
+    });
+    el.addEventListener('click', function(ev) { ev.stopPropagation(); });
+  });
+
+  // ===== Bar state ========================================================
+  var xlsxBars = {}; var userBars = {};
+  function snapshotXlsxBars() {
+    document.querySelectorAll('.item-row').forEach(function(row) {
+      var key = row.getAttribute('data-item');
+      var list = [];
+      row.querySelectorAll('.bar[data-source="xlsx"]').forEach(function(b) {
+        list.push({
+          id:        b.getAttribute('data-bar-id'),
+          startCol:  parseInt(b.getAttribute('data-start-col'), 10),
+          endCol:    parseInt(b.getAttribute('data-end-col'), 10),
+          bucket:    b.getAttribute('data-bucket-key'),
+          tip:       b.getAttribute('title') || '',
+        });
+      });
+      xlsxBars[key] = list;
+    });
+  }
+  function loadUserBars() {
+    ITEMS.forEach(function(it) {
+      var saved = null;
+      try { saved = localStorage.getItem(LS_BARS + it.key); } catch(e) {}
+      if (saved) {
+        try { userBars[it.key] = JSON.parse(saved); }
+        catch(e) { userBars[it.key] = {hidden: [], added: []}; }
+      } else { userBars[it.key] = {hidden: [], added: []}; }
+    });
+  }
+  function saveUserBars(key) {
+    var ub = userBars[key];
+    var isDefault = (!ub || (ub.hidden.length === 0 && ub.added.length === 0));
+    try {
+      if (isDefault) localStorage.removeItem(LS_BARS + key);
+      else           localStorage.setItem(LS_BARS + key, JSON.stringify(ub));
+    } catch(e) {}
+  }
+  function effectiveBars(key) {
+    var ub = userBars[key] || {hidden: [], added: []};
+    var hidden = new Set(ub.hidden);
+    var xl = (xlsxBars[key] || []).filter(function(b) { return !hidden.has(b.id); })
+                                  .map(function(b) { return Object.assign({source:'xlsx'}, b); });
+    var ua = (ub.added || []).map(function(b) { return Object.assign({source:'user'}, b); });
+    return xl.concat(ua).sort(function(a, b) { return a.startCol - b.startCol; });
+  }
+  function buildTip(rowEl, b) {
+    var key = rowEl.getAttribute('data-item');
+    var meta = itemByKey[key];
+    var owner = (rowEl.querySelector('.item-owner') || {}).innerText || '';
+    var s = slotByCol[b.startCol], e = slotByCol[b.endCol];
+    var dateLabel = (s.col === e.col) ? s.label : (s.label + ' -> ' + e.label);
+    var lines = ['[ITEM] ' + meta.en,
+                 '[TIME] ' + dateLabel + ' - ' + (bucketByKey[b.bucket] ? bucketByKey[b.bucket].en : b.bucket),
+                 '[' + owner + ']'];
+    if (b.source === 'user') lines.push('[user-added]');
+    return lines.join('\n');
+  }
+  function renderRowBars(rowEl) {
+    var key   = rowEl.getAttribute('data-item');
+    var track = rowEl.querySelector('.item-track');
+    track.querySelectorAll('.bar').forEach(function(b) { b.remove(); });
+    var bars = effectiveBars(key);
+    var firstLeft = null;
+    bars.forEach(function(b) {
+      var s = slotByCol[b.startCol], e = slotByCol[b.endCol];
+      if (!s || !e) return;
+      var left = (b.startCol - colStart) * weekW;
+      var width = (b.endCol - b.startCol + 1) * weekW;
+      if (firstLeft === null || left < firstLeft) firstLeft = left;
+      var el = document.createElement('div');
+      el.className = 'bar bar-' + b.bucket + (b.source === 'user' ? ' bar-user' : '');
+      el.style.left  = left  + 'px';
+      el.style.width = width + 'px';
+      el.style.background = PALETTE[b.bucket] || '#888';
+      el.setAttribute('title', b.tip || buildTip(rowEl, b));
+      el.setAttribute('data-item', key);
+      el.setAttribute('data-bar-id', b.id);
+      el.setAttribute('data-start-col', b.startCol);
+      el.setAttribute('data-end-col',   b.endCol);
+      el.setAttribute('data-bucket-key', b.bucket);
+      el.setAttribute('data-source', b.source);
+      track.appendChild(el);
+    });
+    if (firstLeft !== null) rowEl.setAttribute('data-first-bar', firstLeft);
+    else                    rowEl.removeAttribute('data-first-bar');
+  }
+  function renderAllRowBars() {
+    document.querySelectorAll('.item-row').forEach(renderRowBars);
+  }
+
+  // ===== Deps editor =====================================================
+  var editorEl = null;
+  function closeEditor() {
+    if (editorEl && editorEl.parentNode) editorEl.parentNode.removeChild(editorEl);
+    editorEl = null;
+    document.querySelectorAll('.rel-edit-btn[data-kind="deps"]').forEach(function(b) { b.disabled = false; });
+  }
+  function openEditor(rowEl, btn) {
+    closeEditor(); closeBarEditor();
+    var key = rowEl.getAttribute('data-item');
+    var meta = itemByKey[key];
+    editorEl = document.createElement('div');
+    editorEl.className = 'dep-editor';
+    editorEl.innerHTML =
+      '<div class="de-title">Edit dependencies of "' + meta.en + '"</div>' +
+      '<div class="de-current"></div>' +
+      '<div class="de-add-row">' +
+      '  <select class="de-add-select"><option value="">-- pick an upstream item to add --</option></select>' +
+      '  <button class="de-btn de-add-btn">+ Add</button>' +
+      '</div>' +
+      '<div class="de-actions">' +
+      '  <button class="de-btn danger de-reset-btn">Restore defaults</button>' +
+      '  <button class="de-btn secondary de-close-btn">Done</button>' +
+      '</div>';
+    document.body.appendChild(editorEl);
+    btn.disabled = true;
+    var rect = btn.getBoundingClientRect();
+    editorEl.style.top  = (window.scrollY + rect.bottom + 6) + 'px';
+    var left = window.scrollX + rect.left;
+    if (left + 360 > window.innerWidth - 12) left = window.innerWidth - 372;
+    editorEl.style.left = Math.max(12, left) + 'px';
+
+    var curBox   = editorEl.querySelector('.de-current');
+    var selectEl = editorEl.querySelector('.de-add-select');
+    var addBtn   = editorEl.querySelector('.de-add-btn');
+    var closeBtn = editorEl.querySelector('.de-close-btn');
+    var resetBtn = editorEl.querySelector('.de-reset-btn');
+    function refresh() {
+      var cur = effDeps[key] || [];
+      curBox.innerHTML = '';
+      if (cur.length === 0) curBox.innerHTML = '<span class="de-empty">(no dependency)</span>';
+      else cur.forEach(function(k) {
+        var c = document.createElement('span');
+        c.className = 'chip';
+        c.innerHTML = (itemByKey[k] ? itemByKey[k].en : k) +
+                       '<span class="chip-remove" title="remove">✕</span>';
+        c.querySelector('.chip-remove').addEventListener('click', function() {
+          effDeps[key] = (effDeps[key] || []).filter(function(x) { return x !== k; });
+          saveDeps(key);
+          recomputeInfluence(); renderAllRel(); refresh();
+        });
+        curBox.appendChild(c);
+      });
+      selectEl.innerHTML = '<option value="">-- pick an upstream item to add --</option>';
+      ITEMS.filter(function(it) { return it.key !== key && cur.indexOf(it.key) < 0; })
+           .forEach(function(it) {
+             var o = document.createElement('option');
+             o.value = it.key; o.textContent = it.en;
+             selectEl.appendChild(o);
+           });
+    }
+    refresh();
+    addBtn.addEventListener('click', function() {
+      var v = selectEl.value; if (!v) return;
+      if ((effDeps[key] || []).indexOf(v) >= 0) return;
+      effDeps[key] = (effDeps[key] || []).concat([v]);
+      saveDeps(key); recomputeInfluence(); renderAllRel(); refresh();
+    });
+    resetBtn.addEventListener('click', function() {
+      if (!confirm('Restore the default dependencies for this item?')) return;
+      effDeps[key] = (DEFAULTS[key] || []).slice();
+      saveDeps(key); recomputeInfluence(); renderAllRel(); refresh();
+    });
+    closeBtn.addEventListener('click', closeEditor);
+  }
+
+  // ===== Bar editor =======================================================
+  var barEditorEl = null;
+  function closeBarEditor() {
+    if (barEditorEl && barEditorEl.parentNode) barEditorEl.parentNode.removeChild(barEditorEl);
+    barEditorEl = null;
+    document.querySelectorAll('.rel-edit-btn[data-kind="bars"]').forEach(function(b) { b.disabled = false; });
+  }
+  function openBarEditor(rowEl, btn) {
+    closeEditor(); closeBarEditor();
+    var key = rowEl.getAttribute('data-item');
+    var meta = itemByKey[key];
+    barEditorEl = document.createElement('div');
+    barEditorEl.className = 'dep-editor bar-editor';
+    barEditorEl.innerHTML =
+      '<div class="de-title">Edit time periods of "' + meta.en + '"</div>' +
+      '<div class="be-list"></div>' +
+      '<div class="be-add">' +
+      '  <div class="be-row">' +
+      '    <select class="be-bucket"></select>' +
+      '    <select class="be-start"></select>' +
+      '    <span class="be-arrow">→</span>' +
+      '    <select class="be-end"></select>' +
+      '    <button class="de-btn be-add-btn">+ Add</button>' +
+      '  </div>' +
+      '</div>' +
+      '<div class="de-actions">' +
+      '  <button class="de-btn danger be-reset-btn">Restore defaults</button>' +
+      '  <button class="de-btn secondary be-close-btn">Done</button>' +
+      '</div>';
+    document.body.appendChild(barEditorEl);
+    btn.disabled = true;
+    barEditorEl.style.width = '480px';
+    var rect = btn.getBoundingClientRect();
+    barEditorEl.style.top  = (window.scrollY + rect.bottom + 6) + 'px';
+    var left = window.scrollX + rect.left;
+    if (left + 480 > window.innerWidth - 12) left = window.innerWidth - 492;
+    barEditorEl.style.left = Math.max(12, left) + 'px';
+
+    var listBox    = barEditorEl.querySelector('.be-list');
+    var bucketSel  = barEditorEl.querySelector('.be-bucket');
+    var startSel   = barEditorEl.querySelector('.be-start');
+    var endSel     = barEditorEl.querySelector('.be-end');
+    var addBtn     = barEditorEl.querySelector('.be-add-btn');
+    var closeBtn   = barEditorEl.querySelector('.be-close-btn');
+    var resetBtn   = barEditorEl.querySelector('.be-reset-btn');
+
+    function fillBucketSelect(sel, value) {
+      sel.innerHTML = '';
+      BUCKETS.forEach(function(b) {
+        var o = document.createElement('option');
+        o.value = b.key; o.textContent = b.en;
+        if (value === b.key) o.selected = true;
+        sel.appendChild(o);
+      });
+    }
+    function fillSlotSelect(sel, value) {
+      sel.innerHTML = '';
+      TIMESLOTS.forEach(function(s) {
+        var o = document.createElement('option');
+        o.value = s.col; o.textContent = s.label;
+        if (parseInt(value, 10) === s.col) o.selected = true;
+        sel.appendChild(o);
+      });
+    }
+    fillBucketSelect(bucketSel, 'revised');
+    fillSlotSelect(startSel, '');
+    fillSlotSelect(endSel, '');
+
+    function makeId() {
+      return 'user-' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+    }
+    function ensureUB() {
+      if (!userBars[key]) userBars[key] = {hidden: [], added: []};
+      return userBars[key];
+    }
+    function refreshList() {
+      listBox.innerHTML = '';
+      var bars = effectiveBars(key);
+      if (bars.length === 0) {
+        listBox.innerHTML = '<div class="de-empty">(no periods)</div>'; return;
+      }
+      bars.forEach(function(b) {
+        var row = document.createElement('div');
+        row.className = 'be-row be-existing';
+        var rowBucket = document.createElement('select'); rowBucket.className = 'be-row-bucket';
+        var rowStart  = document.createElement('select'); rowStart.className  = 'be-row-start';
+        var rowEnd    = document.createElement('select'); rowEnd.className    = 'be-row-end';
+        fillBucketSelect(rowBucket, b.bucket);
+        fillSlotSelect(rowStart, b.startCol);
+        fillSlotSelect(rowEnd,   b.endCol);
+        var del = document.createElement('button');
+        del.className = 'de-btn danger be-del-btn'; del.textContent = '✕';
+        del.title = (b.source === 'xlsx' ? 'Hide this xlsx-sourced period' : 'Delete this user-added period');
+        var srcTag = document.createElement('span'); srcTag.className = 'be-src-tag';
+        srcTag.textContent = (b.source === 'xlsx' ? 'xlsx' : 'user');
+        srcTag.classList.add(b.source === 'xlsx' ? 'tag-xlsx' : 'tag-user');
+
+        function applyEdit() {
+          var newBucket = rowBucket.value;
+          var newStart  = parseInt(rowStart.value, 10);
+          var newEnd    = parseInt(rowEnd.value, 10);
+          if (newEnd < newStart) { var t=newStart; newStart=newEnd; newEnd=t; }
+          if (newBucket === b.bucket && newStart === b.startCol && newEnd === b.endCol) return;
+          var ub = ensureUB();
+          if (b.source === 'xlsx') {
+            if (ub.hidden.indexOf(b.id) < 0) ub.hidden.push(b.id);
+            ub.added.push({id: makeId(), startCol: newStart, endCol: newEnd, bucket: newBucket});
+          } else {
+            ub.added = ub.added.map(function(x) {
+              return x.id === b.id
+                ? {id: x.id, startCol: newStart, endCol: newEnd, bucket: newBucket}
+                : x;
+            });
+          }
+          saveUserBars(key); renderRowBars(rowEl); buildMinimap(); refreshList();
+        }
+        rowBucket.addEventListener('change', applyEdit);
+        rowStart.addEventListener('change',  applyEdit);
+        rowEnd.addEventListener('change',    applyEdit);
+        del.addEventListener('click', function() {
+          var ub = ensureUB();
+          if (b.source === 'xlsx') {
+            if (ub.hidden.indexOf(b.id) < 0) ub.hidden.push(b.id);
+          } else {
+            ub.added = ub.added.filter(function(x) { return x.id !== b.id; });
+          }
+          saveUserBars(key); renderRowBars(rowEl); buildMinimap(); refreshList();
+        });
+
+        row.appendChild(srcTag);
+        row.appendChild(rowBucket);
+        row.appendChild(rowStart);
+        var arr = document.createElement('span'); arr.className='be-arrow'; arr.textContent='→';
+        row.appendChild(arr);
+        row.appendChild(rowEnd);
+        row.appendChild(del);
+        listBox.appendChild(row);
+      });
+    }
+    refreshList();
+
+    addBtn.addEventListener('click', function() {
+      if (!startSel.value || !endSel.value) { toast('Please pick start & end'); return; }
+      var sCol = parseInt(startSel.value, 10), eCol = parseInt(endSel.value, 10);
+      if (eCol < sCol) { var t=sCol; sCol=eCol; eCol=t; }
+      var ub = ensureUB();
+      ub.added.push({id: makeId(), startCol: sCol, endCol: eCol, bucket: bucketSel.value});
+      saveUserBars(key); renderRowBars(rowEl); buildMinimap(); refreshList();
+    });
+    resetBtn.addEventListener('click', function() {
+      if (!confirm('Restore the default time periods for this item? All user adds / edits / deletions will be discarded.')) return;
+      userBars[key] = {hidden: [], added: []};
+      saveUserBars(key); renderRowBars(rowEl); buildMinimap(); refreshList();
+    });
+    closeBtn.addEventListener('click', closeBarEditor);
+  }
+
+  document.addEventListener('mousedown', function(ev) {
+    if (editorEl || barEditorEl) {
+      if (ev.target.closest('.dep-editor') || ev.target.closest('.bar-editor')) return;
+      if (ev.target.classList && ev.target.classList.contains('rel-edit-btn')) return;
+      closeBarEditor(); closeEditor();
+    }
+  });
+
+  // ===== Click delegation =================================================
+  document.body.addEventListener('click', function(ev) {
+    var chip = ev.target.closest('.chip[data-target]');
+    if (chip) { ev.stopPropagation(); scrollToItem(chip.getAttribute('data-target')); return; }
+    var editBtn = ev.target.closest('.rel-edit-btn');
+    if (editBtn) {
+      ev.stopPropagation();
+      var rowEl = editBtn.closest('.item-row');
+      var kind  = editBtn.getAttribute('data-kind');
+      if (kind === 'bars') openBarEditor(rowEl, editBtn);
+      else                 openEditor(rowEl, editBtn);
+      return;
+    }
+    var bar = ev.target.closest('.bar');
+    if (bar && bar.getAttribute('data-item')) {
+      ev.stopPropagation(); scrollToItem(bar.getAttribute('data-item')); return;
+    }
+    var lbl = ev.target.closest('.item-label');
+    if (lbl) {
+      if (ev.target.closest('.row-note')) return;
+      if (ev.target.closest('.chip')) return;
+      if (ev.target.closest('.rel-edit-btn')) return;
+      scrollToItem(lbl.getAttribute('data-item'));
+    }
+  });
+
+  // ===== Toolbar ==========================================================
+  document.getElementById('btn-scroll-today').addEventListener('click', function() {
+    var target = todayLeftPx - scroller.clientWidth * 0.30;
+    scroller.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  });
+  document.getElementById('btn-clear-sel').addEventListener('click', clearHighlights);
+
+  document.getElementById('btn-export-notes').addEventListener('click', function() {
+    var notes = {}, deps = {}, bars = {};
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k) continue;
+        if (k.indexOf(LS_NOTE) === 0) notes[k.slice(LS_NOTE.length)] = localStorage.getItem(k);
+        if (k.indexOf(LS_DEPS) === 0) { try { deps[k.slice(LS_DEPS.length)] = JSON.parse(localStorage.getItem(k)); } catch(e){} }
+        if (k.indexOf(LS_BARS) === 0) { try { bars[k.slice(LS_BARS.length)] = JSON.parse(localStorage.getItem(k)); } catch(e){} }
+      }
+    } catch(e) {}
+    var nCount = Object.keys(notes).length;
+    var dCount = Object.keys(deps).length;
+    var bCount = Object.keys(bars).length;
+    if (nCount === 0 && dCount === 0 && bCount === 0) { toast('No edits yet'); return; }
+    var blob = new Blob([JSON.stringify({ notes: notes, deps: deps, bars: bars }, null, 2)],
+                       { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'sandwich-edits-en-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Exported: notes ' + nCount + ' / deps ' + dCount + ' / periods ' + bCount);
+  });
+
+  document.getElementById('btn-reset-all').addEventListener('click', function() {
+    if (!confirm('Clear all edits (notes, dependencies, time periods) saved in this browser?')) return;
+    try {
+      var rm = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && (k.indexOf(LS_NOTE) === 0 || k.indexOf(LS_DEPS) === 0 || k.indexOf(LS_BARS) === 0)) rm.push(k);
+      }
+      rm.forEach(function(k) { localStorage.removeItem(k); });
+    } catch(e) {}
+    document.querySelectorAll('.row-note').forEach(function(el) {
+      el.textContent = el.getAttribute('data-default') || '';
+      el.classList.remove('edited');
+    });
+    loadUserBars(); renderAllRowBars();
+    loadDeps(); renderAllRel();
+    buildMinimap();
+    toast('All edits cleared');
+  });
+
+  // ===== Minimap ==========================================================
+  var mm        = document.getElementById('minimap');
+  var mmHeader  = document.getElementById('mmHeader');
+  var mmCanvas  = document.getElementById('mmCanvas');
+  var mmSvg     = document.getElementById('mmSvg');
+  var mmViewport= document.getElementById('mmViewport');
+  var mmToggleBtn = document.getElementById('mmToggleBtn');
+  var mmHideBtn   = document.getElementById('mmHideBtn');
+  document.getElementById('btn-show-mm').addEventListener('click', function() {
+    mm.style.display = 'block';
+  });
+  mmHideBtn.addEventListener('click', function() { mm.style.display = 'none'; });
+  mmToggleBtn.addEventListener('click', function() {
+    mm.classList.toggle('collapsed');
+    mmToggleBtn.textContent = mm.classList.contains('collapsed') ? '+' : '—';
+  });
+
+  function buildMinimap() {
+    var rows = grid.querySelectorAll('.item-row, .section-row');
+    var totalH = grid.offsetHeight;
+    var canvasW = mmCanvas.clientWidth || 340;
+    var canvasH = mmCanvas.clientHeight || 220;
+    mmSvg.setAttribute('viewBox', '0 0 ' + trackW + ' ' + totalH);
+    mmSvg.setAttribute('width',  canvasW);
+    mmSvg.setAttribute('height', canvasH);
+    mmSvg.setAttribute('preserveAspectRatio', 'none');
+    var parts = [];
+    for (var m = 0; m <= nCols; m += 4) {
+      var x = m * weekW;
+      parts.push('<line x1="' + x + '" y1="0" x2="' + x + '" y2="' + totalH +
+                 '" stroke="#e2e8f0" stroke-width="3" />');
+    }
+    rows.forEach(function(row) {
+      var top = row.offsetTop; var h = row.offsetHeight;
+      if (row.classList.contains('section-row')) {
+        parts.push('<rect x="0" y="' + top + '" width="' + trackW +
+                    '" height="' + h + '" fill="#dbeafe" />');
+        return;
+      }
+      row.querySelectorAll('.bar').forEach(function(b) {
+        var left = parseFloat(b.style.left) || 0;
+        var w    = parseFloat(b.style.width) || 0;
+        var bg   = b.style.background || '#888';
+        var bH = h - 6; var bY = top + 3;
+        if (b.classList.contains('bar-original')) { bH = 4; bY = top + h - 8; }
+        if (b.classList.contains('bar-update'))   { w = Math.max(w, 6); }
+        parts.push('<rect x="' + left + '" y="' + bY + '" width="' + w +
+                    '" height="' + bH + '" fill="' + bg + '" opacity="0.85" />');
+      });
+    });
+    parts.push('<line x1="' + (todayLeftPx - labelW) + '" y1="0" x2="' +
+               (todayLeftPx - labelW) + '" y2="' + totalH +
+               '" stroke="#dc2626" stroke-width="6" />');
+    mmSvg.innerHTML = parts.join('');
+    updateMinimapViewport();
+  }
+
+  function updateMinimapViewport() {
+    var canvasW = mmCanvas.clientWidth || 340;
+    var canvasH = mmCanvas.clientHeight || 220;
+    var scaleX = canvasW / trackW;
+    var scaleY = canvasH / (grid.offsetHeight || 1);
+    var vpLeft = Math.max(0, scroller.scrollLeft - labelW) * scaleX;
+    var vpTop  = scroller.scrollTop * scaleY;
+    var vpW    = (scroller.clientWidth - labelW) * scaleX;
+    var vpH    = scroller.clientHeight * scaleY;
+    mmViewport.style.left = vpLeft + 'px';
+    mmViewport.style.top  = vpTop  + 'px';
+    mmViewport.style.width  = Math.max(20, vpW) + 'px';
+    mmViewport.style.height = Math.max(20, vpH) + 'px';
+  }
+
+  function scrollFromMinimap(ev) {
+    var rect = mmCanvas.getBoundingClientRect();
+    var x = ev.clientX - rect.left;
+    var y = ev.clientY - rect.top;
+    var canvasW = mmCanvas.clientWidth || 340;
+    var canvasH = mmCanvas.clientHeight || 220;
+    var scaleX = canvasW / trackW;
+    var scaleY = canvasH / (grid.offsetHeight || 1);
+    var targetLeft = x / scaleX + labelW - scroller.clientWidth / 2;
+    var targetTop  = y / scaleY - scroller.clientHeight / 2;
+    scroller.scrollTo({ left: Math.max(0, targetLeft),
+                        top: Math.max(0, targetTop), behavior: 'auto' });
+  }
+  var mmDragging = false;
+  mmCanvas.addEventListener('mousedown', function(ev) { mmDragging = true; scrollFromMinimap(ev); ev.preventDefault(); });
+  document.addEventListener('mousemove', function(ev) { if (mmDragging) scrollFromMinimap(ev); });
+  document.addEventListener('mouseup', function() { mmDragging = false; });
+  scroller.addEventListener('scroll', updateMinimapViewport);
+  window.addEventListener('resize', function() { buildMinimap(); });
+
+  (function() {
+    var dragX = 0, dragY = 0, startL = 0, startT = 0, dragging = false;
+    mmHeader.addEventListener('mousedown', function(ev) {
+      if (ev.target.tagName === 'BUTTON') return;
+      dragging = true; mm.classList.add('dragging');
+      dragX = ev.clientX; dragY = ev.clientY;
+      var r = mm.getBoundingClientRect();
+      startL = r.left; startT = r.top;
+      mm.style.right = 'auto'; mm.style.bottom = 'auto';
+      mm.style.left = startL + 'px'; mm.style.top = startT + 'px';
+      ev.preventDefault();
+    });
+    document.addEventListener('mousemove', function(ev) {
+      if (!dragging) return;
+      var nx = startL + (ev.clientX - dragX);
+      var ny = startT + (ev.clientY - dragY);
+      nx = Math.max(0, Math.min(window.innerWidth - mm.offsetWidth, nx));
+      ny = Math.max(0, Math.min(window.innerHeight - 40, ny));
+      mm.style.left = nx + 'px'; mm.style.top = ny + 'px';
+    });
+    document.addEventListener('mouseup', function() {
+      dragging = false; mm.classList.remove('dragging');
+    });
+  })();
+
+  // ===== Init =============================================================
+  snapshotXlsxBars();
+  loadUserBars(); renderAllRowBars();
+  loadDeps();     renderAllRel();
+  restoreNotes();
+  buildMinimap();
+  (function() {
+    var target = todayLeftPx - scroller.clientWidth * 0.30;
+    scroller.scrollLeft = Math.max(0, target);
+    updateMinimapViewport();
+  })();
+})();
+</script>
+
+</div>
+</body></html>
