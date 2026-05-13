@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>SE01 — Demister vs Degasser 工程示意图</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+         margin: 0; color: #1f2937; background: #f5f7fa; padding: 24px; line-height: 1.5; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  h1 { font-size: 22px; color: #0f3460; margin-bottom: 6px; }
+  .sub { font-size: 13px; color: #64748b; margin-bottom: 18px; }
+  .panel { background: #fff; border-radius: 10px; padding: 18px 22px;
+           box-shadow: 0 1px 3px rgba(15,52,96,0.06); margin-bottom: 16px; }
+  h2 { font-size: 16px; color: #0f3460; margin: 0 0 10px 0;
+        border-left: 4px solid #d97706; padding-left: 10px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .col-head { text-align: center; font-weight: 700; font-size: 15px;
+              padding: 8px 12px; border-radius: 6px 6px 0 0; }
+  .col-head.demister { background: #16a34a; color: #fff; }
+  .col-head.degasser { background: #be185d; color: #fff; }
+  .col-body { border: 2px solid transparent; border-radius: 0 0 6px 6px;
+              padding: 10px; background: #f8fafc; }
+  .col-body.demister { border-color: #86efac; }
+  .col-body.degasser { border-color: #fbcfe8; }
+  .svg-wrap { display: flex; justify-content: center; padding: 14px 0;
+              background: #fff; border-radius: 4px; }
+  .svg-wrap svg { width: 100%; max-width: 480px; height: auto; }
+  .verdict { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px;
+              padding: 12px 16px; margin: 14px 0; font-size: 14px; }
+  .verdict b { color: #b45309; }
+
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 13px;
+              margin-top: 10px; }
+  table.cmp th, table.cmp td { border: 1px solid #e2e8f0; padding: 8px 10px;
+                                vertical-align: top; }
+  table.cmp th { background: #f1f5f9; color: #0f3460; font-weight: 600;
+                  text-align: left; }
+  table.cmp tr:nth-child(odd) td { background: #fafafa; }
+  table.cmp td.dem { background: #f0fdf4 !important; }
+  table.cmp td.deg { background: #fdf2f8 !important; }
+  .ok { color: #16a34a; font-weight: 600; }
+  .bad { color: #dc2626; font-weight: 600; }
+  code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px;
+         font-size: 12px; color: #b45309; }
+  .legend { font-size: 12px; color: #64748b; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>SE01 — Demister vs Degasser 工程对比示意图</h1>
+<div class="sub">
+  Sandwich 连续氢化撬块项目 · 气液分离器设计模式辨析 ·
+  应对 2026/05/12 Keith 提出的"PID 与计算原理不一致"问题
+</div>
+
+<!-- ======== 示意图 ======== -->
+<div class="panel">
+  <h2>📐 配置示意图 ｜ Configuration drawings</h2>
+  <div class="grid">
+
+    <!-- ===== Demister ===== -->
+    <div>
+      <div class="col-head demister">A. Demister（从气里除液滴）<br><span style="font-weight:400;font-size:12px;opacity:0.9;">Vapour–Liquid Knock-out / De-misting separator</span></div>
+      <div class="col-body demister">
+        <div class="svg-wrap">
+          <svg viewBox="0 0 380 480" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0369a1"/>
+              </marker>
+              <marker id="arrL" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7"/>
+              </marker>
+              <pattern id="meshA" patternUnits="userSpaceOnUse" width="8" height="8">
+                <path d="M0 0 L8 8 M8 0 L0 8" stroke="#0f766e" stroke-width="1"/>
+              </pattern>
+              <pattern id="liqA" patternUnits="userSpaceOnUse" width="10" height="10">
+                <path d="M0 5 Q 2.5 0 5 5 T 10 5" stroke="#0284c7"
+                      stroke-width="1" fill="none"/>
+              </pattern>
+            </defs>
+
+            <!-- Vessel: vertical with dished top/bottom -->
+            <path d="M 80 60
+                     Q 80 30 130 30
+                     L 250 30
+                     Q 300 30 300 60
+                     L 300 420
+                     Q 300 450 250 450
+                     L 130 450
+                     Q 80 450 80 420 Z"
+                  fill="#fff" stroke="#0f3460" stroke-width="2.5"/>
+
+            <!-- Demister mesh pad at the top -->
+            <rect x="100" y="80" width="180" height="34"
+                  fill="url(#meshA)" stroke="#0f766e" stroke-width="1.5"/>
+            <text x="190" y="74" text-anchor="middle"
+                  font-size="11" fill="#0f766e" font-weight="700">
+              丝网除沫器 / Demister pad
+            </text>
+
+            <!-- Liquid pool at bottom -->
+            <path d="M 82 340 L 298 340 L 298 448 Q 298 449 296 449 L 84 449
+                     Q 82 449 82 448 Z"
+                  fill="url(#liqA)" opacity="0.5"/>
+            <line x1="82" y1="340" x2="298" y2="340"
+                  stroke="#0284c7" stroke-width="2"/>
+            <text x="245" y="335" font-size="10" fill="#0284c7"
+                  font-style="italic">液位 NLL</text>
+
+            <!-- Side inlet (above liquid level) -->
+            <rect x="295" y="220" width="65" height="22" fill="#fff"
+                  stroke="#0f3460" stroke-width="2"/>
+            <line x1="295" y1="221" x2="295" y2="242"
+                  stroke="#0f3460" stroke-width="2"/>
+            <text x="365" y="225" text-anchor="end" font-size="11"
+                  fill="#0f3460" font-weight="600">
+              进口 Inlet
+            </text>
+            <text x="365" y="238" text-anchor="end" font-size="10"
+                  fill="#64748b">气+液滴 gas + droplets</text>
+
+            <!-- Vane / vortex breaker at inlet (vertical baffle) -->
+            <rect x="240" y="208" width="6" height="46"
+                  fill="#dc2626"/>
+            <text x="240" y="200" text-anchor="middle" font-size="10"
+                  fill="#dc2626" font-weight="600">vane / 防涡板</text>
+
+            <!-- Flow arrows: gas swirls up to demister, droplets fall down -->
+            <path d="M 285 232 Q 220 232 200 200 Q 180 170 200 145"
+                  fill="none" stroke="#0369a1" stroke-width="2"
+                  marker-end="url(#arrA)"/>
+            <text x="155" y="180" font-size="10" fill="#0369a1">
+              气流上行 gas ↑
+            </text>
+
+            <!-- Droplets falling -->
+            <circle cx="200" cy="160" r="3" fill="#0284c7"/>
+            <circle cx="180" cy="200" r="2.5" fill="#0284c7"/>
+            <circle cx="215" cy="240" r="2.5" fill="#0284c7"/>
+            <circle cx="195" cy="280" r="3" fill="#0284c7"/>
+            <circle cx="175" cy="320" r="2.5" fill="#0284c7"/>
+            <line x1="200" y1="165" x2="200" y2="195" stroke="#0284c7"
+                  stroke-width="1.5" stroke-dasharray="2,2"
+                  marker-end="url(#arrL)"/>
+            <line x1="195" y1="285" x2="195" y2="335" stroke="#0284c7"
+                  stroke-width="1.5" stroke-dasharray="2,2"
+                  marker-end="url(#arrL)"/>
+            <text x="115" y="285" font-size="10" fill="#0284c7">
+              液滴沉降 droplets ↓
+            </text>
+
+            <!-- Top outlet: clean gas -->
+            <rect x="170" y="0" width="40" height="40" fill="#fff"
+                  stroke="#0f3460" stroke-width="2"/>
+            <line x1="190" y1="0" x2="190" y2="30" stroke="#0369a1"
+                  stroke-width="3" marker-start="url(#arrA)"
+                  transform="rotate(180 190 15)"/>
+            <text x="190" y="14" text-anchor="middle" font-size="11"
+                  fill="#0f3460" font-weight="600">干燥气体</text>
+            <text x="190" y="28" text-anchor="middle" font-size="10"
+                  fill="#64748b">clean gas ↑</text>
+
+            <!-- Bottom outlet: liquid -->
+            <rect x="170" y="450" width="40" height="30" fill="#fff"
+                  stroke="#0f3460" stroke-width="2"/>
+            <text x="190" y="470" text-anchor="middle" font-size="11"
+                  fill="#0f3460" font-weight="600">液体出口</text>
+            <text x="190" y="478" text-anchor="end" font-size="10"
+                  fill="#64748b" transform="translate(220 0)">liquid out</text>
+
+            <!-- Annotation: key sizing -->
+            <text x="10" y="100" font-size="10" fill="#0f766e">
+              关键参数：
+            </text>
+            <text x="10" y="115" font-size="10" fill="#0f766e">
+              气速 &lt; 终端沉降速度
+            </text>
+            <text x="10" y="130" font-size="10" fill="#0f766e">
+              Souders-Brown: v &lt; K·√((ρL-ρG)/ρG)
+            </text>
+          </svg>
+        </div>
+
+        <div class="legend">
+          <b>工艺含义</b>：反应器出口的"湿氢气 + 液滴"经侧入 → vane 撞击除粗液滴 → 气体上行经丝网除沫器除细液滴 → 干燥气体顶部出 → 收集的液体重力落入底部 pool → 液相出口。
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Degasser ===== -->
+    <div>
+      <div class="col-head degasser">B. Degasser（从液里脱出气泡）<br><span style="font-weight:400;font-size:12px;opacity:0.9;">Liquid de-gasser / De-aerator</span></div>
+      <div class="col-body degasser">
+        <div class="svg-wrap">
+          <svg viewBox="0 0 380 480" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#be185d"/>
+              </marker>
+              <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0369a1"/>
+              </marker>
+              <pattern id="liqB" patternUnits="userSpaceOnUse" width="10" height="10">
+                <path d="M0 5 Q 2.5 0 5 5 T 10 5" stroke="#be185d"
+                      stroke-width="1" fill="none"/>
+              </pattern>
+            </defs>
+
+            <!-- Vessel -->
+            <path d="M 80 60
+                     Q 80 30 130 30
+                     L 250 30
+                     Q 300 30 300 60
+                     L 300 420
+                     Q 300 450 250 450
+                     L 130 450
+                     Q 80 450 80 420 Z"
+                  fill="#fff" stroke="#0f3460" stroke-width="2.5"/>
+
+            <!-- Liquid pool: HIGH level (degasser) -->
+            <path d="M 82 130 L 298 130 L 298 448 Q 298 449 296 449 L 84 449
+                     Q 82 449 82 448 Z"
+                  fill="url(#liqB)" opacity="0.45"/>
+            <line x1="82" y1="130" x2="298" y2="130"
+                  stroke="#be185d" stroke-width="2"/>
+            <text x="245" y="125" font-size="10" fill="#be185d"
+                  font-style="italic">液位 NLL (高)</text>
+
+            <!-- Dip pipe (subsurface inlet) -->
+            <rect x="135" y="0" width="18" height="290" fill="#fff"
+                  stroke="#0f3460" stroke-width="2"/>
+            <line x1="144" y1="0" x2="144" y2="35" stroke="#be185d"
+                  stroke-width="3" marker-start="url(#arrB)"
+                  transform="rotate(180 144 17)"/>
+            <text x="144" y="14" text-anchor="middle" font-size="11"
+                  fill="#0f3460" font-weight="600">进口</text>
+            <text x="144" y="-4" text-anchor="middle" font-size="9"
+                  fill="#64748b" transform="translate(0 36)">气+液</text>
+
+            <!-- Dip pipe label -->
+            <text x="170" y="180" font-size="11" fill="#dc2626"
+                  font-weight="700">深管 dip pipe</text>
+            <text x="170" y="195" font-size="10" fill="#dc2626">
+              出口在液面下
+            </text>
+
+            <!-- Bubbles rising from dip pipe outlet -->
+            <circle cx="144" cy="260" r="4" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+            <circle cx="155" cy="240" r="3" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+            <circle cx="135" cy="220" r="3.5" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+            <circle cx="160" cy="195" r="2.5" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+            <circle cx="140" cy="170" r="3" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+            <circle cx="160" cy="145" r="2" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+            <circle cx="170" cy="180" r="2" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+            <circle cx="125" cy="155" r="2" fill="#fff" stroke="#0369a1" stroke-width="1.2"/>
+
+            <!-- Arrow showing bubbles up -->
+            <path d="M 144 285 Q 144 200 144 130" fill="none"
+                  stroke="#0369a1" stroke-width="1.5"
+                  stroke-dasharray="3,3" marker-end="url(#arrG)"/>
+            <text x="200" y="240" font-size="10" fill="#0369a1">
+              气泡上浮 bubbles ↑
+            </text>
+
+            <!-- Top gas outlet -->
+            <rect x="220" y="0" width="40" height="40" fill="#fff"
+                  stroke="#0f3460" stroke-width="2"/>
+            <line x1="240" y1="0" x2="240" y2="30" stroke="#0369a1"
+                  stroke-width="3" marker-start="url(#arrG)"
+                  transform="rotate(180 240 15)"/>
+            <text x="240" y="14" text-anchor="middle" font-size="11"
+                  fill="#0f3460" font-weight="600">脱出气体</text>
+            <text x="240" y="28" text-anchor="middle" font-size="10"
+                  fill="#64748b">released gas ↑</text>
+
+            <!-- Bottom liquid outlet -->
+            <rect x="170" y="450" width="40" height="30" fill="#fff"
+                  stroke="#0f3460" stroke-width="2"/>
+            <line x1="190" y1="450" x2="190" y2="480" stroke="#be185d"
+                  stroke-width="3" marker-end="url(#arrB)"/>
+            <text x="190" y="470" text-anchor="middle" font-size="11"
+                  fill="#0f3460" font-weight="600">脱气液体</text>
+            <text x="220" y="478" text-anchor="start" font-size="10"
+                  fill="#64748b">degassed liquid ↓</text>
+
+            <!-- Annotation: key sizing -->
+            <text x="10" y="385" font-size="10" fill="#be185d">
+              关键参数：
+            </text>
+            <text x="10" y="400" font-size="10" fill="#be185d">
+              气泡上升速度 (Stokes)
+            </text>
+            <text x="10" y="415" font-size="10" fill="#be185d">
+              v = (ρL-ρG)·g·d²/(18μL)
+            </text>
+            <text x="10" y="430" font-size="10" fill="#be185d">
+              液体停留时间 &gt; 上浮时间
+            </text>
+          </svg>
+        </div>
+
+        <div class="legend">
+          <b>工艺含义</b>：含气液体经深管深入到液面以下排出 → 气泡靠浮力慢慢上浮穿过液柱到达液面 → 释放的气从顶部出 → 脱气后的液体从底部出。<u>液柱深度</u>和<u>停留时间</u>是关键。
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======== 对比表 ======== -->
+<div class="panel">
+  <h2>🔍 五维对比 ｜ Five-dimension comparison</h2>
+  <table class="cmp">
+    <thead>
+      <tr>
+        <th style="width:18%;">维度 Dimension</th>
+        <th class="dem" style="width:41%;">Demister（从气除液）</th>
+        <th class="deg" style="width:41%;">Degasser（从液除气）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>进口位置<br>Inlet location</b></td>
+        <td class="dem">侧入，<b>液面以上</b>；常带 vane / vortex breaker 防涡流</td>
+        <td class="deg">顶入 <b>dip pipe</b>，<b>液面以下</b>；出口在液柱内部</td>
+      </tr>
+      <tr>
+        <td><b>液位高度<br>Liquid level</b></td>
+        <td class="dem">较低（容器 ~20–30%），留大空间给气相分离</td>
+        <td class="deg">较高（容器 ~60–80%），提供足够液柱让气泡上浮</td>
+      </tr>
+      <tr>
+        <td><b>主物理过程<br>Mechanism</b></td>
+        <td class="dem">液滴受重力 / 离心 / 拦截沉降，气速 &lt; 终端速度</td>
+        <td class="deg">气泡受浮力上升，停留时间 &gt; 上浮时间</td>
+      </tr>
+      <tr>
+        <td><b>核心公式<br>Sizing equation</b></td>
+        <td class="dem">
+          <b>Souders-Brown</b>：v<sub>max</sub> = K · √((ρ<sub>L</sub>−ρ<sub>G</sub>)/ρ<sub>G</sub>)<br>
+          K = 0.07–0.12 m/s（带丝网 0.107）<br>
+          → 内径 D = √(4·Q<sub>G</sub>/π/v<sub>max</sub>)
+        </td>
+        <td class="deg">
+          <b>Stokes</b>：v<sub>bubble</sub> = (ρ<sub>L</sub>−ρ<sub>G</sub>) g d² / (18 μ<sub>L</sub>)<br>
+          停留时间 τ = V<sub>liquid</sub>/Q<sub>L</sub><br>
+          τ 必须 &gt; H<sub>liquid</sub>/v<sub>bubble</sub>
+        </td>
+      </tr>
+      <tr>
+        <td><b>内构件<br>Internals</b></td>
+        <td class="dem">丝网除沫器 (mesh pad) / 折流板 / vane pack；
+          <code>K-factor</code> 选择取决于内构件</td>
+        <td class="deg">通常无；可加分布器 / 静态混合器辅助气泡破碎</td>
+      </tr>
+      <tr>
+        <td><b>典型应用<br>Typical use</b></td>
+        <td class="dem">
+          • 反应器顶部冷凝液收集<br>
+          • 压缩机入口 KO drum<br>
+          • <span class="ok">↑ 我们的工艺</span>
+        </td>
+        <td class="deg">
+          • 锅炉给水脱氧<br>
+          • CO₂ 汽提塔<br>
+          • 发酵罐脱泡
+        </td>
+      </tr>
+      <tr>
+        <td><b>SE01 当前状态<br>SE01 status</b></td>
+        <td class="dem"><span class="ok">✅ 计算依据用的是这种</span></td>
+        <td class="deg"><span class="bad">❌ PID 画的是这种（遗留错误）</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ======== 我们的结论 ======== -->
+<div class="panel">
+  <h2>🎯 SE01 应该用哪种？我们的结论</h2>
+
+  <div class="verdict">
+    <b>结论</b>：<u>SE01 应该是 Demister（A 方案）</u>。<br>
+    工艺逻辑：连续氢化 →反应器出口为"未消耗的 H₂ + 反应液混合"→ 进 SE01 后干气要走顶部 process vent，
+    液相走底部进 BT04。这是<b>典型的"从气里除液滴"</b>过程，<b>不是</b>"从液里除气"。
+    现有 PID 上的 dip-pipe 是聂博/Yongguang 早期版本的<b>遗留错误</b>，需要修正。
+  </div>
+
+  <table class="cmp">
+    <thead>
+      <tr>
+        <th style="width:25%;">行动 Action</th>
+        <th style="width:50%;">具体内容 Detail</th>
+        <th style="width:25%;">责任 Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>① 改 PID</b></td>
+        <td>SE01 进口由 dip pipe → 侧入 + vane / vortex breaker；液位下移到容器 ~25%；保留丝网除沫器在气相出口前</td>
+        <td>胡超群 提变更<br>Keith 出新版 PID</td>
+      </tr>
+      <tr>
+        <td><b>② 重新选型</b></td>
+        <td>按 Demister Souders-Brown 公式重新核算，<u>新数据</u>：液相 20 L/h、气相 ~0.2 Nm³/h（H₂ 反应后余量 + 20% 余量）；用<code>K = 0.107 m/s</code>（含丝网）；选丝网厚度 100–150 mm</td>
+        <td>胡超群 + 范双双</td>
+      </tr>
+      <tr>
+        <td><b>③ 数据单升版</b></td>
+        <td>更新设备数据单容积、内径、内构件清单；管嘴方位等 3D 模型联动后确定</td>
+        <td>范双双（CFCT）</td>
+      </tr>
+      <tr>
+        <td><b>④ 对外沟通</b></td>
+        <td>下次会议明确告诉 Keith："we agreed it's a demister, redesigning per Souders-Brown with corrected flows" — 可能 SE01 体积变小，对他布局是好消息</td>
+        <td>Peter / 李涛</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ======== 给 Keith 看的英文版概述 ======== -->
+<div class="panel">
+  <h2>🇬🇧 One-paragraph English explainer for Keith</h2>
+  <div style="background:#f1f5f9;padding:14px 16px;border-radius:6px;font-size:13px;line-height:1.7;">
+    "On SE01, our internal review confirms that it should function as a
+    <b>demister / vapour–liquid knock-out</b> — separating residual reaction
+    liquid carried in the hydrogen-rich vapour stream — not a degasser.
+    The current PID showing a sub-surface dip-pipe is a legacy
+    inconsistency from an earlier rev. We are realigning the PID to a
+    <b>side inlet with a vortex breaker</b> and resizing the vessel via the
+    standard <b>Souders-Brown</b> approach using the corrected flows
+    (liquid 20 L/h, post-reaction gas ≈ 0.2 Nm³/h). We expect the
+    resulting vessel to be <b>smaller</b> than the current sizing, which
+    should help your skid layout. We will issue the updated equipment
+    datasheet and a marked-up PID extract for your review by next week."
+  </div>
+</div>
+
+</div>
+</body></html>
