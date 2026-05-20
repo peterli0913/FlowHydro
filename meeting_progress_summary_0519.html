@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Progress Update — 0512 → 0519 (Sandwich Continuous Hydrogenation)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+         margin: 0; color: #1f2937; background: #f5f7fa; padding: 24px; line-height: 1.55; }
+  .container { max-width: 1280px; margin: 0 auto; }
+
+  .header { background: linear-gradient(120deg, #0f3460, #16213e); color: #fff;
+            padding: 22px 28px; border-radius: 12px; margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(15,52,96,0.15); }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header .sub { font-size: 13px; color: #cbd5e1; margin-top: 6px; }
+  .kpis { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+  .kpi { background: rgba(255,255,255,0.10); padding: 10px 14px; border-radius: 8px;
+         min-width: 130px; flex: 1; max-width: 200px; }
+  .kpi .v { font-size: 22px; font-weight: 700; }
+  .kpi .l { font-size: 11px; color: #cbd5e1; margin-top: 3px; }
+
+  .nav { background: #fff; padding: 10px 16px; border-radius: 8px; margin-bottom: 14px;
+         font-size: 12px; box-shadow: 0 1px 3px rgba(15,52,96,0.06); }
+  .nav a { color: #0369a1; text-decoration: none; margin-right: 14px; }
+  .nav a:hover { text-decoration: underline; }
+
+  .group { background: #fff; border-radius: 12px; margin-bottom: 14px;
+           box-shadow: 0 1px 3px rgba(15,52,96,0.06); overflow: hidden; }
+  .group-head { padding: 12px 18px; border-bottom: 1px solid #e2e8f0;
+                background: #f8fafc; display: flex; align-items: center;
+                gap: 12px; }
+  .group-head h2 { margin: 0; font-size: 16px; color: #0f3460; }
+  .group-head .gh-en { color: #94a3b8; font-weight: 400;
+                       font-size: 12px; margin-left: auto; }
+  .group-head .badge { background: #e0f2fe; color: #075985; padding: 2px 10px;
+                       border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .group-head .badge.win  { background: #dcfce7; color: #166534; }
+  .group-head .badge.new  { background: #dbeafe; color: #1d4ed8; }
+  .group-head .badge.open { background: #fef3c7; color: #92400e; }
+  .group-head .badge.warn { background: #fee2e2; color: #b91c1c; }
+
+  .card { padding: 12px 18px; border-top: 1px solid #f1f5f9; display: grid;
+          grid-template-columns: 1fr 1fr; gap: 16px; align-items: start;
+          position: relative; }
+  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+                  width: 4px; }
+  .card.win::before  { background: #16a34a; }
+  .card.new::before  { background: #2563eb; }
+  .card.open::before { background: #d97706; }
+  .card.warn::before { background: #dc2626; }
+
+  .card .col-zh, .card .col-en { font-size: 13px; line-height: 1.6; }
+  .card .topic { font-weight: 600; color: #0f3460; font-size: 13.5px;
+                  margin-bottom: 5px; display: flex; align-items: center; gap: 6px;
+                  flex-wrap: wrap; }
+  .card .col-en .topic { color: #475569; }
+  .card .meta { font-size: 11px; color: #64748b; margin-bottom: 4px; }
+  .card .meta b { color: #0f766e; }
+  .card .body  { font-size: 12.5px; }
+  .card .body .h { display: inline-block; font-size: 10.5px;
+                    font-weight: 700; color: #d97706; margin-right: 6px;
+                    text-transform: uppercase; letter-spacing: 0.5px; }
+  .card .body .h.ok { color: #16a34a; }
+  .card .body .h.q  { color: #be185d; }
+
+  .tag { display: inline-block; font-size: 10px; padding: 1px 7px;
+          border-radius: 10px; background: #e0f2fe; color: #075985;
+          font-weight: 600; vertical-align: middle; }
+  .tag.new   { background: #fef3c7; color: #b45309; }
+  .tag.win   { background: #dcfce7; color: #166534; }
+  .tag.open  { background: #fed7aa; color: #9a3412; }
+  .tag.warn  { background: #fee2e2; color: #b91c1c; }
+
+  .heads-up { background: #fef2f2; border: 1.5px solid #fecaca;
+              border-radius: 8px; padding: 14px 18px; margin: 4px 0 10px 0; }
+  .heads-up h3 { margin: 0 0 6px 0; color: #b91c1c; font-size: 14px; }
+  .heads-up .body { font-size: 13px; color: #7f1d1d; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>📊 Sandwich 连续氢化项目 — 进展总结 (2026/05/19)</h1>
+  <div class="sub">
+    对比 <code>Meeting Minutes Tracking Record 0512.xlsx</code> ⇄
+    <code>Meeting Minutes Tracking Record 0519.xlsx</code> ·
+    Compared progress between the two minutes tracking files (one-week delta)
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="v" style="color:#86efac;">8</div><div class="l">✅ 新关闭项<br>Newly closed</div></div>
+    <div class="kpi"><div class="v" style="color:#93c5fd;">4</div><div class="l">➕ 新增议题<br>New topics added</div></div>
+    <div class="kpi"><div class="v" style="color:#fcd34d;">8</div><div class="l">🟠 仍开放<br>Still open</div></div>
+    <div class="kpi"><div class="v" style="color:#fca5a5;">1</div><div class="l">⚠️ 状态倒退<br>Regression</div></div>
+    <div class="kpi" style="max-width:280px;"><div class="v" style="font-size:13px;color:#fff;">PID / URS / PFD 三大文件均已更新发版</div><div class="l">SW 05/20 文件发版总动作</div></div>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="#a">A. ✅ 新关闭项</a>
+  <a href="#b">B. ➕ 新增议题</a>
+  <a href="#c">C. 🟠 仍开放</a>
+  <a href="#d">D. ⚠️ 注意 · Keith 5/18 邮件</a>
+</div>
+
+<!-- ============ A. Newly closed ============ -->
+<div class="group" id="a">
+  <div class="group-head">
+    <span style="font-size:22px;">✅</span>
+    <h2>A. 自 05/12 以来新关闭的议题</h2>
+    <span class="badge win">8 closed</span>
+    <span class="gh-en">A. Items newly closed since 05/12</span>
+  </div>
+
+  <!-- A-1 SE01 separator -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">
+        <span class="tag win">★ Top win</span>
+        A-1. SE01 气液分离器 — 设计模式分歧已澄清并重算
+      </div>
+      <div class="meta">原议题 R22 · 提出 05/12 · 关闭 <b>05/20</b> · 负责 胡超群</div>
+      <div class="body">
+        与<b>聂博沟通确认</b>：
+        <ul style="margin:4px 0 4px 18px;padding:0;">
+          <li>"小试"配置确实是<b>底部插入式（dip pipe）</b></li>
+          <li>"生产"版本一直是<b>侧入式（demister 配置）</b></li>
+          <li>之前 PID 上的 dip-pipe 是早期遗留错误</li>
+        </ul>
+        胡超群按 5/12 商定的新流量重算了分离器：<br>
+        <code>气相 1.0 → 0.2 Nm³/h</code> ｜ <code>液相 40 → 20 L/h</code>
+        <br>
+        ✅ 这正是我们 5/13 SE01 demister 分析预判的方向。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">
+        <span class="tag win">★ Top win</span>
+        A-1. SE01 separator — design-mode mismatch resolved &amp; resized
+      </div>
+      <div class="meta">Item R22 · Raised 05/12 · Closed <b>05/20</b> · Owner: Chaoqun Hu</div>
+      <div class="body">
+        Internal alignment with Dr. Nie confirms:
+        <ul style="margin:4px 0 4px 18px;padding:0;">
+          <li>The small-scale test indeed used a <b>bottom dip-pipe</b> config</li>
+          <li>The production version was always intended as <b>side-inlet (demister)</b></li>
+          <li>The dip-pipe shown on the PID is a legacy carry-over error</li>
+        </ul>
+        Hu re-sized the separator with the updated flows:
+        <br>
+        <code>gas 1.0 → 0.2 Nm³/h</code> ｜ <code>liquid 40 → 20 L/h</code>
+        <br>
+        ✅ This validates the demister direction we proposed on 05/13.
+      </div>
+    </div>
+  </div>
+
+  <!-- A-2 PID updates -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">
+        <span class="tag win">3-合-1 大批关闭</span>
+        A-2. PID 三处修订 — SW 已发出更新版
+      </div>
+      <div class="meta">原议题 R15 / R16 / R17 (04/28) · 关闭 <b>05/20</b> · 负责 Keith</div>
+      <div class="body">
+        04/30 会议达成的三项 PID 修订意见，05/20 由 SW 一并发出更新版 PID：
+        <ol style="margin:4px 0 4px 18px;padding:0;">
+          <li><b>BT01（常压罐）</b> — 取消尾气管线手阀 + 取消安全阀</li>
+          <li><b>CR01 / CR02 / CR03</b> — 压差报警与联锁本就在 PLC 中保留，Keith 精修 PID 上的表达，避免审查时被误读为"缺失"</li>
+          <li><b>PRV030</b> — 保留，不删除（FCV004 无法把 10–60 bar 减到常压，需要 PRV 兜底）</li>
+        </ol>
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">
+        <span class="tag win">3-in-1 close-out</span>
+        A-2. Three PID edits — SW issued the updated drawings
+      </div>
+      <div class="meta">Items R15 / R16 / R17 (04/28) · Closed <b>05/20</b> · Owner: Keith</div>
+      <div class="body">
+        The three PID edits agreed at the 04/30 meeting have all been
+        delivered in the SW updated PID issued on 05/20:
+        <ol style="margin:4px 0 4px 18px;padding:0;">
+          <li><b>BT01 (atmospheric tank)</b> — remove tail-gas hand valve + remove safety valve</li>
+          <li><b>CR01 / CR02 / CR03</b> — differential-pressure alarms &amp; interlocks remain in the PLC; Keith refined the PID representation so they are not read as "missing" during review</li>
+          <li><b>PRV030</b> — retained (FCV004 alone cannot drop 10–60 bar to atmospheric; PRV needed)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- A-3 URS/QTM -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">A-3. URS / QTM 文档审查关闭</div>
+      <div class="meta">原议题 R11 (04/21) · 关闭 04/30 → 反映到 05/19 跟踪 · 负责 ALL</div>
+      <div class="body">
+        04/30 会议澄清：URS 7.12 冷凝器/分离器温控范围 <b>−20~130 °C 应改为 10~30 °C</b>，
+        Keith 已修订 URS 对应章节。所有专业审查的开放点也一并清零。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">A-3. URS / QTM document review closed</div>
+      <div class="meta">Item R11 (04/21) · Closed 04/30, reflected in 05/19 tracker · Owner: All</div>
+      <div class="body">
+        Clarified on 04/30: URS 7.12 (condenser / separator temperature
+        range) <b>changed from −20–130 °C to 10–30 °C</b>; Keith
+        revised the corresponding section. All disciplines' open review
+        points are cleared.
+      </div>
+    </div>
+  </div>
+
+  <!-- A-4 MP01/02 flow -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">A-4. MP01 / MP02 流量 — PFD 已发版</div>
+      <div class="meta">原议题 R13 (04/21) · 关闭 <b>05/20</b> · 负责 Chaoqun Hu</div>
+      <div class="body">
+        04/30 会议确认 MP01 / MP02 流量需求 <b>2 – 20 L/h</b>（不是原来的 4 – 40 L/h），Keith 修订 PFD，05/20 SW 已发出更新版 PFD。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">A-4. MP01 / MP02 flow rate — PFD reissued</div>
+      <div class="meta">Item R13 (04/21) · Closed <b>05/20</b> · Owner: Chaoqun Hu</div>
+      <div class="body">
+        04/30 confirmed MP01 / MP02 flow requirement is <b>2–20 L/h</b>
+        (not 4–40 L/h). Keith revised the PFD; SW issued the
+        updated PFD on 05/20.
+      </div>
+    </div>
+  </div>
+
+  <!-- A-5 3D model -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">A-5. CFCT 3D 模型 + 反应器图纸已发 SW</div>
+      <div class="meta">原议题 R19 (04/30) · 关闭 05/12 · 负责 赵子亮 / 范双双</div>
+      <div class="body">
+        05/06 CFCT 把最新 STP 格式模型 + 反应器 PDF 图纸邮件发出。
+        05/12 SW 反馈确认 <b>主反应器催化剂床高度不做调整</b>（保持 ~975 mm）。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">A-5. CFCT 3D model + reactor drawings delivered</div>
+      <div class="meta">Item R19 (04/30) · Closed 05/12 · Owner: Zhao Ziliang / Fan Shuangshuang</div>
+      <div class="body">
+        Latest STP-format model and reactor PDF drawings emailed
+        from CFCT to SW on 05/06.
+        05/12 SW confirmed the <b>main reactor catalyst bed height
+        will NOT be adjusted</b> (stays ~975 mm).
+      </div>
+    </div>
+  </div>
+
+  <!-- A-6 CE-LVD -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">A-6. CE 认证范围澄清 — 不需要单独 LVD</div>
+      <div class="meta">原议题 R21 (05/06) · 关闭 05/12 · 负责 赵子亮</div>
+      <div class="body">
+        整撬走 <b>CE-MD（机械指令）</b>认证即可，不需要单独再做 <b>CE-LVD（低压电气指令）</b>。
+        因为 MD 是综合性指令，已涵盖电气风险；同一产品也不能既算机械又算电气。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">A-6. CE certification scope — LVD not required</div>
+      <div class="meta">Item R21 (05/06) · Closed 05/12 · Owner: Zhao Ziliang</div>
+      <div class="body">
+        The whole skid undergoes <b>CE-MD (Machinery Directive)</b>
+        certification only. A separate <b>CE-LVD (Low-Voltage
+        Directive)</b> is not required because MD is comprehensive and
+        already covers electrical risks; one product cannot be both a
+        machine and an electrical-only device.
+      </div>
+    </div>
+  </div>
+
+  <!-- A-7 Pilot equipment list -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">A-7. Pilot Plant Equipment List — 已定位</div>
+      <div class="meta">原议题 R18 (04/28) · 关闭 04/30 · 负责 Chaoqun Hu</div>
+      <div class="body">
+        04/22 邮件中"Pilot Plant Equipment List v0.1"未找到本项目设备的问题，04/30 已找到。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">A-7. Pilot Plant Equipment List — located</div>
+      <div class="meta">Item R18 (04/28) · Closed 04/30 · Owner: Chaoqun Hu</div>
+      <div class="body">
+        Earlier issue of "project equipment not found in Pilot Plant
+        Equipment List v0.1 emailed on 04/22" — located on 04/30.
+      </div>
+    </div>
+  </div>
+
+  <!-- A-8 Safety valve solvent decision -->
+  <div class="card win">
+    <div class="col-zh">
+      <div class="topic">
+        <span class="tag win">关键决策</span>
+        A-8. 安全阀计算溶剂基准锁定 — <b>乙酸乙酯</b>
+      </div>
+      <div class="meta">原议题 R2 (03/10) · 部分进展 04/30 · 负责 Chaoqun Hu / Keith</div>
+      <div class="body">
+        04/30 会议确定：
+        <ul style="margin:4px 0 4px 18px;padding:0;">
+          <li>在 Keith 提供的 Relief Design Study Template 中补充各种泄放工况</li>
+          <li>IEPE 的安全阀数据单作为附件</li>
+          <li><b>溶剂选用乙酸乙酯（ethyl acetate）</b>（研发原先提供的是乙酸异丙酯，Keith 建议用乙酸乙酯）</li>
+        </ul>
+        <span class="h q">注</span>这条<b>整体计算还未关闭</b>（状态仍 NO），见 C 区；
+        但溶剂基准已锁定 — 这对回应 Keith 5/18 邮件关于"降级基准溶剂"的提问<b>极其关键</b>，见 D 区。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">
+        <span class="tag win">Key decision</span>
+        A-8. PSV calc solvent basis locked — <b>ethyl acetate</b>
+      </div>
+      <div class="meta">Item R2 (03/10) · Partial progress 04/30 · Owner: Chaoqun Hu / Keith</div>
+      <div class="body">
+        At the 04/30 meeting:
+        <ul style="margin:4px 0 4px 18px;padding:0;">
+          <li>All relief scenarios will be supplemented in Keith's Relief Design Study Template</li>
+          <li>IEPE safety valve datasheet attached as appendix</li>
+          <li><b>Solvent confirmed as ethyl acetate</b> (R&amp;D had originally provided isopropyl acetate; Keith recommended ethyl acetate)</li>
+        </ul>
+        <span class="h q">Note</span> the overall PSV calc remains
+        OPEN (see C below), but the solvent basis is locked — this is
+        <b>critical</b> for responding to Keith's 05/18 email about the
+        derating-basis solvent (see D).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ B. New items added ============ -->
+<div class="group" id="b">
+  <div class="group-head">
+    <span style="font-size:22px;">➕</span>
+    <h2>B. 自 05/12 以来新增的议题</h2>
+    <span class="badge new">4 added</span>
+    <span class="gh-en">B. New topics added since 05/12</span>
+  </div>
+
+  <div class="card new">
+    <div class="col-zh">
+      <div class="topic"><span class="tag win">已闭环</span> B-1. SE01 设计基准（05/12 提出）</div>
+      <div class="body">同 A-1；从提出到关闭只花了 8 天，非常高效。</div>
+    </div>
+    <div class="col-en">
+      <div class="topic"><span class="tag win">CLOSED</span> B-1. SE01 design basis (raised 05/12)</div>
+      <div class="body">Same as A-1; raised to closed within 8 days — very efficient.</div>
+    </div>
+  </div>
+
+  <div class="card new">
+    <div class="col-zh">
+      <div class="topic"><span class="tag win">已闭环</span> B-2. CE-LVD 必要性（05/06 SW 提出）</div>
+      <div class="body">同 A-6。</div>
+    </div>
+    <div class="col-en">
+      <div class="topic"><span class="tag win">CLOSED</span> B-2. CE-LVD necessity (raised 05/06 by SW)</div>
+      <div class="body">Same as A-6.</div>
+    </div>
+  </div>
+
+  <div class="card new">
+    <div class="col-zh">
+      <div class="topic"><span class="tag win">已闭环</span> B-3. 3D 模型 STP 交付（04/30 提出）</div>
+      <div class="body">同 A-5。</div>
+    </div>
+    <div class="col-en">
+      <div class="topic"><span class="tag win">CLOSED</span> B-3. 3D STP model delivery (raised 04/30)</div>
+      <div class="body">Same as A-5.</div>
+    </div>
+  </div>
+
+  <div class="card new">
+    <div class="col-zh">
+      <div class="topic"><span class="tag open">开放</span> B-4. 爆炸危险区域划分（HAC）— 04/30 提出</div>
+      <div class="meta">负责 ALL · 状态 NO</div>
+      <div class="body">
+        05/09 各专业讨论后达成<b>共识</b>：HAC 图必须按 SW 当地规范绘制，
+        <b>建议由 SW 主导完成，CN 团队配合提供所需资料条件</b>。
+        <span class="h q">下一步</span>形成正式邮件发 Keith，请 SW 启动出图工作。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic"><span class="tag open">OPEN</span> B-4. Hazardous Area Classification — raised 04/30</div>
+      <div class="meta">Owner: ALL · Status: NO</div>
+      <div class="body">
+        After 05/09 cross-discipline discussion, <b>consensus reached</b>:
+        the HAC drawing must be produced per SW local code; <b>SW to
+        lead, CN team to support with required documentation</b>.
+        <span class="h q">Next</span> formalise this in an email to Keith
+        and ask SW to start the drawing.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ C. Still open ============ -->
+<div class="group" id="c">
+  <div class="group-head">
+    <span style="font-size:22px;">🟠</span>
+    <h2>C. 仍然开放的议题（下次会议优先讨论）</h2>
+    <span class="badge open">8 open</span>
+    <span class="gh-en">C. Still-open items (priority for next session)</span>
+  </div>
+
+  <!-- C-1 PSV calc (biggest) -->
+  <div class="card warn">
+    <div class="col-zh">
+      <div class="topic"><span class="tag warn">最高优先</span> C-1. 安全阀整体计算（R2，03/10 起）</div>
+      <div class="meta">负责 Chaoqun Hu / Keith · 仍 NO</div>
+      <div class="body">
+        本项目最老、最大的开放项。已锁定的元素：模板（Keith）、SDS（研发）、溶剂（乙酸乙酯）。
+        <br>
+        <b>未关闭原因</b>：Keith 在 05/12 会议上对单相 API 520 提出方法论质疑（要 DIERS Omega 两相），
+        以及 05/18 邮件追加<b>超临界流体泄放</b>和<b>容器高温短时降级</b>两个深技术问题（详见 D 区）。
+        <br>
+        <b>当前动作</b>：Alex 介入对齐方法论，胡超群准备完整 RDS（含全部公式、假设、未算工况理由）。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic"><span class="tag warn">Highest priority</span> C-1. Overall PSV calculation (R2, since 03/10)</div>
+      <div class="meta">Owner: Chaoqun Hu / Keith · Status: NO</div>
+      <div class="body">
+        Oldest and largest open item. Inputs locked: template (Keith),
+        SDS (R&amp;D), solvent (ethyl acetate).
+        <br>
+        <b>Why still open</b>: Keith challenged single-phase API 520 on
+        05/12 (asks for DIERS Omega two-phase), and added two further
+        deep questions on 05/18 — <b>supercritical-fluid relief</b> and
+        <b>vessel short-duration high-temperature derating</b> (see D).
+        <br>
+        <b>Current action</b>: Alex Lin engaged for methodology
+        alignment; Hu rebuilding a full RDS (with all formulas,
+        assumptions and rationales for un-calculated scenarios).
+      </div>
+    </div>
+  </div>
+
+  <!-- C-2 URS revision -->
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-2. URS 升版（R6，04/14 起）</div>
+      <div class="meta">负责 Keith · NO</div>
+      <div class="body">
+        URS 初版已完成；正式发版前需 Keith 评审。
+        <br>
+        <b>下次会问</b>：URS 7.12 温控范围已修订（10-30 °C），整版能否在本周发出？
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">C-2. URS revision (R6, since 04/14)</div>
+      <div class="meta">Owner: Keith · NO</div>
+      <div class="body">
+        Initial URS draft completed; Keith's review pending.
+        <br>
+        <b>Ask</b>: URS 7.12 temperature range has been revised
+        (10-30 °C); can the full package be issued this week?
+      </div>
+    </div>
+  </div>
+
+  <!-- C-3 Bronkhorst -->
+  <div class="card warn">
+    <div class="col-zh">
+      <div class="topic">
+        <span class="tag warn">状态倒退</span>
+        C-3. Bronkhorst PRV 选型（R8，04/14 起）— 状态从 YES 退回 NO
+      </div>
+      <div class="meta">负责 Yu Gao / Chaoqun Hu</div>
+      <div class="body">
+        0512 版本曾标 YES（因为有专门的 R15 资源做了 4 点澄清）。
+        <b>0519 版本删掉了 R15 综合行</b>，R8 又退回 NO。
+        <span class="h q">数据健康</span> 这是<b>跟踪表整理时的形式变化</b>，
+        实际技术状态没有倒退（两段式减压方案仍然成立）。
+        建议下次会议 confirm 一下，将 R8 直接关闭。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">
+        <span class="tag warn">Regression</span>
+        C-3. Bronkhorst PRV selection (R8, since 04/14) — status reverted YES → NO
+      </div>
+      <div class="meta">Owner: Yu Gao / Chaoqun Hu</div>
+      <div class="body">
+        Marked YES in the 0512 file (a dedicated R15 row consolidated the
+        four-point resolution). The <b>0519 file removed that R15 row</b>,
+        so R8 reverted to NO.
+        <span class="h q">Tracker hygiene</span> This is a
+        <b>bookkeeping artefact</b>, not a real reversal — the
+        two-stage reduction scheme still stands. Recommend confirming
+        next session and closing R8 directly.
+      </div>
+    </div>
+  </div>
+
+  <!-- C-4 Burkert -->
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-4. Burkert 电磁阀 5 bar 最小开启压差（R7，04/14 起）</div>
+      <div class="meta">负责 Yu Gao / Keith · NO</div>
+      <div class="body">
+        12 周货期 + 5 bar 最小开启限制 + 常闭故障关型已确认。
+        <br>
+        <b>下次会问</b>：高宇上次提的替代型号 <b>Burkert 6080</b>（无 5 bar 限制，零压可开）测试 / 货期情况；
+        以及 Keith 5/12 建议的 <b>Hambonia</b> 国内代理商邮件回复有无进展。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">C-4. Burkert solenoid 5 bar min opening Δp (R7, since 04/14)</div>
+      <div class="meta">Owner: Yu Gao / Keith · NO</div>
+      <div class="body">
+        12-week lead time + 5 bar min Δp + fail-closed normally-closed
+        type confirmed.
+        <br>
+        <b>Ask</b>: status of the alternative <b>Burkert 6080</b> Yu Gao
+        proposed (no 5 bar minimum, opens from zero pressure); also
+        whether the <b>Hambonia</b> agent in Shanghai responded.
+      </div>
+    </div>
+  </div>
+
+  <!-- C-5 SW/CIMT timeline -->
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-5. SW &amp; CIMT 责任部门时间进度补充（R10，04/21 起）</div>
+      <div class="meta">负责 Keith / Dezhi Meng · NO · 无 progress 更新</div>
+      <div class="body">
+        在 <code>0416-Sandwich Continuous Hydrogen Timeline</code> 中补充 SW 和 CIMT 各项时间节点。
+        <br>
+        <b>建议</b>：直接在我们最新版 timeline (<code>0509-...</code>) 上让 Keith 和孟德志填，避免基线脱节。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">C-5. Timeline rows for SW &amp; CIMT (R10, since 04/21)</div>
+      <div class="meta">Owner: Keith / Dezhi Meng · NO · No progress note</div>
+      <div class="body">
+        Need to add SW and CIMT row schedules in
+        <code>0416-Sandwich Continuous Hydrogen Timeline</code>.
+        <br>
+        <b>Suggest</b> using our latest timeline file
+        (<code>0509-...</code>) to avoid baseline drift.
+      </div>
+    </div>
+  </div>
+
+  <!-- C-6 Instrument datasheet -->
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-6. 仪表数据单（R12，04/21 起）</div>
+      <div class="meta">负责 Chaoqun Hu · NO</div>
+      <div class="body">
+        设备数据单已更新；<b>仪表数据单仍未完成</b>。
+        <br>
+        <b>下次会问</b>：本周能否出 update 版？SE01 重算后参数变化需要同步到仪表 schedule。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">C-6. Instrument datasheet (R12, since 04/21)</div>
+      <div class="meta">Owner: Chaoqun Hu · NO</div>
+      <div class="body">
+        Equipment datasheet updated; <b>instrument datasheet still pending</b>.
+        <br>
+        <b>Ask</b>: can an update be issued this week? SE01 resizing
+        introduces changes that need to be reflected in the instrument
+        schedule.
+      </div>
+    </div>
+  </div>
+
+  <!-- C-7 Cable holes -->
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-7. 穿墙电缆预留孔（R14，04/21 起）</div>
+      <div class="meta">负责 Dezhi Meng · NO</div>
+      <div class="body">
+        当前预留 14 孔；CIMT 设计需要 18-20 孔，<b>可优化缩减至 14，待确认</b>；
+        且要确认每孔能否容纳 32 芯及以上的电缆。
+        <br>
+        <b>下次会问</b>：孟德智是否已完成最终核算？SW 是否可以扩孔或调整 R23 模块布置？
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">C-7. Wall-penetration cable holes (R14, since 04/21)</div>
+      <div class="meta">Owner: Dezhi Meng · NO</div>
+      <div class="body">
+        14 reserved holes on-site; CIMT current design needs 18-20,
+        <b>can be optimised to 14, pending confirmation</b>; also need
+        to confirm if each hole accommodates ≥ 32-core cables.
+        <br>
+        <b>Ask</b>: has Meng completed the final count? Can SW add more
+        penetrations or adjust the R23 module layout?
+      </div>
+    </div>
+  </div>
+
+  <!-- C-8 HAC -->
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-8. 爆炸危险区域划分 HAC（R20，04/30 起）</div>
+      <div class="meta">负责 ALL · NO</div>
+      <div class="body">
+        共识：SW 主导出图，CN 配合提供资料。
+        <br>
+        <b>下次会问</b>：Keith 一侧能否给出 HAC 图的目标时间节点？我们 3D 模型 5 月底冻结，希望 6 月上旬启动正式 HAC 划区。
+      </div>
+    </div>
+    <div class="col-en">
+      <div class="topic">C-8. Hazardous Area Classification (R20, since 04/30)</div>
+      <div class="meta">Owner: ALL · NO</div>
+      <div class="body">
+        Consensus: SW leads the drawing, CN supports with data.
+        <br>
+        <b>Ask</b>: target date for issuing the HAC drawing from your
+        side? Our 3D model freezes end-of-May; we'd like formal HAC
+        zoning to kick off in early June.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ D. Heads-up about Keith's 5/18 email ============ -->
+<div class="group" id="d">
+  <div class="group-head">
+    <span style="font-size:22px;">⚠️</span>
+    <h2>D. 注意：Keith 05/18 邮件提出的深技术问题（未进入跟踪表）</h2>
+    <span class="badge warn">Pending</span>
+    <span class="gh-en">D. Heads-up: Keith's 05/18 email (not yet in tracker)</span>
+  </div>
+
+  <div class="heads-up">
+    <h3>不在 0519 跟踪表里，但下次会议必须谈</h3>
+    <div class="body">
+      Keith 05/18 邮件追加了 <b>两个安全阀相关的深技术问题</b>：
+      <ol style="margin:6px 0 6px 22px;padding:0;">
+        <li><b>超临界流体泄放</b>（PSV022 在 80-88 barg 下，温度若超过乙酸乙酯的 Tc = 250 °C 则进入超临界态，单相 API 520 计算可能偏小）</li>
+        <li><b>容器机械设计的高温短时降级</b>（火灾工况短时偏离到 &gt; 250 °C 时，反应器、管线设计的 derating factor 怎么定？是否用 MTBE 还是乙酸乙酯作为降级基准？）</li>
+      </ol>
+      <b>好消息</b>：A-8 已经把溶剂基准锁定为<b>乙酸乙酯（Tc = 250 °C，比 MTBE 高 26 °C）</b>，这能直接回应 Keith 关于 "MTBE 是否是最高可预见温度" 的疑问。我们应该把这个对齐结果作为 5/18 邮件回复的核心论据之一。
+    </div>
+  </div>
+</div>
+
+</div>
+</body></html>
