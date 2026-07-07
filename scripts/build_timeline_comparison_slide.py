@@ -167,7 +167,7 @@ def build_chart(out_png="timeline_compare.png"):
     from matplotlib.patches import Patch
     handles = [
         Patch(facecolor=CHART_OLD_FILL, edgecolor=CHART_OLD_EDGE,
-              label="原计划（2026-01）"),
+              label="原计划（2025-08）"),
         Patch(facecolor=CHART_NEW_FILL, edgecolor=CHART_NEW_EDGE,
               label="当前计划（2026-07）"),
     ]
