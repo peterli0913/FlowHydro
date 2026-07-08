@@ -51,33 +51,30 @@ CHART_OLD_EDGE = "#7A89A8"
 CHART_NEW_FILL = "#FF7E3D"   # brand orange for the current plan
 CHART_NEW_EDGE = "#C9531E"
 
-# ---------- comparison data (derived from 0114 vs 0701 bar extraction) ------
+# ---------- comparison data (derived from 20250919 vs 0701 bar extraction) --
 # Each row is (phase_label, original(start,end), current(start,end)).
 PHASES = [
     ("设计对齐 · 三方文件包冻结",
-     (date(2025, 8, 15), date(2026, 2, 28)),
+     (date(2025, 8, 15), date(2025, 11, 30)),
      (date(2025, 8, 15), date(2026, 7, 31))),
     ("长周期设备采购 · PO 下达",
-     (date(2026, 3, 1),  date(2026, 7, 31)),
-     (date(2026, 6, 15), date(2026, 12, 15))),
-    ("撬块制造与组装",
-     (date(2026, 7, 15), date(2026, 9, 15)),
-     (date(2026, 11, 15), date(2027, 1, 15))),
-    ("FAT 出厂验收",
-     (date(2026, 9, 1),  date(2026, 9, 30)),
-     (date(2027, 1, 15), date(2027, 2, 15))),
+     (date(2025, 11, 15), date(2026, 3, 31)),
+     (date(2026, 6, 15),  date(2026, 12, 15))),
+    ("撬块制造 · 组装 · FAT",
+     (date(2026, 3, 15), date(2026, 4, 30)),
+     (date(2026, 11, 15), date(2027, 2, 15))),
     ("CE 认证",
-     (date(2026, 9, 1),  date(2026, 11, 30)),
+     (date(2026, 4, 15), date(2026, 6, 15)),
      (date(2026, 12, 1), date(2027, 3, 15))),
     ("出口运输 · 到英方现场",
-     (date(2026, 12, 1), date(2027, 2, 28)),
+     (date(2026, 6, 15), date(2026, 9, 30)),
      (date(2027, 3, 15), date(2027, 6, 30))),
     ("现场安装 · MEIP",
-     (date(2027, 3, 1),  date(2027, 4, 30)),
+     (date(2026, 9, 15), date(2026, 11, 30)),
      (date(2027, 6, 15), date(2027, 8, 31))),
     ("DQ / IQ / OQ · 调试开车",
-     (date(2027, 5, 1),  date(2027, 6, 30)),
-     (date(2027, 8, 15), date(2027, 9, 30))),
+     (date(2026, 11, 15), date(2026, 12, 31)),
+     (date(2027, 8, 15),  date(2027, 9, 30))),
 ]
 
 
@@ -126,7 +123,7 @@ def build_chart(out_png="timeline_compare.png"):
     ax.tick_params(axis="y", length=0)
 
     ax.set_xlim(mdates.date2num(date(2025, 7, 1)),
-                mdates.date2num(date(2027, 12, 15)))
+                mdates.date2num(date(2027, 12, 31)))
     ax.set_ylim(-0.6, n + 0.35)
 
     # x-axis: quarterly ticks
@@ -159,7 +156,7 @@ def build_chart(out_png="timeline_compare.png"):
     mid = mdates.date2num(orig_startup) + \
           (mdates.date2num(curr_startup) - mdates.date2num(orig_startup)) / 2
     ax.text(mid, y_arrow + 0.06,
-            "整体开车目标  2027-06  →  2027-09  (+3 个月)",
+            "整体开车目标  2026-12  →  2027-09  (+9 个月)",
             ha="center", va="bottom", fontsize=9,
             color=CHART_NEW_EDGE, fontweight="bold")
 
@@ -167,7 +164,7 @@ def build_chart(out_png="timeline_compare.png"):
     from matplotlib.patches import Patch
     handles = [
         Patch(facecolor=CHART_OLD_FILL, edgecolor=CHART_OLD_EDGE,
-              label="原计划（2025-08）"),
+              label="初版计划（2025-09 立项版）"),
         Patch(facecolor=CHART_NEW_FILL, edgecolor=CHART_NEW_EDGE,
               label="当前计划（2026-07）"),
     ]
@@ -268,27 +265,27 @@ def _add_header(slide, title):
 
 
 BULLETS = [
-    ("① 既有厂房升级改造 · 空间与消防受限",
-     "项目为既有中试厂房改造，实际可用空间受既有设备、双方防爆与消防规范的多重约束；中英两国在 HAC 分区、"
-     "撤离通道、通风等规范细节存在差异。撬块 layout 需在有限空间内同时兼顾 URS 性能、成本与合规，"
-     "经过多轮反复；Buffer Tank 等关键设备位置多次调整，触发 HAZOP 部分节点重做（中英双方共同挑战）。"),
-    ("② 深度技术议题 · 中英标准细节差异",
+    ("① 业务需求扩展 · 通用型反应器兼顾双工况",
+     "英方希望撬块同时覆盖高压与低压两大类加氢工艺（以 129361 项目为蓝本），"
+     "反应器与安全阀设计需在多个工况下同时满足，包括超临界与亚临界的切换、双工况互斥保护逻辑等，"
+     "较初版立项时的单一工况显著提升了工程复杂度与验证工作量。"),
+    ("② 既有厂房升级改造 · 空间与消防受限",
+     "项目为对英国既有中试厂房的升级改造，实际可用空间受既有设备、双方防爆与消防规范多重约束；"
+     "中英两国在 HAC 分区、通风、撤离通道等要求上存在差异。撬块 layout 需在有限空间同时兼顾 URS 性能、"
+     "成本与合规，Buffer Tank 等关键设备位置多次调整，触发 HAZOP 部分节点重做。"),
+    ("③ 深度技术议题 · 中英标准细节差异",
      "泄放计算（含超临界流体）、清洗策略与自动化互锁、气液分离器工艺选型、控制逻辑与联锁等，"
      "中英工程方在思路、余量、文档粒度上均有差异，且规范并未提供闭合方法学。"
-     "为确保英国生产的合规与安全，多个议题上升到「科研级论证」（如 API 520/521 与 GB/HG 20570 对比、"
-     "DIERS 两相流方法适用性等），耗时显著高于同规模国内项目。"),
-    ("③ 设计交付物范围扩展 · 匹配 UK 工程文档体系",
-     "对比初版计划，本轮设计包由 35 项扩展至 55+ 项，新增 FDS/SDS/HDS、I/O Schedule、SIL / LOPA、"
-     "Cable Schedule、Tie-in Point Sheet、管道等级规格等 UK 详细工程要求。"
-     "深度对接 UK 工程标准是长期能力沉淀，但短期显著抬升了设计节奏。"),
-    ("④ 三方协作机制沉淀 · 前期必要投入",
-     "CFCT / IEPE / UK Sandwich 三方跨语言、跨专业协作，需要建立稳定的技术协作基线"
-     "（双语跟踪表、双周技术会议、共同术语），并系统闭环双方合并的 92 项问题（国内 33 + UK 59）；"
-     "过程时间换来 HAZOP 与 DQ 阶段的低返工风险。"),
-    ("⑤ 采购与 CE 认证前置 · 依赖设计冻结",
-     "反应柱、高压阀门、仪表等长周期物料需等待 URS / P&ID / 管道等级 / 仪表数据单等关键设计节点冻结后再下 PO；"
-     "撬块 CE-MD 认证范围（整机认证 vs 分部件认证）、PED 分类、ATEX 边界需与 Notified Body 反复对齐，"
-     "实际周期较初版预估延长约 2–3 个月。"),
+     "为确保英国生产合规，多个议题上升到「科研级论证」（如 API 520/521 与 GB/HG 20570 对比、"
+     "DIERS 两相流方法适用性等），耗时显著。"),
+    ("④ 设计交付物范围扩展 · 匹配 UK 工程文档体系",
+     "对比 2025-09 立项时约 19 项主要交付项，当前设计包扩展至 55+ 项，"
+     "新增 FDS/SDS/HDS、I/O Schedule、SIL / LOPA、Cable Schedule、Tie-in Point Sheet、"
+     "管道等级规格等 UK 详细工程要求。深度对接 UK 工程标准是长期能力沉淀。"),
+    ("⑤ HAZOP 前风险系统闭环 + CE 与 NB 排期",
+     "双方合并 92 项风险清单（国内 33 + UK 59）系统闭环，为 HAZOP 一次通过铺路；"
+     "同时撬块 CE-MD 范围（整机 vs 分部件认证）、PED 分类、ATEX 边界需与欧盟公告机构"
+     "（Notified Body, NB）反复对齐，并受 NB 审核排期约束，较初版预估延长约 2-3 个月。"),
 ]
 
 
@@ -298,8 +295,9 @@ def build_slide(prs, chart_path):
 
     # one-line sub-header explaining the overall delta
     _add_text(slide, 0.30, 1.00, 9.40, 0.34,
-              [("整体开车目标 2027-06 → 2027-09，约 +3 个月；并非单一节点，而是设计阶段整体后移 5 个月带动的连锁传导",
-                {"size": 10.5, "color": C_SUB})])
+              [("对比 2025-09 立项版初版计划，整体开车目标 2026-12 → 2027-09（+9 个月）；"
+                "主因是业务需求扩展与深度对接 UK 工程/合规体系的必要投入",
+                {"size": 10, "color": C_SUB})])
 
     # ---- chart on top (full width) --------------------------------------
     chart_top = 1.34
@@ -319,16 +317,17 @@ def build_slide(prs, chart_path):
     card_w = (9.40 - gap * 4) / 5
 
     body_map = {
-        "① 既有厂房升级改造 · 空间与消防受限":
-            "既有中试厂房改造，空间与中英防爆/消防规范双重受限；buffer tank 等设备多次调整，触发部分 HAZOP 重做",
-        "② 深度技术议题 · 中英标准细节差异":
-            "泄放/超临界、清洗、分离器、控制与联锁等，中英思路与文档粒度不同，多个议题上升到科研级论证，耗时显著",
-        "③ 设计交付物范围扩展 · 匹配 UK 工程文档体系":
-            "对比初版 35 项，现扩展至 55+ 项，新增 FDS/SDS/HDS、I/O Schedule、SIL/LOPA、Cable Schedule 等",
-        "④ 三方协作机制沉淀 · 前期必要投入":
-            "CFCT/IEPE/UK 三方跨语言协作基线建立，双方合并 92 项问题（33+59）系统闭环，降低后续返工",
-        "⑤ 采购与 CE 认证前置 · 依赖设计冻结":
-            "长周期物料需等关键设计冻结再下 PO；CE-MD 范围/PED/ATEX 与 NB 反复对齐，较初版延长约 2-3 个月",
+        "① 业务需求扩展 · 通用型反应器兼顾双工况":
+            "英方希望撬块同时覆盖高压与低压两类加氢工艺（以 129361 项目为蓝本），"
+            "反应器与安全阀需含超临界/亚临界切换与双工况互斥保护，工程复杂度显著提升",
+        "② 既有厂房升级改造 · 空间与消防受限":
+            "既有中试厂房改造，空间与中英防爆/消防规范双重受限；Buffer Tank 等设备多次调整，触发部分 HAZOP 重做",
+        "③ 深度技术议题 · 中英标准细节差异":
+            "泄放/超临界、清洗、分离器、控制与联锁等，中英思路与文档粒度不同，多项议题上升到科研级论证",
+        "④ 设计交付物范围扩展 · 匹配 UK 工程文档体系":
+            "初版 19 项主要交付项扩展至 55+ 项，新增 FDS/SDS/HDS、I/O Schedule、SIL/LOPA、Cable Schedule 等",
+        "⑤ HAZOP 前风险系统闭环 + CE 与 NB 排期":
+            "92 项风险清单（33+59）系统闭环换 HAZOP 一次通过；CE-MD/PED/ATEX 与欧盟公告机构 NB 反复对齐并受排期约束",
     }
 
     for i, (title, _) in enumerate(BULLETS):
