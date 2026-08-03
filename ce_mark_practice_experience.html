@@ -117,12 +117,6 @@
 
   .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 24px 64px; }
 
-  .summary {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 16px;
-    margin-bottom: 22px;
-  }
   .panel {
     background: var(--panel);
     border: 1px solid var(--line);
@@ -138,6 +132,65 @@
   .panel.teal {
     background: linear-gradient(180deg, #fff, var(--teal-soft));
     border-color: #c5dde0;
+  }
+  .panel.hero-panel {
+    border-color: #e2c89a;
+    background:
+      linear-gradient(135deg, rgba(201,133,42,0.08), transparent 40%),
+      linear-gradient(180deg, #fff, var(--accent-soft));
+  }
+
+  .key-line {
+    font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--navy-deep);
+    margin: 0 0 16px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #ecd7b4;
+    border-radius: 12px;
+  }
+  .key-line em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .focus-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 14px 0 0;
+  }
+  .focus-card {
+    background: #fff;
+    border: 1px solid #ecd7b4;
+    border-radius: 12px;
+    padding: 14px 15px;
+    position: relative;
+  }
+  .focus-card .idx {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+  .focus-card strong {
+    display: block;
+    color: var(--navy);
+    font-size: 14.5px;
+    margin-bottom: 6px;
+  }
+  .focus-card p {
+    margin: 0;
+    font-size: 13.5px;
+    color: #334155;
   }
 
   h2 {
@@ -308,7 +361,7 @@
   }
 
   @media (max-width: 900px) {
-    .summary, .grid-2, .grid-3, .grid-4, .pitfall, .flow {
+    .focus-grid, .grid-2, .grid-3, .grid-4, .pitfall, .flow {
       grid-template-columns: 1fr;
     }
     .flow-step::after { content: none; }
@@ -346,41 +399,126 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="#position">定位</a>
+    <a href="#position">核心判断</a>
+    <a href="#basics">科普精要</a>
     <a href="#directives">指令组合</a>
     <a href="#boundary">认证边界</a>
     <a href="#workflow">工作链路</a>
     <a href="#files">文件接口</a>
     <a href="#hydrogen">涉氢要点</a>
-    <a href="#partner">机构协作</a>
-    <a href="#pitfalls">避坑</a>
-    <a href="#takeaway">带走清单</a>
   </div>
 </nav>
 
 <main class="wrap">
 
-  <section class="summary" id="position">
-    <div class="panel accent">
-      <h2><span class="num">01</span> 核心判断</h2>
-      <p>
-        CE 标志不是“一张出口贴纸”，而是制造商对产品符合欧盟相关指令的<strong>符合性声明体系</strong>。
-        对成套撬装设备而言，真正决定成败的不是临近发货时找机构出证，而是：
-        <strong>指令划定是否准确、责任边界是否清晰、关键文件与采购规格是否在设计阶段同步锁定</strong>。
-      </p>
-      <div class="takeaway">
-        可复用结论：把 CE 当作“设计约束 + 供应链约束 + 制造验证”三位一体的项目管控项，而不是单独的认证事务。
+  <section class="panel hero-panel" id="position">
+    <h2><span class="num">01</span> 核心判断</h2>
+    <p class="key-line">
+      CE 不是发运前补的“出口贴纸”，而是制造商对产品符合欧盟相关指令的
+      <em>符合性声明体系</em>。成败关键不在末端出证，而在项目前半段是否把约束建进设计与供应链。
+    </p>
+    <p>
+      对成套撬装设备而言，真正要尽早钉死的不是“找哪家机构”，而是下面三件事是否同时成立。
+      后续所有可复用做法，都围绕这三点展开。
+    </p>
+    <div class="focus-grid">
+      <div class="focus-card">
+        <span class="idx">重点 1</span>
+        <strong>指令组合划定要准</strong>
+        <p>整橇落入哪些指令、单体与成套如何分层，必须在方案/基础设计阶段明确；划错后面全是返工。</p>
+      </div>
+      <div class="focus-card">
+        <span class="idx">重点 2</span>
+        <strong>责任与产品边界要清</strong>
+        <p>什么作为“一件产品”进入市场、清关前符合性与属地验收各由谁负责，必须在合同与计划中拆开。</p>
+      </div>
+      <div class="focus-card">
+        <span class="idx">重点 3</span>
+        <strong>设计阶段同步锁定证据</strong>
+        <p>关键文件、材料选型、电气规格与供应商符合性要求，要在采购冻结前写入设计与采购基线。</p>
       </div>
     </div>
-    <div class="panel teal">
-      <h2><span class="num">02</span> 科普精要</h2>
-      <ul class="checklist">
-        <li><strong>指令</strong>规定必须满足的基本安全要求；<strong>协调标准</strong>提供证明符合的技术路径。</li>
-        <li>同一产品常同时落入多条指令；须<strong>全部满足后</strong>方可加贴 CE。</li>
-        <li>常见输出两类：制造商签署的 <strong>DoC（符合性声明）</strong>，以及必要时由公告机构（NB）出具的评估/证书。</li>
-        <li>英国脱欧后存在 UKCA 体系差异；属地安装与使用监管，不等于清关前 CE 工作本身。</li>
-      </ul>
+    <div class="takeaway">
+      <strong>一句话结论：</strong>把 CE 当作“设计约束 + 供应链约束 + 制造验证”三位一体的项目管控项，而不是单独的认证事务。
     </div>
+  </section>
+
+  <section class="panel teal" id="basics">
+    <h2><span class="num">02</span> 科普精要</h2>
+    <p class="muted">先建立共同语言，再进入做法。以下为成套设备出口场景下最需要统一理解的概念。</p>
+
+    <h3>CE 标志解决什么问题</h3>
+    <p>
+      CE（Conformité Européenne）是产品进入欧盟市场流通的强制性符合性标识。
+      它表明制造商声明：该产品已满足所适用欧盟“新方法”指令中的基本健康、安全与相关要求。
+      对出口方而言，CE 的实质工作是<strong>识别适用指令 → 完成合格评定 → 形成技术文件与符合性声明 → 正确加贴标识</strong>，而不是单纯“拿一张证”。
+    </p>
+
+    <h3>指令与标准：谁强制、谁支持</h3>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>指令（Directive）</strong>
+        <ul>
+          <li>具有法律强制力，规定产品类别与基本安全要求（EHSR）</li>
+          <li>决定是否需要、以及需要何种合格评定路径</li>
+          <li>同一产品可同时落入多条指令</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <strong>协调标准（Standard）</strong>
+        <ul>
+          <li>提供更细的技术路径，用于证明满足指令要求</li>
+          <li>原则上属支持性、可选用的符合证据工具</li>
+          <li>按适用标准设计与验证，是最常用的符合路径</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaway" style="margin-top:12px">
+      关键原则：当产品同时受多条指令覆盖时，必须<strong>全部符合后</strong>才能加贴 CE；只满足其中一条不够。
+    </div>
+
+    <h3>两类常见输出：DoC 与公告机构评估</h3>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>DoC 符合性声明</strong>
+        <p>由制造商签署（Declaration of Conformity）。声明产品符合所列指令与标准，是加贴 CE 的核心法律文件之一，通常还需明确欧洲代表等信息。</p>
+      </div>
+      <div class="tile">
+        <strong>公告机构（Notified Body, NB）</strong>
+        <p>在指令要求第三方介入时，由获欧盟授权编号的机构开展型式评估、体系审核、验证等，并在授权范围内出具相应评估/证书。</p>
+      </div>
+    </div>
+    <p style="margin-top:12px">
+      是否必须走 NB，取决于指令与产品风险类别（合格评定模块）。低风险路径可能以制造商内部生产控制 + DoC 为主；承压、防爆等高风险场景更常需要第三方介入。
+      选型机构时，应核对<strong>授权范围是否覆盖对应指令与产品类型</strong>。
+    </p>
+
+    <h3>成套撬装常见相关指令（概念层）</h3>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>MD / ATEX / EMC / PED</strong>
+        <ul>
+          <li><strong>MD</strong>：机械与成套装置的基本健康与安全要求</li>
+          <li><strong>ATEX</strong>：用于潜在爆炸环境的设备与保护系统</li>
+          <li><strong>EMC</strong>：设备不产生过度电磁干扰、且具备抗扰能力</li>
+          <li><strong>PED</strong>：承压设备及承压装置的设计制造与合格评定</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <strong>理解时避免两个混淆</strong>
+        <ul>
+          <li><strong>单体有证 ≠ 整橇自动合规</strong>：成套边界、接口与系统风险仍需整体评估</li>
+          <li><strong>CE 合规 ≠ 现场即可投用</strong>：属地安装检查、SAT 等属于另一工作层</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>市场准入与属地监管的差别</h3>
+    <p>
+      英国脱欧后存在 UKCA 等体系差异，具体适用需按目标市场确认。
+      更通用的经验是：<strong>出口前符合性工作</strong>解决的是产品以何种身份合法进入市场；
+      <strong>属地安装与使用监管</strong>解决的是到场后如何组装、检查与投用。两者相关，但不宜混为一个包干事项。
+    </p>
   </section>
 
   <section class="panel" id="directives">
@@ -529,60 +667,6 @@
     </div>
   </section>
 
-  <section class="panel" id="partner">
-    <h2><span class="num">08</span> 机构协作：选资质，更要选可执行路径</h2>
-    <div class="grid-2">
-      <div class="tile">
-        <strong>选择时看什么</strong>
-        <ul>
-          <li>是否具备对应指令范围的公告机构资质</li>
-          <li>是否覆盖整橇/承压/防爆组合场景经验</li>
-          <li>是否能提供设计到制造的连续辅导，而非末端发证</li>
-        </ul>
-      </div>
-      <div class="tile">
-        <strong>协作时盯什么</strong>
-        <ul>
-          <li>明确责任止于清关前哪些交付物</li>
-          <li>采购前指导要形成可执行检查单</li>
-          <li>整改项必须同时回写图纸、BOM 与实物</li>
-        </ul>
-      </div>
-    </div>
-    <p class="muted" style="margin-top:12px">
-      法规窗口需持续跟踪：欧盟 CE 相关法规存在阶段性更新，跨生效节点的项目应在启动时确认适用版本与过渡安排，避免按旧路径做到中段再切换。
-    </p>
-  </section>
-
-  <section class="panel" id="pitfalls">
-    <h2><span class="num">09</span> 常见误区与纠正</h2>
-    <div class="pitfall">
-      <div class="bad">
-        <strong>误区</strong>
-        临近发运才启动认证；默认“设备有证 = 整橇有证”；把属地 SAT / 监察检查当成认证机构顺带服务；介质与边界未定就开始询价锁周期。
-      </div>
-      <div class="good">
-        <strong>推荐做法</strong>
-        方案阶段完成指令划定与产品边界；整橇与单体认证分层管理；合同拆分清关前符合性与属地验收；先交齐定义文件，再锁定路径、工作量和计划接口。
-      </div>
-    </div>
-  </section>
-
-  <section class="panel accent" id="takeaway">
-    <h2><span class="num">10</span> 可带走的复用清单</h2>
-    <ul class="checklist">
-      <li>立项即明确：产品边界、指令组合、责任主体、清关前/属地两条线。</li>
-      <li>建立标准“CE 文件接口包”，作为设计输出与机构评审的共同模板。</li>
-      <li>把 CE/ATEX/PED 证据要求写入采购规格与供应商准入，而不是货到补证。</li>
-      <li>以 HAZOP、材料策略、泄漏控制作为涉氢场景的认证对话主线。</li>
-      <li>认证机构深度参与设计审核—采购指导—生产复验—FAT—整改闭环。</li>
-      <li>发运前完成铭牌、说明书、DoC/证书与实物版本一致性核验。</li>
-    </ul>
-  </section>
-
-  <p class="footer">
-    基于连续氢化撬装项目 CE 技术交流与内部要点整理 · 侧重可复用方法，供同类成套设备出口符合性工作参考
-  </p>
 </main>
 
 </body>
