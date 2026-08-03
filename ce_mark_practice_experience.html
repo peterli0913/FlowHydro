@@ -157,6 +157,62 @@
     font-weight: 700;
   }
 
+  .core-flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 16px 0 4px;
+  }
+  .core-step {
+    background: #fff;
+    border: 1px solid #ecd7b4;
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+    position: relative;
+    min-height: 96px;
+  }
+  .core-step::after {
+    content: "→";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .core-step:last-child::after { content: none; }
+  .core-step .idx {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+  .core-step.final .idx { background: var(--navy); }
+  .core-step.final {
+    background: var(--navy-deep);
+    border-color: var(--navy-deep);
+    color: #edf2f7;
+  }
+  .core-step strong {
+    display: block;
+    color: var(--navy);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .core-step.final strong { color: #f0d3a2; }
+  .core-step p {
+    margin: 0;
+    font-size: 12.5px;
+    color: #5b6b7c;
+  }
+  .core-step.final p { color: rgba(237,242,247,0.85); }
   .focus-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -361,10 +417,10 @@
   }
 
   @media (max-width: 900px) {
-    .focus-grid, .grid-2, .grid-3, .grid-4, .pitfall, .flow {
+    .core-flow, .focus-grid, .grid-2, .grid-3, .grid-4, .pitfall, .flow {
       grid-template-columns: 1fr;
     }
-    .flow-step::after { content: none; }
+    .core-step::after, .flow-step::after { content: none; }
     .hero { padding: 36px 18px 28px; }
     .wrap { padding: 20px 16px 48px; }
   }
@@ -384,15 +440,16 @@
     <div class="eyebrow">CE Conformity Practice Brief</div>
     <h1>成套撬装设备 CE 符合性实践经验</h1>
     <p class="hero-lead">
-      以连续氢化撬装项目为实践样本，提炼可复用的 CE 符合性路径：
-      先定指令组合与认证边界，再把符合性要求前移到设计、采购与制造，
-      而不是把认证当作发运前的补证动作。
+      核心经验只有一句：CE 不是发运前补的“出口贴纸”，
+      而是认证供应商深度参与「设计审核 → 采购前指导 → 生产复验 → 工厂验收」，
+      最终形成符合性闭环。
     </p>
     <div class="hero-tags">
-      <span>可复用方法</span>
-      <span>MD · ATEX · EMC · PED</span>
-      <span>设计前移 · 文件接口 · 制造复核</span>
-      <span>清关前符合性 vs 属地验收</span>
+      <span>设计审核</span>
+      <span>采购前指导</span>
+      <span>生产复验</span>
+      <span>工厂验收</span>
+      <span>符合性闭环</span>
     </div>
   </div>
 </header>
@@ -414,32 +471,44 @@
   <section class="panel hero-panel" id="position">
     <h2><span class="num">01</span> 核心判断</h2>
     <p class="key-line">
-      CE 不是发运前补的“出口贴纸”，而是制造商对产品符合欧盟相关指令的
-      <em>符合性声明体系</em>。成败关键不在末端出证，而在项目前半段是否把约束建进设计与供应链。
+      CE 不是发运前补的<em>“出口贴纸”</em>，
+      而是认证供应商全程参与
+      <em>设计审核 → 采购前指导 → 生产复验 → 工厂验收</em>，
+      最终得到<em>符合性闭环</em>。
     </p>
     <p>
-      对成套撬装设备而言，真正要尽早钉死的不是“找哪家机构”，而是下面三件事是否同时成立。
-      后续所有可复用做法，都围绕这三点展开。
+      可复用的做法不是“临近发货再找机构出证”，而是把认证供应商嵌进制造主线：
+      前四步有其持续参与，最后一步完成 DoC / 证书、铭牌与说明书的一致闭环。
     </p>
-    <div class="focus-grid">
-      <div class="focus-card">
-        <span class="idx">重点 1</span>
-        <strong>指令组合划定要准</strong>
-        <p>整橇落入哪些指令、单体与成套如何分层，必须在方案/基础设计阶段明确；划错后面全是返工。</p>
+    <div class="core-flow">
+      <div class="core-step">
+        <span class="idx">1</span>
+        <strong>设计审核</strong>
+        <p>指令划定<br>风险点锁定</p>
       </div>
-      <div class="focus-card">
-        <span class="idx">重点 2</span>
-        <strong>责任与产品边界要清</strong>
-        <p>什么作为“一件产品”进入市场、清关前符合性与属地验收各由谁负责，必须在合同与计划中拆开。</p>
+      <div class="core-step">
+        <span class="idx">2</span>
+        <strong>采购前指导</strong>
+        <p>规格写入<br>供应商证据</p>
       </div>
-      <div class="focus-card">
-        <span class="idx">重点 3</span>
-        <strong>设计阶段同步锁定证据</strong>
-        <p>关键文件、材料选型、电气规格与供应商符合性要求，要在采购冻结前写入设计与采购基线。</p>
+      <div class="core-step">
+        <span class="idx">3</span>
+        <strong>生产复验</strong>
+        <p>制造一致性<br>关键工序见证</p>
+      </div>
+      <div class="core-step">
+        <span class="idx">4</span>
+        <strong>工厂验收</strong>
+        <p>FAT 验证<br>问题闭环</p>
+      </div>
+      <div class="core-step final">
+        <span class="idx">目标</span>
+        <strong>符合性闭环</strong>
+        <p>DoC / 证书<br>铭牌说明书一致</p>
       </div>
     </div>
     <div class="takeaway">
-      <strong>一句话结论：</strong>把 CE 当作“设计约束 + 供应链约束 + 制造验证”三位一体的项目管控项，而不是单独的认证事务。
+      <strong>核心就这一条：</strong>有认证供应商参与的前四步过程，才换得上最后的符合性闭环；没有过程参与，末端补证不成立。
     </div>
   </section>
 
