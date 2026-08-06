@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Agenda 会议议程 — 06 August 2026 | Continuous Hydrogenation Skid</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+    margin: 0; padding: 26px; color: #17212f; background: #f4f6f9; line-height: 1.55;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  header {
+    background: linear-gradient(120deg, #0f3460, #16213e);
+    color: #fff; padding: 22px 28px; border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(15,52,96,0.18); margin-bottom: 14px;
+  }
+  header h1 { margin: 0; font-size: 21px; line-height: 1.3; }
+  header .sub { display: block; font-size: 13.5px; font-weight: 400; color: #c8d4e3; margin-top: 6px; }
+  header .meta { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+  header .meta span {
+    font-size: 11.5px; border: 1px solid rgba(255,255,255,0.24);
+    background: rgba(255,255,255,0.07); border-radius: 999px; padding: 4px 11px; color: #e4ebf3;
+  }
+
+  .toc {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .toc a {
+    text-decoration: none; font-size: 12.5px; font-weight: 600; color: #0f3460;
+    border: 1px solid #dbe3ec; border-radius: 999px; padding: 5px 12px; background: #f8fafc;
+  }
+  .toc a:hover { background: #eef3f8; }
+  .toc .count { color: #94a3b8; font-weight: 400; }
+
+  section {
+    background: #fff; border-radius: 12px; padding: 18px 22px 8px;
+    box-shadow: 0 1px 3px rgba(15,52,96,0.06); margin-bottom: 16px;
+  }
+  section > h2 {
+    margin: 0 0 4px; font-size: 16.5px; color: #0f3460;
+    padding-left: 12px; border-left: 4px solid #d97706;
+  }
+  section > h2 .en {
+    display: block; font-size: 12.5px; font-weight: 400; color: #64748b; margin-top: 3px;
+  }
+  section > .lead { margin: 0 0 4px 14px; font-size: 12.5px; color: #334155; }
+  section > .lead .en { display: block; color: #64748b; margin-top: 2px; font-style: italic; }
+
+  .item {
+    border: 1px solid #e5ebf2; border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 12px; background: #fcfdfe;
+  }
+  .item.key { border-color: #e9c98f; background: #fffdf7; }
+
+  .row1 { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+  .tag {
+    flex: 0 0 auto; font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+    color: #fff; background: #0f3460; border-radius: 999px; padding: 3px 10px; margin-top: 1px;
+  }
+  .tag.key { background: #b45309; }
+  .tag.new { background: #166534; }
+  .ref { font-size: 11px; color: #8798ab; margin-left: 2px; align-self: center; }
+  .h { font-size: 14.5px; font-weight: 650; color: #0f172a; flex: 1 1 340px; }
+  .h .en { display: block; font-size: 12.5px; font-weight: 500; color: #64748b; margin-top: 2px; }
+
+  .pos {
+    margin: 10px 0 0; font-size: 13px; color: #33415a;
+    padding-left: 12px; border-left: 3px solid #cfd9e5;
+  }
+  .pos > b { color: #0f3460; }
+  .pos > b .en { color: #64748b; font-weight: 500; }
+  .pos ul { margin: 6px 0 0 18px; padding: 0; }
+  .pos li { margin: 5px 0; }
+  .pos li .en {
+    display: block; color: #5b6b7c; font-size: 12.5px; margin-top: 2px;
+    padding-top: 2px;
+  }
+
+  .q {
+    margin-top: 10px; background: #edfaf2; border: 1px solid #b9e0c7;
+    border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;
+    padding: 9px 13px; font-size: 13.5px; color: #14532d; font-weight: 600;
+  }
+  .q .lab {
+    display: block; font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase;
+    color: #16a34a; font-weight: 700; margin-bottom: 3px;
+  }
+  .q .zh { display: block; margin-bottom: 4px; }
+  .q .en-q { display: block; font-weight: 600; color: #166534; }
+  .q ol { margin: 4px 0 0 18px; padding: 0; font-weight: 600; }
+  .q li { margin: 6px 0; }
+  .q li .en { display: block; font-weight: 600; color: #166534; margin-top: 2px; }
+
+  .opts { margin-top: 9px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .opt {
+    font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 8px;
+    padding: 5px 11px; background: #fff; color: #334155;
+  }
+  .opt b { color: #0f3460; }
+  .opt .en { color: #64748b; }
+
+  .note {
+    margin-top: 10px; display: flex; align-items: center; gap: 9px;
+    font-size: 11px; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .note .line { flex: 1; border-bottom: 1px dashed #c8d3e0; height: 14px; }
+
+  .banner {
+    background: #eff6ff; border-left: 4px solid #1d4ed8; border-radius: 0 8px 8px 0;
+    padding: 12px 16px; font-size: 13.5px; color: #1e3a8a; margin-bottom: 14px;
+  }
+  .banner b { color: #1d4ed8; }
+  .banner .en {
+    display: block; margin-top: 6px; padding-top: 6px; border-top: 1px dotted #bfdbfe;
+    font-size: 12.5px; color: #1e40af; font-style: italic;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 12px; }
+  th, td { border: 1px solid #e2e8f0; padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: #eef3f8; color: #0f3460; font-size: 12px; font-weight: 700; }
+  td.d { width: 52%; font-weight: 600; color: #0f3460; background: #f9fbfd; }
+  td.d .en { display: block; font-weight: 400; color: #64748b; font-size: 12px; margin-top: 2px; }
+  td.w { width: 22%; }
+
+  .close {
+    background: #fff7ed; border: 1px solid #f0d9b5; border-left: 4px solid #d97706;
+    border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13px; color: #7c2d12;
+    margin-bottom: 12px;
+  }
+  .close .en {
+    display: block; margin-top: 6px; padding-top: 6px; border-top: 1px dotted #f0d9b5;
+    font-size: 12.5px; color: #9a3412; font-style: italic;
+  }
+
+  footer { text-align: center; font-size: 11.5px; color: #94a3b8; padding: 10px 0 6px; }
+
+  @media (max-width: 760px) {
+    body { padding: 14px; }
+    .h { flex: 1 1 100%; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    section, .item { box-shadow: none; break-inside: avoid; }
+    .toc { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Meeting Agenda — 06 August 2026
+    <span class="sub">会议议程 · 2026年8月6日</span>
+    <span class="sub">Sandwich Continuous Hydrogenation Skid | Asymchem UK &times; CFCT / IEPE / CIMT</span>
+    <span class="sub">连续氢化撬块</span>
+  </h1>
+  <div class="meta">
+    <span>A — Decisions 决策确认 (5)</span>
+    <span>B — Inputs from SW 需 SW 输入 (3)</span>
+    <span>C — Confirm closure 确认关闭 (5)</span>
+    <span>D — Deliverable dates 交付节点</span>
+    <span>HAZOP once only / 只做一次</span>
+  </div>
+</header>
+
+<div class="banner">
+  <b>今日优先级 Priority：</b>3D 布置与控制说明是 HAZOP 前仅剩的两项可能引发重大设计变更的内容，目前只在国内内部讨论过。希望在 9 月初 HAZOP 前与你谈定，确保 HAZOP 只做一次。
+  <span class="en">The 3D layout and the control philosophy are the only two remaining items that could still trigger a significant design change, and both have so far only been reviewed internally. We would like to agree them with you before the early-September HAZOP so that HAZOP is run once and only once.</span>
+</div>
+
+<div class="toc">
+  <a href="#a">A — Decisions 决策 <span class="count">5</span></a>
+  <a href="#b">B — Inputs 输入 <span class="count">3</span></a>
+  <a href="#c">C — Closure 关闭确认 <span class="count">5</span></a>
+  <a href="#d">D — Dates 节点</a>
+</div>
+
+<!-- ============== A ============== -->
+<section id="a">
+  <h2>A. 需决策 / 确认
+    <span class="en">Decisions and confirmations</span>
+  </h2>
+  <p class="lead">这些不定，设计与采购无法冻结。
+    <span class="en">Design and procurement cannot be frozen until these are settled.</span>
+  </p>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">A1</span>
+      <span class="h">将四撬块分体运输定为基准方案
+        <span class="en">Baseline the four-module split shipment</span>
+      </span>
+      <span class="ref">R127</span>
+    </div>
+    <div class="pos">
+      <b>我方立场 Our position：</b>
+      <ul>
+        <li>四撬块技术可行；屋顶整体吊装并非必选项。
+          <span class="en">The four-module split is technically feasible; a whole-unit lift through the roof is not mandatory.</span>
+        </li>
+        <li>另在核实：分撬是否不仅受进口电梯尺寸限制，海运运输本身也可能要求分撬。若成立，屋顶方案不再有成本优势。
+          <span class="en">We are also verifying whether sea freight itself requires the split, independent of the lift dimensions. If it does, the roof option no longer offers a cost advantage.</span>
+        </li>
+        <li>3D 正在定稿；认证机构评估取决于该定稿。
+          <span class="en">The 3D layout is being finalised now; the Notified Body assessment depends on that freeze.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">能否以四撬块分体运输 + 现场组装作为基准方案，屋顶更换评估作为并行选项、不阻塞设计？</span>
+      <span class="en-q">Can we baseline four-module split shipment with site assembly, and keep the roof-replacement assessment as a parallel option that does not block design?</span>
+    </div>
+    <div class="opts">
+      <div class="opt"><b>A</b> — 基准四撬块 <span class="en">Baseline four modules</span></div>
+      <div class="opt"><b>B</b> — 等待屋顶决策 <span class="en">Hold for roof decision</span></div>
+    </div>
+    <div class="note"><span>Decision / action 决策 / 行动</span><span class="line"></span></div>
+  </div>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">A2</span>
+      <span class="h">SE01 清洁度验证方式
+        <span class="en">SE01 cleanliness verification method</span>
+      </span>
+      <span class="ref">R38</span>
+    </div>
+    <div class="pos">
+      <b>我方立场 Our position：</b>
+      <ul>
+        <li>反应柱与分离器操作压力高，无法配置视镜，目视检查不可行。
+          <span class="en">Sight glasses cannot be fitted on the reaction columns or the separator at the operating pressure, so visual verification is not feasible.</span>
+        </li>
+        <li>我方拟通过取样分析残留浓度验证清洁度。
+          <span class="en">We propose verifying cleanliness by sampling and residue concentration analysis.</span>
+        </li>
+        <li>验收标准取决于项目密闭等级与英方要求，应由 SW 侧确定。
+          <span class="en">Acceptance criteria depend on project containment level and UK requirements, so they should be set on the SW side.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Questions 问题</span>
+      <ol>
+        <li>取样分析残留浓度作为验证方式是否可接受？
+          <span class="en">Is residue sampling analysis acceptable as the verification method?</span>
+        </li>
+        <li>验收限度与检测方法能否由 SW 属地 QA 确定？
+          <span class="en">Can SW site QA define the acceptance limits and analytical method?</span>
+        </li>
+      </ol>
+    </div>
+    <div class="note"><span>Decision / action 决策 / 行动</span><span class="line"></span></div>
+  </div>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">A3</span>
+      <span class="h">清洗方案的定位与分层
+        <span class="en">Scope and structure of the cleaning philosophy</span>
+      </span>
+      <span class="ref">本周发出 / to be issued this week</span>
+    </div>
+    <div class="pos">
+      <b>我方输出 Our output：</b>
+      <ul>
+        <li>文件覆盖的是 3Q 验证之后、项目运行期间的常规清洗，不是 3Q 验证文件；验证仍属属地职责。
+          <span class="en">The document covers routine cleaning during project operation, after 3Q validation. It is not a 3Q validation document; validation remains a site responsibility.</span>
+        </li>
+        <li>按 CMB（反应前）与 CMA（反应后）分开编写。
+          <span class="en">It is split into CMB (before reaction) and CMA (after reaction).</span>
+        </li>
+        <li>CMB：用反应溶剂清洗 → 吹干 → 装填催化剂。
+          <span class="en">CMB: wash with the reaction solvent, dry, then charge catalyst.</span>
+        </li>
+        <li>CMA：在注水与惰性气体保护下卸催化剂 → 水洗冲净催化剂粉末 → 溶剂清洗 → 吹干（高活性催化剂残留遇溶剂有燃爆风险）。
+          <span class="en">CMA: discharge catalyst under water and inert gas protection, water flush to remove catalyst fines, then solvent wash, then dry — residual active catalyst in contact with solvent presents a fire and explosion risk.</span>
+        </li>
+        <li>溶剂种类只给指导原则，具体溶剂随项目化学体系定。
+          <span class="en">Solvent selection is given as a general principle only; the specific solvent follows the project chemistry.</span>
+        </li>
+        <li>反应器可单独清洗；储罐与分离器可打循环清洗，须充满以保证润湿。
+          <span class="en">The reactor can be cleaned separately; tanks and the separator can be cleaned on a circulation loop, filled to ensure full wetted contact.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">这个定位、CMB / CMA 分层，以及验证责任边界，是否可接受？</span>
+      <span class="en-q">Are you content with this scope, the CMB / CMA split and the responsibility boundary for validation?</span>
+    </div>
+    <div class="note"><span>Decision / action 决策 / 行动</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag new">A4</span>
+      <span class="h">喷淋球形式
+        <span class="en">Spray ball type</span>
+      </span>
+      <span class="ref">new item / 新增</span>
+    </div>
+    <div class="pos">
+      <b>我方立场 Our position：</b>
+      <ul>
+        <li>现选可拆卸旋转喷淋球，设备数据表已标注处理流量。
+          <span class="en">We have selected a removable rotating spray ball, with the required flow noted on the equipment datasheet.</span>
+        </li>
+        <li>理解此前顾虑是可拆卸件可能脱落；我方将说明防脱结构。
+          <span class="en">We understand the earlier concern was that a removable head could drop off; we will explain the retention arrangement.</span>
+        </li>
+        <li>此项须在设备定标前锁定，否则厂家无法按要求配置。
+          <span class="en">This must be locked before the vessel order is placed, otherwise the vendor cannot configure to requirement.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">可拆卸 + 防脱结构，还是固定式？</span>
+      <span class="en-q">Removable head with positive retention, or fixed type?</span>
+    </div>
+    <div class="opts">
+      <div class="opt"><b>A</b> — 可拆卸 + 防脱 <span class="en">Removable + retention</span></div>
+      <div class="opt"><b>B</b> — 固定式 <span class="en">Fixed</span></div>
+    </div>
+    <div class="note"><span>Decision / action 决策 / 行动</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">A5</span>
+      <span class="h">SE01 垫片材质
+        <span class="en">SE01 gasket material</span>
+      </span>
+      <span class="ref">R121</span>
+    </div>
+    <div class="pos">
+      <b>我方立场 Our position：</b>
+      <ul>
+        <li>分离器现为设计温度 270 ℃、设计压力 7.5 MPaG；原拟采用 316L 金属环垫。
+          <span class="en">The separator is now at 270 &deg;C design temperature and 7.5 MPaG design pressure; a 316L metallic ring gasket was originally proposed.</span>
+        </li>
+        <li>垫片与法兰同为 316L、硬度接近，存在密封不住的风险。
+          <span class="en">Gasket and flange would both be 316L with similar hardness, so sealing may be unreliable.</span>
+        </li>
+        <li>建议改用不同金属垫片，例如铜质。
+          <span class="en">We propose a dissimilar metal gasket, for example copper.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">能否改用不同金属垫片以保证密封？</span>
+      <span class="en-q">Can we change to a dissimilar metal gasket to secure the seal?</span>
+    </div>
+    <div class="note"><span>Decision / action 决策 / 行动</span><span class="line"></span></div>
+  </div>
+</section>
+
+<!-- ============== B ============== -->
+<section id="b">
+  <h2>B. 需 SW 提供输入 / 资料
+    <span class="en">Inputs and documents needed from SW</span>
+  </h2>
+  <p class="lead">没有这些输入我方无法继续推进；会中确认责任人与日期。
+    <span class="en">We cannot progress these without your input. Owner and date to be agreed in the meeting.</span>
+  </p>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">B1</span>
+      <span class="h">FAT / 验证文件模板与签发流程
+        <span class="en">FAT / validation template and sign-off route</span>
+      </span>
+      <span class="ref">R128 / R129</span>
+    </div>
+    <div class="pos">
+      <b>我方理解 Our understanding：</b>
+      <ul>
+        <li>SW 提供模板与信息需求清单；国内按该模板提供文件与资料。
+          <span class="en">SW provides the template and the information requirement list; the China team supplies documents and information to that template.</span>
+        </li>
+        <li>CE 认证方参与文件评审，但不参与签发。
+          <span class="en">The CE Notified Body takes part in document review but not in sign-off.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Questions 问题</span>
+      <ol>
+        <li>上述理解是否正确——谁编制、谁签发？
+          <span class="en">Is that understanding correct — who prepares and who signs off?</span>
+        </li>
+        <li>UK 侧 FAT / validation 模板与信息清单能否本周内发出，以便我方从一开始就按该模板编制、避免后期返工？
+          <span class="en">Can the UK FAT / validation template and information list be issued this week, so we work to it from the start and avoid rework?</span>
+        </li>
+      </ol>
+    </div>
+    <div class="note"><span>Owner / date 责任人 / 日期</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">B2</span>
+      <span class="h">步梯与平台尺寸
+        <span class="en">Staircase and platform dimensions</span>
+      </span>
+      <span class="ref">R119</span>
+    </div>
+    <div class="pos">
+      <b>现状 Status：</b>
+      <ul>
+        <li>此前已发邮件询问，至今未收到回复。
+          <span class="en">Requested by email earlier; no reply received to date.</span>
+        </li>
+        <li>该项卡住 3D 定稿，而 3D 定稿又是认证机构评估与 HAZOP 的前提。
+          <span class="en">This blocks the 3D freeze, which in turn gates the Notified Body assessment and HAZOP.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Questions 问题</span>
+      <ol>
+        <li>能否提供加料步梯与平台尺寸？
+          <span class="en">Can you send the charging staircase and platform dimensions?</span>
+        </li>
+        <li>加料步梯是否在我方供货范围内？
+          <span class="en">Is the charging staircase inside our supply scope?</span>
+        </li>
+      </ol>
+    </div>
+    <div class="note"><span>Owner / date 责任人 / 日期</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">B3</span>
+      <span class="h">精滤器 FTR9832 —— 期望控制措施
+        <span class="en">Polishing filter FTR9832 — expectation</span>
+      </span>
+      <span class="ref">R80</span>
+    </div>
+    <div class="pos">
+      <b>我方立场 Our position：</b>
+      <ul>
+        <li>已增加差压监测联锁。
+          <span class="en">Differential pressure monitoring with an interlock has been added.</span>
+        </li>
+        <li>溶剂清洗可覆盖粉尘。
+          <span class="en">Solvent cleaning addresses particulates.</span>
+        </li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">差压联锁 + 定期清洗是否足够，还是需要备用过滤器 + 在线切换？</span>
+      <span class="en-q">Is DP interlock plus periodic cleaning sufficient, or do you require a duty / standby filter with online changeover?</span>
+    </div>
+    <div class="opts">
+      <div class="opt"><b>A</b> — 差压联锁 + 清洗 <span class="en">DP interlock + cleaning</span></div>
+      <div class="opt"><b>B</b> — 主备过滤器 <span class="en">Duty / standby filter</span></div>
+    </div>
+    <div class="note"><span>Decision / action 决策 / 行动</span><span class="line"></span></div>
+  </div>
+</section>
+
+<!-- ============== C ============== -->
+<section id="c">
+  <h2>C. 我方已关闭 · 请确认
+    <span class="en">Closed on our side — confirmation sought</span>
+  </h2>
+  <p class="lead">不拟逐条过。
+    <span class="en">Not intended to be worked through line by line.</span>
+  </p>
+
+  <div class="close">
+    大量跟踪项已在国内内部关闭。我方将发出清洗方案、控制说明与操作手册，之后与你做一次批量关闭确认，而非零散确认。以下是有实质变化或仍有问题的条目。
+    <span class="en">A large number of tracking items are now resolved internally. We will issue the cleaning philosophy, control philosophy and operating manual, and then run a single batch closure review with you rather than confirming items piecemeal. The items below are the ones with a substantive change or a remaining question.</span>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C1</span>
+      <span class="h">差压监测精度
+        <span class="en">Differential pressure monitoring accuracy</span>
+      </span>
+      <span class="ref">R82</span>
+    </div>
+    <div class="pos">
+      <b>我方输出 Our output：</b>
+      按反应柱与反应器进出口管线压力变送器精度估算，最大差压误差约 40 kPa；07/14 已增加压力联锁。
+      <span class="en" style="display:block;color:#5b6b7c;font-size:12.5px;margin-top:3px">Based on transmitter accuracy on the reaction column and the reactor inlet / outlet lines, the maximum differential pressure error is approximately 40 kPa. A pressure interlock was added on 14 July.</span>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">精度方面是否还有顾虑？若无，本条可否关闭？</span>
+      <span class="en-q">Any remaining concern on accuracy — otherwise can we close this item?</span>
+    </div>
+    <div class="note"><span>Confirmed / open 确认 / 仍开</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C2</span>
+      <span class="h">操作模式切换保护
+        <span class="en">Mode-transition safeguards</span>
+      </span>
+      <span class="ref">R52 / R53</span>
+    </div>
+    <div class="pos">
+      <b>我方输出 Our output：</b>
+      分离器改为增大排净管径淋洗（非浸泡），进出口匹配，不触发高液位联锁；R52 已在我方关闭。
+      <span class="en" style="display:block;color:#5b6b7c;font-size:12.5px;margin-top:3px">The separator is rinsed through an enlarged drain line rather than soaked, with inlet and outlet matched, so the high-level interlock is not challenged. R52 is closed on our side.</span>
+      <br><b>仍开放 Still open：</b>清洗模式与处理模式之间切换所需的保护措施，含换气 / 扫线步骤及联锁绕过复位确认。
+      <span class="en" style="display:block;color:#5b6b7c;font-size:12.5px;margin-top:3px">The required safeguards for switching between cleaning mode and processing mode, including purge / line-blow steps and reset confirmation for any interlock bypass.</span>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">需要什么程度的保护——技术性（钥匙开关、HMI 确认）与程序性（SOP、双签发）？</span>
+      <span class="en-q">What level of safeguard do you require — technical (key switch, HMI confirmation) and procedural (SOP, dual sign-off)?</span>
+    </div>
+    <div class="note"><span>Requirement agreed 要求已定</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C3</span>
+      <span class="h">催化剂规格与堵塞风险
+        <span class="en">Catalyst specification and blockage risk</span>
+      </span>
+      <span class="ref">R63</span>
+    </div>
+    <div class="pos">
+      <b>设计基础 Basis of design：</b>
+      无粉尘、非燃、暴露要求 OEB 3 或更低的颗粒 / 粒状催化剂；装填由 SW 侧负责。
+      <span class="en" style="display:block;color:#5b6b7c;font-size:12.5px;margin-top:3px">Dust-free, non-flammable bead / pellet catalyst with exposure requiring OEB 3 or lower containment. Catalyst charging is handled on the SW side.</span>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">能否确认 OEB 3 相对 URS 的偏离已被接受，本条关闭且我方无需进一步动作？</span>
+      <span class="en-q">Can you confirm the OEB 3 deviation from the URS is accepted, and that this item closes with no further action from us?</span>
+    </div>
+    <div class="note"><span>Confirmed / open 确认 / 仍开</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C4</span>
+      <span class="h">催化剂加料 / 卸料操作空间
+        <span class="en">Catalyst charging and discharging space</span>
+      </span>
+      <span class="ref">R47</span>
+    </div>
+    <div class="pos">
+      <b>我方输出 Our output：</b>
+      现布置中加料、卸料口均设在撬体端面。
+      <span class="en" style="display:block;color:#5b6b7c;font-size:12.5px;margin-top:3px">In the current layout the charging and discharging nozzles are both located on the end face of the skid.</span>
+    </div>
+    <div class="q">
+      <span class="lab">Question 问题</span>
+      <span class="zh">端面空间是否满足你方拟定的加卸料方式、设备与操作人员需求？</span>
+      <span class="en-q">Is the space at the end face adequate for your intended charging and discharging method, equipment and operator access?</span>
+    </div>
+    <div class="note"><span>Confirmed / open 确认 / 仍开</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C5</span>
+      <span class="h">穿墙孔与电缆
+        <span class="en">Wall penetrations and cabling</span>
+      </span>
+      <span class="ref">R72</span>
+    </div>
+    <div class="pos">
+      <b>我方输出 Our output：</b>
+      CIMT 已按你方发出的单线图更新电缆数量。两项选型仍待确认。
+      <span class="en" style="display:block;color:#5b6b7c;font-size:12.5px;margin-top:3px">CIMT has updated cable quantities against the single-line diagram you issued. Two selections remain open.</span>
+    </div>
+    <div class="q">
+      <span class="lab">Questions 问题</span>
+      <ol>
+        <li>流量控制器电缆 —— Modbus 还是 4–20 mA？
+          <span class="en">Flow controller cabling — Modbus or 4&ndash;20 mA?</span>
+        </li>
+        <li>硬联锁开关阀回路 —— 本安还是隔爆（Ex d）？
+          <span class="en">Hardwired interlock on / off valve loops — intrinsically safe or Ex d?</span>
+        </li>
+      </ol>
+    </div>
+    <div class="note"><span>Selection confirmed 选型已定</span><span class="line"></span></div>
+  </div>
+</section>
+
+<!-- ============== D ============== -->
+<section id="d">
+  <h2>D. 交付节点
+    <span class="en">Deliverable dates</span>
+  </h2>
+  <p class="lead">对齐用。
+    <span class="en">For alignment.</span>
+  </p>
+  <table>
+    <tr>
+      <th>交付物 Deliverable</th>
+      <th class="w">计划 Plan</th>
+      <th class="w">备注 Comment</th>
+    </tr>
+    <tr>
+      <td class="d">设备数据单（设计压力 75 barg / CLASS 900 升版）
+        <span class="en">Equipment datasheets — reissued at 75 barg / CLASS 900</span>
+      </td>
+      <td>本周 This week</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="d">清洗方案（按内部评审修订）
+        <span class="en">Cleaning philosophy — revised per internal review</span>
+      </td>
+      <td>本周 This week</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="d">操作手册（初稿）
+        <span class="en">Operating manual — first issue</span>
+      </td>
+      <td>本周末 End of this week</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="d">仪表数据表 / 仪表条件
+        <span class="en">Instrument datasheets and instrument specifications</span>
+      </td>
+      <td>8 月 11 日 11 August</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="d">控制说明（中英文）
+        <span class="en">Control philosophy — bilingual issue</span>
+      </td>
+      <td>内部评审后 After internal review</td>
+      <td>Gates HAZOP<br>卡住 HAZOP</td>
+    </tr>
+    <tr>
+      <td class="d">3D 布置定稿
+        <span class="en">3D layout — frozen version</span>
+      </td>
+      <td>电缆桥架路由完成后 Following cable tray routing</td>
+      <td>Gates HAZOP<br>卡住 HAZOP</td>
+    </tr>
+    <tr>
+      <td class="d">FDS / SDS</td>
+      <td>8 月中 Mid August</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="d">DN65 / DN50 变更影响清单与两版物料平衡
+        <span class="en">DN65 / DN50 change-impact list and both mass balances</span>
+      </td>
+      <td>本周末起 From end of this week</td>
+      <td>9 月研发数据后定案<br>Final on Sept R&amp;D data</td>
+    </tr>
+    <tr>
+      <td class="d">HAZOP</td>
+      <td>9 月初 Early September</td>
+      <td>只做一次<br>Run once only</td>
+    </tr>
+  </table>
+  <div class="note"><span>Agreed actions and owners 已定行动与责任人</span><span class="line"></span></div>
+</section>
+
+<footer>Continuous Hydrogenation Skid — bilingual agenda for discussion · 连续氢化撬块中英议程 · 06 August 2026</footer>
+
+</div>
+</body>
+</html>
