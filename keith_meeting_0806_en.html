@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meeting Agenda — 06 August 2026 | Continuous Hydrogenation Skid</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, 'Segoe UI', sans-serif;
+    margin: 0; padding: 26px; color: #17212f; background: #f4f6f9; line-height: 1.55;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  header {
+    background: linear-gradient(120deg, #0f3460, #16213e);
+    color: #fff; padding: 22px 28px; border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(15,52,96,0.18); margin-bottom: 14px;
+  }
+  header h1 { margin: 0; font-size: 21px; line-height: 1.3; }
+  header .sub { display: block; font-size: 13.5px; font-weight: 400; color: #c8d4e3; margin-top: 6px; }
+  header .meta { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+  header .meta span {
+    font-size: 11.5px; border: 1px solid rgba(255,255,255,0.24);
+    background: rgba(255,255,255,0.07); border-radius: 999px; padding: 4px 11px; color: #e4ebf3;
+  }
+
+  .toc {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .toc a {
+    text-decoration: none; font-size: 12.5px; font-weight: 600; color: #0f3460;
+    border: 1px solid #dbe3ec; border-radius: 999px; padding: 5px 12px; background: #f8fafc;
+  }
+  .toc a:hover { background: #eef3f8; }
+  .toc .count { color: #94a3b8; font-weight: 400; }
+
+  section {
+    background: #fff; border-radius: 12px; padding: 18px 22px 8px;
+    box-shadow: 0 1px 3px rgba(15,52,96,0.06); margin-bottom: 16px;
+  }
+  section > h2 {
+    margin: 0 0 4px; font-size: 16.5px; color: #0f3460;
+    padding-left: 12px; border-left: 4px solid #d97706;
+  }
+  section > .lead { margin: 0 0 14px 14px; font-size: 12.5px; color: #64748b; }
+
+  .item {
+    border: 1px solid #e5ebf2; border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 12px; background: #fcfdfe;
+  }
+  .item.key { border-color: #e9c98f; background: #fffdf7; }
+
+  .row1 { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+  .tag {
+    flex: 0 0 auto; font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+    color: #fff; background: #0f3460; border-radius: 999px; padding: 3px 10px; margin-top: 1px;
+  }
+  .tag.key { background: #b45309; }
+  .tag.new { background: #166534; }
+  .ref { font-size: 11px; color: #8798ab; margin-left: 2px; align-self: center; }
+  .h { font-size: 14.5px; font-weight: 650; color: #0f172a; flex: 1 1 340px; }
+
+  .pos {
+    margin: 10px 0 0; font-size: 13px; color: #33415a;
+    padding-left: 12px; border-left: 3px solid #cfd9e5;
+  }
+  .pos b { color: #0f3460; }
+  .pos ul { margin: 6px 0 0 18px; padding: 0; }
+  .pos li { margin: 3px 0; }
+
+  .q {
+    margin-top: 10px; background: #edfaf2; border: 1px solid #b9e0c7;
+    border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;
+    padding: 9px 13px; font-size: 13.5px; color: #14532d; font-weight: 600;
+  }
+  .q .lab {
+    display: block; font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase;
+    color: #16a34a; font-weight: 700; margin-bottom: 3px;
+  }
+  .q ol { margin: 4px 0 0 18px; padding: 0; font-weight: 600; }
+  .q li { margin: 3px 0; }
+
+  .opts { margin-top: 9px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .opt {
+    font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 8px;
+    padding: 5px 11px; background: #fff; color: #334155;
+  }
+  .opt b { color: #0f3460; }
+
+  .note {
+    margin-top: 10px; display: flex; align-items: center; gap: 9px;
+    font-size: 11px; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .note .line { flex: 1; border-bottom: 1px dashed #c8d3e0; height: 14px; }
+
+  .banner {
+    background: #eff6ff; border-left: 4px solid #1d4ed8; border-radius: 0 8px 8px 0;
+    padding: 12px 16px; font-size: 13.5px; color: #1e3a8a; margin-bottom: 14px;
+  }
+  .banner b { color: #1d4ed8; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 12px; }
+  th, td { border: 1px solid #e2e8f0; padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: #eef3f8; color: #0f3460; font-size: 12px; font-weight: 700; }
+  td.d { width: 52%; font-weight: 600; color: #0f3460; background: #f9fbfd; }
+  td.w { width: 22%; }
+
+  .close {
+    background: #fff7ed; border: 1px solid #f0d9b5; border-left: 4px solid #d97706;
+    border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 13px; color: #7c2d12;
+    margin-bottom: 12px;
+  }
+
+  footer { text-align: center; font-size: 11.5px; color: #94a3b8; padding: 10px 0 6px; }
+
+  @media (max-width: 760px) {
+    body { padding: 14px; }
+    .h { flex: 1 1 100%; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    section, .item { box-shadow: none; break-inside: avoid; }
+    .toc { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Meeting Agenda — 06 August 2026
+    <span class="sub">Sandwich Continuous Hydrogenation Skid | Asymchem UK &times; CFCT / IEPE / CIMT</span>
+  </h1>
+  <div class="meta">
+    <span>A — Decisions needed (5)</span>
+    <span>B — Inputs from SW (3)</span>
+    <span>C — Closed our side, confirm (5)</span>
+    <span>D — Deliverable dates</span>
+    <span>Objective: run HAZOP once only</span>
+  </div>
+</header>
+
+<div class="banner">
+  <b>Priority for today:</b> the 3D layout and the control philosophy are the only two remaining items that could still trigger a significant design change, and both have so far only been reviewed internally. We would like to agree them with you before the early-September HAZOP so that HAZOP is run once and only once.
+</div>
+
+<div class="toc">
+  <a href="#a">A — Decisions <span class="count">5</span></a>
+  <a href="#b">B — Inputs needed <span class="count">3</span></a>
+  <a href="#c">C — Confirm closure <span class="count">5</span></a>
+  <a href="#d">D — Dates</a>
+</div>
+
+<!-- ============== A ============== -->
+<section id="a">
+  <h2>A. Decisions and confirmations</h2>
+  <p class="lead">Design and procurement cannot be frozen until these are settled.</p>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">A1</span>
+      <span class="h">Baseline the four-module split shipment</span>
+      <span class="ref">R127</span>
+    </div>
+    <div class="pos">
+      <b>Our position:</b>
+      <ul>
+        <li>The four-module split is technically feasible; a whole-unit lift through the roof is not mandatory.</li>
+        <li>We are also verifying whether sea freight itself requires the split, independent of the lift dimensions. If it does, the roof option no longer offers a cost advantage.</li>
+        <li>The 3D layout is being finalised now; the Notified Body assessment depends on that freeze.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Can we baseline four-module split shipment with site assembly, and keep the roof-replacement assessment as a parallel option that does not block design?
+    </div>
+    <div class="opts">
+      <div class="opt"><b>A</b> — Baseline four modules</div>
+      <div class="opt"><b>B</b> — Hold for roof decision</div>
+    </div>
+    <div class="note"><span>Decision / action</span><span class="line"></span></div>
+  </div>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">A2</span>
+      <span class="h">SE01 cleanliness verification method</span>
+      <span class="ref">R38</span>
+    </div>
+    <div class="pos">
+      <b>Our position:</b>
+      <ul>
+        <li>Sight glasses cannot be fitted on the reaction columns or the separator at the operating pressure, so visual verification is not feasible.</li>
+        <li>We propose verifying cleanliness by sampling and residue concentration analysis.</li>
+        <li>Acceptance criteria depend on project containment level and UK requirements, so they should be set on the SW side.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Questions</span>
+      <ol>
+        <li>Is residue sampling analysis acceptable as the verification method?</li>
+        <li>Can SW site QA define the acceptance limits and analytical method?</li>
+      </ol>
+    </div>
+    <div class="note"><span>Decision / action</span><span class="line"></span></div>
+  </div>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">A3</span>
+      <span class="h">Scope and structure of the cleaning philosophy</span>
+      <span class="ref">to be issued this week</span>
+    </div>
+    <div class="pos">
+      <b>Our output:</b>
+      <ul>
+        <li>The document covers routine cleaning during project operation, <b>after 3Q validation</b>. It is not a 3Q validation document; validation remains a site responsibility.</li>
+        <li>It is split into <b>CMB</b> (before reaction) and <b>CMA</b> (after reaction).</li>
+        <li>CMB: wash with the reaction solvent, dry, then charge catalyst.</li>
+        <li>CMA: discharge catalyst under water and inert gas protection, water flush to remove catalyst fines, then solvent wash, then dry — residual active catalyst in contact with solvent presents a fire and explosion risk.</li>
+        <li>Solvent selection is given as a general principle only; the specific solvent follows the project chemistry.</li>
+        <li>The reactor can be cleaned separately; tanks and the separator can be cleaned on a circulation loop, filled to ensure full wetted contact.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Are you content with this scope, the CMB / CMA split and the responsibility boundary for validation?
+    </div>
+    <div class="note"><span>Decision / action</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag new">A4</span>
+      <span class="h">Spray ball type</span>
+      <span class="ref">new item</span>
+    </div>
+    <div class="pos">
+      <b>Our position:</b>
+      <ul>
+        <li>We have selected a removable rotating spray ball, with the required flow noted on the equipment datasheet.</li>
+        <li>We understand the earlier concern was that a removable head could drop off; we will explain the retention arrangement.</li>
+        <li>This must be locked before the vessel order is placed, otherwise the vendor cannot configure to requirement.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Removable head with positive retention, or fixed type?
+    </div>
+    <div class="opts">
+      <div class="opt"><b>A</b> — Removable + retention</div>
+      <div class="opt"><b>B</b> — Fixed</div>
+    </div>
+    <div class="note"><span>Decision / action</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">A5</span>
+      <span class="h">SE01 gasket material</span>
+      <span class="ref">R121</span>
+    </div>
+    <div class="pos">
+      <b>Our position:</b>
+      <ul>
+        <li>The separator is now at 270 &deg;C design temperature and 7.5 MPaG design pressure; a 316L metallic ring gasket was originally proposed.</li>
+        <li>Gasket and flange would both be 316L with similar hardness, so sealing may be unreliable.</li>
+        <li>We propose a dissimilar metal gasket, for example copper.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Can we change to a dissimilar metal gasket to secure the seal?
+    </div>
+    <div class="note"><span>Decision / action</span><span class="line"></span></div>
+  </div>
+</section>
+
+<!-- ============== B ============== -->
+<section id="b">
+  <h2>B. Inputs and documents needed from SW</h2>
+  <p class="lead">We cannot progress these without your input. Owner and date to be agreed in the meeting.</p>
+
+  <div class="item key">
+    <div class="row1">
+      <span class="tag key">B1</span>
+      <span class="h">FAT / validation template and sign-off route</span>
+      <span class="ref">R128 / R129</span>
+    </div>
+    <div class="pos">
+      <b>Our understanding:</b>
+      <ul>
+        <li>SW provides the template and the information requirement list; the China team supplies documents and information to that template.</li>
+        <li>The CE Notified Body takes part in document review but not in sign-off.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Questions</span>
+      <ol>
+        <li>Is that understanding correct — who prepares and who signs off?</li>
+        <li>Can the UK FAT / validation template and information list be issued this week, so we work to it from the start and avoid rework?</li>
+      </ol>
+    </div>
+    <div class="note"><span>Owner / date</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">B2</span>
+      <span class="h">Staircase and platform dimensions</span>
+      <span class="ref">R119</span>
+    </div>
+    <div class="pos">
+      <b>Status:</b>
+      <ul>
+        <li>Requested by email earlier; no reply received to date.</li>
+        <li>This blocks the 3D freeze, which in turn gates the Notified Body assessment and HAZOP.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Questions</span>
+      <ol>
+        <li>Can you send the charging staircase and platform dimensions?</li>
+        <li>Is the charging staircase inside our supply scope?</li>
+      </ol>
+    </div>
+    <div class="note"><span>Owner / date</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">B3</span>
+      <span class="h">Polishing filter FTR9832 — expectation</span>
+      <span class="ref">R80</span>
+    </div>
+    <div class="pos">
+      <b>Our position:</b>
+      <ul>
+        <li>Differential pressure monitoring with an interlock has been added.</li>
+        <li>Solvent cleaning addresses particulates.</li>
+      </ul>
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Is DP interlock plus periodic cleaning sufficient, or do you require a duty / standby filter with online changeover?
+    </div>
+    <div class="opts">
+      <div class="opt"><b>A</b> — DP interlock + cleaning</div>
+      <div class="opt"><b>B</b> — Duty / standby filter</div>
+    </div>
+    <div class="note"><span>Decision / action</span><span class="line"></span></div>
+  </div>
+</section>
+
+<!-- ============== C ============== -->
+<section id="c">
+  <h2>C. Closed on our side — confirmation sought</h2>
+  <p class="lead">Not intended to be worked through line by line.</p>
+
+  <div class="close">
+    A large number of tracking items are now resolved internally. We will issue the cleaning philosophy, control philosophy and operating manual, and then run a <b>single batch closure review</b> with you rather than confirming items piecemeal. The items below are the ones with a substantive change or a remaining question.
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C1</span>
+      <span class="h">Differential pressure monitoring accuracy</span>
+      <span class="ref">R82</span>
+    </div>
+    <div class="pos">
+      <b>Our output:</b> based on transmitter accuracy on the reaction column and the reactor inlet / outlet lines, the maximum differential pressure error is approximately 40 kPa. A pressure interlock was added on 14 July.
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Any remaining concern on accuracy — otherwise can we close this item?
+    </div>
+    <div class="note"><span>Confirmed / open</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C2</span>
+      <span class="h">Mode-transition safeguards</span>
+      <span class="ref">R52 / R53</span>
+    </div>
+    <div class="pos">
+      <b>Our output:</b> the separator is rinsed through an enlarged drain line rather than soaked, with inlet and outlet matched, so the high-level interlock is not challenged. R52 is closed on our side.
+      <br><b>Still open:</b> the required safeguards for switching between cleaning mode and processing mode, including purge / line-blow steps and reset confirmation for any interlock bypass.
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      What level of safeguard do you require — technical (key switch, HMI confirmation) and procedural (SOP, dual sign-off)?
+    </div>
+    <div class="note"><span>Requirement agreed</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C3</span>
+      <span class="h">Catalyst specification and blockage risk</span>
+      <span class="ref">R63</span>
+    </div>
+    <div class="pos">
+      <b>Basis of design:</b> dust-free, non-flammable bead / pellet catalyst with exposure requiring OEB 3 or lower containment. Catalyst charging is handled on the SW side.
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Can you confirm the OEB 3 deviation from the URS is accepted, and that this item closes with no further action from us?
+    </div>
+    <div class="note"><span>Confirmed / open</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C4</span>
+      <span class="h">Catalyst charging and discharging space</span>
+      <span class="ref">R47</span>
+    </div>
+    <div class="pos">
+      <b>Our output:</b> in the current layout the charging and discharging nozzles are both located on the end face of the skid.
+    </div>
+    <div class="q">
+      <span class="lab">Question</span>
+      Is the space at the end face adequate for your intended charging and discharging method, equipment and operator access?
+    </div>
+    <div class="note"><span>Confirmed / open</span><span class="line"></span></div>
+  </div>
+
+  <div class="item">
+    <div class="row1">
+      <span class="tag">C5</span>
+      <span class="h">Wall penetrations and cabling</span>
+      <span class="ref">R72</span>
+    </div>
+    <div class="pos">
+      <b>Our output:</b> CIMT has updated cable quantities against the single-line diagram you issued. Two selections remain open.
+    </div>
+    <div class="q">
+      <span class="lab">Questions</span>
+      <ol>
+        <li>Flow controller cabling — Modbus or 4&ndash;20 mA?</li>
+        <li>Hardwired interlock on / off valve loops — intrinsically safe or Ex d?</li>
+      </ol>
+    </div>
+    <div class="note"><span>Selection confirmed</span><span class="line"></span></div>
+  </div>
+</section>
+
+<!-- ============== D ============== -->
+<section id="d">
+  <h2>D. Deliverable dates</h2>
+  <p class="lead">For alignment.</p>
+  <table>
+    <tr><th>Deliverable</th><th class="w">Plan</th><th class="w">Comment</th></tr>
+    <tr><td class="d">Equipment datasheets — reissued at 75 barg design pressure / CLASS 900</td><td>This week</td><td></td></tr>
+    <tr><td class="d">Cleaning philosophy — revised per internal review</td><td>This week</td><td></td></tr>
+    <tr><td class="d">Operating manual — first issue</td><td>End of this week</td><td></td></tr>
+    <tr><td class="d">Instrument datasheets and instrument specifications</td><td>11 August</td><td></td></tr>
+    <tr><td class="d">Control philosophy — bilingual issue</td><td>After internal review</td><td>Gates HAZOP</td></tr>
+    <tr><td class="d">3D layout — frozen version</td><td>Following cable tray routing</td><td>Gates HAZOP</td></tr>
+    <tr><td class="d">FDS / SDS</td><td>Mid August</td><td></td></tr>
+    <tr><td class="d">DN65 / DN50 change-impact list and both mass balances</td><td>From end of this week</td><td>Final decision on September R&amp;D data</td></tr>
+    <tr><td class="d">HAZOP</td><td>Early September</td><td>Run once only</td></tr>
+  </table>
+  <div class="note"><span>Agreed actions and owners</span><span class="line"></span></div>
+</section>
+
+<footer>Continuous Hydrogenation Skid — agenda for discussion, 06 August 2026</footer>
+
+</div>
+</body>
+</html>
