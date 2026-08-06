@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>08-06 议程思维导图 | Agenda Mind Map</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 34px 28px;
+    font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+    color: #17212f;
+    background: linear-gradient(135deg, #f5f8fc 0%, #eef3f9 100%);
+    line-height: 1.4;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  .head { text-align: center; margin-bottom: 26px; }
+  .head h1 { margin: 0; font-size: 22px; color: #0f3460; letter-spacing: 0.3px; }
+  .head .sub { margin-top: 6px; font-size: 13px; color: #64748b; }
+
+  .map { display: flex; align-items: center; gap: 0; }
+
+  .root {
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, #0f3460, #1b4b86);
+    color: #fff; border-radius: 14px; padding: 18px 20px;
+    box-shadow: 0 8px 22px rgba(15,52,96,0.28);
+    text-align: center; width: 176px;
+  }
+  .root .t { font-size: 16px; font-weight: 700; line-height: 1.3; }
+  .root .e { font-size: 11.5px; color: #c8d4e3; margin-top: 6px; }
+  .root .d { font-size: 11px; color: #f0d3a2; margin-top: 9px; }
+
+  .stem { flex: 0 0 26px; height: 2px; background: #c3d0de; }
+
+  .tree { flex: 1 1 auto; }
+  .tree ul { list-style: none; margin: 0; padding: 0; }
+
+  .tree > ul > li {
+    position: relative;
+    border-left: 2px solid #c3d0de;
+    padding: 9px 0 9px 26px;
+  }
+  .tree > ul > li::before {
+    content: ''; position: absolute; left: 0; top: 27px;
+    width: 24px; border-top: 2px solid #c3d0de;
+  }
+  .tree > ul > li:first-child { border-left-color: transparent; }
+  .tree > ul > li:first-child::after {
+    content: ''; position: absolute; left: -2px; top: 27px; bottom: 0;
+    border-left: 2px solid #c3d0de;
+  }
+  .tree > ul > li:last-child { border-left-color: transparent; }
+  .tree > ul > li:last-child::after {
+    content: ''; position: absolute; left: -2px; top: 0; height: 27px;
+    border-left: 2px solid #c3d0de;
+  }
+
+  .cat { display: flex; align-items: flex-start; gap: 14px; }
+
+  .catbox {
+    flex: 0 0 178px;
+    border-radius: 11px; padding: 10px 13px;
+    background: #fff; border: 1px solid #e2e8f0;
+    border-left: 5px solid var(--c);
+    box-shadow: 0 3px 10px rgba(30,50,80,0.07);
+  }
+  .catbox .t { font-size: 14.5px; font-weight: 700; color: var(--c); }
+  .catbox .e { font-size: 11px; color: #8798ab; margin-top: 3px; }
+  .catbox .n {
+    display: inline-block; margin-top: 7px; font-size: 10.5px; font-weight: 700;
+    color: #fff; background: var(--c); border-radius: 999px; padding: 1px 8px;
+  }
+
+  .leaves { flex: 1 1 auto; }
+  .leaves ul { list-style: none; margin: 0; padding: 0; }
+  .leaves li {
+    position: relative;
+    padding: 3px 0 3px 22px;
+    border-left: 2px solid var(--c);
+    opacity: 0.98;
+  }
+  .leaves li::before {
+    content: ''; position: absolute; left: 0; top: 17px;
+    width: 18px; border-top: 2px solid var(--c);
+  }
+  .leaves li:first-child { border-left-color: transparent; }
+  .leaves li:first-child::after {
+    content: ''; position: absolute; left: -2px; top: 17px; bottom: 0;
+    border-left: 2px solid var(--c);
+  }
+  .leaves li:last-child { border-left-color: transparent; }
+  .leaves li:last-child::after {
+    content: ''; position: absolute; left: -2px; top: 0; height: 17px;
+    border-left: 2px solid var(--c);
+  }
+  .leaves li:first-child:last-child::after { display: none; }
+
+  .leaf {
+    display: inline-block;
+    background: #fff; border: 1px solid #e5ebf2; border-radius: 8px;
+    padding: 6px 12px; box-shadow: 0 1px 4px rgba(30,50,80,0.06);
+  }
+  .leaf .t { font-size: 13px; font-weight: 600; color: #1e2b3a; }
+  .leaf .e { font-size: 10.5px; color: #94a3b8; margin-top: 1px; }
+  .leaf .id {
+    font-size: 10px; font-weight: 700; color: var(--c);
+    margin-right: 6px; letter-spacing: 0.3px;
+  }
+
+  .foot { text-align: center; margin-top: 26px; font-size: 11.5px; color: #9aa6b8; }
+
+  @media (max-width: 900px) {
+    .map { flex-direction: column; align-items: stretch; gap: 14px; }
+    .root { width: auto; }
+    .stem { display: none; }
+    .cat { flex-direction: column; gap: 8px; }
+    .catbox { flex: 1 1 auto; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .root, .catbox, .leaf { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <h1>08-06 与 Keith 会议议程 · 思维导图</h1>
+    <div class="sub">Agenda Mind Map — 06 August 2026 | Continuous Hydrogenation Skid</div>
+  </div>
+
+  <div class="map">
+    <div class="root">
+      <div class="t">08-06<br>Keith 会议</div>
+      <div class="e">Agenda</div>
+      <div class="d">HAZOP 只做一次</div>
+    </div>
+    <div class="stem"></div>
+
+    <div class="tree">
+      <ul>
+
+        <!-- A -->
+        <li style="--c:#b45309">
+          <div class="cat">
+            <div class="catbox">
+              <div class="t">A. 需决策</div>
+              <div class="e">Decisions</div>
+              <span class="n">5</span>
+            </div>
+            <div class="leaves">
+              <ul>
+                <li><span class="leaf"><span class="id">A1</span><span class="t">四撬块分体运输定为基准</span><span class="e">Four-module split as baseline</span></span></li>
+                <li><span class="leaf"><span class="id">A2</span><span class="t">SE01 清洁度验证方式</span><span class="e">SE01 cleanliness verification</span></span></li>
+                <li><span class="leaf"><span class="id">A3</span><span class="t">清洗方案定位与 CMB / CMA 分层</span><span class="e">Cleaning philosophy scope &amp; split</span></span></li>
+                <li><span class="leaf"><span class="id">A4</span><span class="t">喷淋球形式</span><span class="e">Spray ball type</span></span></li>
+                <li><span class="leaf"><span class="id">A5</span><span class="t">SE01 垫片材质</span><span class="e">SE01 gasket material</span></span></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+
+        <!-- B -->
+        <li style="--c:#1d4ed8">
+          <div class="cat">
+            <div class="catbox">
+              <div class="t">B. 需 SW 输入</div>
+              <div class="e">Inputs from SW</div>
+              <span class="n">3</span>
+            </div>
+            <div class="leaves">
+              <ul>
+                <li><span class="leaf"><span class="id">B1</span><span class="t">FAT 模板与签发流程</span><span class="e">FAT template &amp; sign-off route</span></span></li>
+                <li><span class="leaf"><span class="id">B2</span><span class="t">步梯与平台尺寸</span><span class="e">Staircase &amp; platform dimensions</span></span></li>
+                <li><span class="leaf"><span class="id">B3</span><span class="t">精滤器控制措施期望</span><span class="e">Polishing filter expectation</span></span></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+
+        <!-- C -->
+        <li style="--c:#16a34a">
+          <div class="cat">
+            <div class="catbox">
+              <div class="t">C. 确认关闭</div>
+              <div class="e">Confirm closure</div>
+              <span class="n">5</span>
+            </div>
+            <div class="leaves">
+              <ul>
+                <li><span class="leaf"><span class="id">C1</span><span class="t">差压监测精度</span><span class="e">DP monitoring accuracy</span></span></li>
+                <li><span class="leaf"><span class="id">C2</span><span class="t">操作模式切换保护</span><span class="e">Mode-transition safeguards</span></span></li>
+                <li><span class="leaf"><span class="id">C3</span><span class="t">催化剂规格与 OEB 3 偏离</span><span class="e">Catalyst spec &amp; OEB 3</span></span></li>
+                <li><span class="leaf"><span class="id">C4</span><span class="t">加料 / 卸料操作空间</span><span class="e">Charging &amp; discharging space</span></span></li>
+                <li><span class="leaf"><span class="id">C5</span><span class="t">穿墙孔与电缆选型</span><span class="e">Penetrations &amp; cable selection</span></span></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+
+        <!-- D -->
+        <li style="--c:#0e9aa7">
+          <div class="cat">
+            <div class="catbox">
+              <div class="t">D. 交付节点</div>
+              <div class="e">Deliverables</div>
+              <span class="n">5</span>
+            </div>
+            <div class="leaves">
+              <ul>
+                <li><span class="leaf"><span class="t">设备数据单 · 清洗方案</span><span class="e">This week 本周</span></span></li>
+                <li><span class="leaf"><span class="t">操作手册初稿</span><span class="e">End of week 本周末</span></span></li>
+                <li><span class="leaf"><span class="t">仪表数据表</span><span class="e">11 Aug 8/11</span></span></li>
+                <li><span class="leaf"><span class="t">控制说明 · 3D 定稿</span><span class="e">Gates HAZOP 卡 HAZOP</span></span></li>
+                <li><span class="leaf"><span class="t">HAZOP</span><span class="e">Early Sept 9 月初</span></span></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot">Asymchem · Sandwich Continuous Hydrogenation Skid | IEPE · CFCT · CIMT</div>
+
+</div>
+</body>
+</html>
