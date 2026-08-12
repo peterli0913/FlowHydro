@@ -27,15 +27,21 @@ PERIOD = "Bi-weekly Progress 2026-07-29 ~ 08-11"
 SLIDES = [
     dict(no="01", color="2563EB", title="Overall Progress", sub="整体推进",
          bullets=[
-             dict(en="Design package closing out — internal cross-review "
-                     "complete, issue to SW next Tuesday",
-                  cn="设计文件收口，国内内部会审完成，下周二发出 SW", subs=[
-                      ("Cleaning philosophy · 3D layout · control philosophy",
-                       "清洗方案 · 3D 布置 · 控制说明"),
-                      ("Equipment datasheets reissued at 75 barg / CLASS 900",
-                       "设备数据单按 75 barg / CLASS 900 升版"),
-                      ("Instrument datasheets 11 Aug · operating manual first issue",
-                       "仪表数据表 8/11 · 操作手册初稿本周发出"),
+             dict(en="Design package closing out — documents moving through "
+                     "internal review to issue",
+                  cn="设计文件收口，各文件正由内部会审转入正式发出", subs=[
+                      ("Updated cleaning philosophy and operating manual "
+                       "issued for cross-discipline review",
+                       "更新的清洗说明与操作手册已发各专业会审"),
+                      ("Reissued equipment and instrument datasheets checked "
+                       "— issue on the morning of 12 Aug",
+                       "升版的设备数据单与仪表数据单已校核完成，8/12 上午发出"),
+                      ("Document list affected by the R24-CR01 size change "
+                       "— issue expected on the morning of 12 Aug",
+                       "因 R24-CR01 尺寸变更需更新的文件清单，预计 8/12 上午发出"),
+                      ("Cleaning philosophy · 3D layout · control philosophy "
+                       "to SW next Tuesday",
+                       "清洗方案 · 3D 布置 · 控制说明，下周二发出 SW"),
                   ]),
              dict(en="Weekly technical session with SW now running — items "
                      "closed live in the meeting",
