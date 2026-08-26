@@ -60,9 +60,9 @@ SLIDES = [
 
     dict(no="02", color="16A34A", title="Technical Progress & Open Items",
          sub="关键技术进展与待解决事项", bullets=[
-             dict(en="PFD and mass balance confirmed unchanged — the "
-                     "consequential re-work is avoided",
-                  cn="PFD 与物料平衡确认不改，连带的配置调整全部免除", subs=[
+             dict(en="Reactor size no longer drives a PFD change — but the CIP "
+                     "revision still requires a PFD review and update",
+                  cn="反应器尺寸不再驱动 PFD 变更，但 CIP 修改仍需 PFD 复核升版", subs=[
                       ("Residence time is variable: smaller volume, but hourly "
                        "feed flow holds — so heat load and TCU duty are unchanged",
                        "停留时间可变：容积变小但每小时进料流量可不降，热负荷与 TCU 负荷均不变"),
@@ -155,11 +155,11 @@ SLIDES = [
                   cn="评估进货梯所需的降高方案：去掉顶部一段、HTF 管道散件发运、"
                      "控制柜加铰链以免重新布线",
                   gap=0.25, subs=[]),
-             dict(en="Send tracker responses to Keith for line-by-line closure "
-                     "this week; HAZOP early September with the 3D layout and "
-                     "control philosophy agreed first, run once only",
-                  cn="本周将跟踪表答复发 Keith 逐条关闭；9 月初 HAZOP 前先谈定 3D 与控制说明，"
-                     "确保只做一次",
+             dict(en="Send tracker responses to Keith for closure, and submit "
+                     "the proposal for a one-week on-site session at Sandwich — "
+                     "HAZOP follows once the layout is fixed",
+                  cn="将跟踪表答复发 Keith 逐条关闭；提交赴 Sandwich 现场集中一周的行程申请"
+                     "——HAZOP 待布置定案后再排",
                   gap=0.25, subs=[]),
          ]),
 ]

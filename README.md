@@ -22,6 +22,7 @@
 | `Meeting_Summary_0813_Technical_Keith.md` | 08-13 技术会（Keith）：清洗方案与设备设计 |
 | `Meeting_Summary_0818_Technical_Keith.md` | 08-18 技术会（Keith）：撬块设计与清洗方案 |
 | `Meeting_Summary_0825_Technical_Keith.md` | 08-25 技术会（Keith）：PFD 定案、垫片方案、控制柜与 3D 重排 |
+| `Meeting_Summary_0826_Biweekly_Review.md` | 08-26 双周汇报会：提议赴 Sandwich 现场攻 3D、HAZOP 延期预警、PFD 口径更正 |
 
 ### 会议转写（原始录音转文字）
 `05-09` / `05-12` / `07-01` / `07-06` / `07-14` / `08-05` / `08-06` / `08-12` / `08-13` / `08-18` 各场 `.docx`，以及 `2026-05-09`、`2026-06-09`、`2026-07-29`、`2026-08-13` 录音转写。
