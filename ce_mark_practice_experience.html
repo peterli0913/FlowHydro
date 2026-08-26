@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>成套撬装设备 CE 符合性实践经验</title>
+<style>
+  :root {
+    --ink: #142033;
+    --muted: #5b6b7c;
+    --line: #d9e2ec;
+    --paper: #f7f9fc;
+    --panel: #ffffff;
+    --navy: #0f3460;
+    --navy-deep: #0a2540;
+    --accent: #c9852a;
+    --accent-soft: #f8efe2;
+    --teal: #1f6f78;
+    --teal-soft: #e8f4f5;
+    --ok: #1f7a4d;
+    --warn: #9a3412;
+    --shadow: 0 10px 30px rgba(15, 52, 96, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 10% -10%, #e8f0f8 0%, transparent 55%),
+      radial-gradient(900px 420px at 100% 0%, #f4ebe0 0%, transparent 50%),
+      var(--paper);
+    font-family: "Source Han Sans SC", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.65;
+  }
+
+  .hero {
+    background:
+      linear-gradient(135deg, rgba(10, 37, 64, 0.96), rgba(15, 52, 96, 0.88)),
+      linear-gradient(120deg, #0a2540, #1f6f78);
+    color: #f5f7fa;
+    padding: 52px 24px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -80px -120px auto;
+    width: 320px; height: 320px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 40% 60% 55% 45%;
+    transform: rotate(18deg);
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #f0d3a2;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  h1 {
+    margin: 0 0 14px;
+    font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", serif;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .hero-lead {
+    max-width: 720px;
+    font-size: 16px;
+    color: rgba(245,247,250,0.88);
+    margin: 0 0 22px;
+  }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hero-tags span {
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #e8eef5;
+  }
+
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(10px);
+    background: rgba(247,249,252,0.88);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .nav a {
+    flex: 0 0 auto;
+    text-decoration: none;
+    color: var(--navy);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+  }
+  .nav a:hover { background: #fff; border-color: var(--line); }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 24px 64px; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  .panel.accent {
+    background: linear-gradient(180deg, #fff, var(--accent-soft));
+    border-color: #ecd7b4;
+  }
+  .panel.teal {
+    background: linear-gradient(180deg, #fff, var(--teal-soft));
+    border-color: #c5dde0;
+  }
+  .panel.hero-panel {
+    border-color: #e2c89a;
+    background:
+      linear-gradient(135deg, rgba(201,133,42,0.08), transparent 40%),
+      linear-gradient(180deg, #fff, var(--accent-soft));
+  }
+
+  .key-line {
+    font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--navy-deep);
+    margin: 0 0 16px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #ecd7b4;
+    border-radius: 12px;
+  }
+  .key-line em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .core-flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 16px 0 4px;
+  }
+  .core-step {
+    background: #fff;
+    border: 1px solid #ecd7b4;
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+    position: relative;
+    min-height: 96px;
+  }
+  .core-step::after {
+    content: "→";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .core-step:last-child::after { content: none; }
+  .core-step .idx {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+  .core-step.final .idx { background: var(--navy); }
+  .core-step.final {
+    background: var(--navy-deep);
+    border-color: var(--navy-deep);
+    color: #edf2f7;
+  }
+  .core-step strong {
+    display: block;
+    color: var(--navy);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .core-step.final strong { color: #f0d3a2; }
+  .core-step p {
+    margin: 0;
+    font-size: 12.5px;
+    color: #5b6b7c;
+  }
+  .core-step.final p { color: rgba(237,242,247,0.85); }
+  .focus-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 14px 0 0;
+  }
+  .focus-card {
+    background: #fff;
+    border: 1px solid #ecd7b4;
+    border-radius: 12px;
+    padding: 14px 15px;
+    position: relative;
+  }
+  .focus-card .idx {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+  }
+  .focus-card strong {
+    display: block;
+    color: var(--navy);
+    font-size: 14.5px;
+    margin-bottom: 6px;
+  }
+  .focus-card p {
+    margin: 0;
+    font-size: 13.5px;
+    color: #334155;
+  }
+
+  h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+    color: var(--navy);
+    font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  h2 .num {
+    font-family: "Source Han Sans SC", "Noto Sans SC", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  h3 {
+    margin: 18px 0 8px;
+    font-size: 15px;
+    color: var(--navy-deep);
+  }
+  p { margin: 0 0 10px; color: #243447; font-size: 14.5px; }
+  .muted { color: var(--muted); font-size: 13.5px; }
+
+  .takeaway {
+    border-left: 4px solid var(--accent);
+    background: #fffaf2;
+    padding: 12px 14px;
+    border-radius: 0 10px 10px 0;
+    font-size: 14.5px;
+    margin: 12px 0 0;
+  }
+
+  .grid-2, .grid-3, .grid-4 {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .tile {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 15px;
+  }
+  .tile strong {
+    display: block;
+    color: var(--navy);
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .tile p, .tile li { font-size: 13.5px; margin: 0; color: #334155; }
+  .tile ul { margin: 0; padding-left: 18px; }
+  .tile li { margin: 3px 0; }
+
+  .directive {
+    border-top: 3px solid var(--navy);
+  }
+  .directive.md { border-top-color: #0f3460; }
+  .directive.atex { border-top-color: #9a3412; }
+  .directive.emc { border-top-color: #1f6f78; }
+  .directive.ped { border-top-color: #c9852a; }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .flow-step {
+    background: var(--navy-deep);
+    color: #edf2f7;
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align: center;
+    position: relative;
+    min-height: 92px;
+  }
+  .flow-step::after {
+    content: "›";
+    position: absolute;
+    right: -8px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .flow-step:last-child::after { content: none; }
+  .flow-step b {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #f0d3a2;
+  }
+  .flow-step span { font-size: 12px; color: rgba(237,242,247,0.85); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-top: 10px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    vertical-align: top;
+    text-align: left;
+  }
+  th {
+    background: #eef3f8;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 12.5px;
+  }
+  td.dim {
+    width: 22%;
+    background: #f8fafc;
+    font-weight: 650;
+    color: var(--navy);
+  }
+
+  .checklist { list-style: none; padding: 0; margin: 8px 0 0; }
+  .checklist li {
+    position: relative;
+    padding: 8px 10px 8px 34px;
+    border-bottom: 1px dashed #e5edf5;
+    font-size: 14px;
+  }
+  .checklist li:last-child { border-bottom: 0; }
+  .checklist li::before {
+    content: "";
+    position: absolute;
+    left: 8px; top: 13px;
+    width: 14px; height: 14px;
+    border: 2px solid var(--teal);
+    border-radius: 4px;
+    background: #fff;
+  }
+
+  .pitfall {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .bad, .good {
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 13.5px;
+  }
+  .bad { background: #fff1f0; border: 1px solid #f3c6c2; }
+  .good { background: #eefaf3; border: 1px solid #b9e0c7; }
+  .bad strong, .good strong { display: block; margin-bottom: 6px; }
+  .bad strong { color: #9f1239; }
+  .good strong { color: var(--ok); }
+
+  .footer {
+    margin-top: 28px;
+    color: var(--muted);
+    font-size: 12.5px;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .core-flow, .focus-grid, .grid-2, .grid-3, .grid-4, .pitfall, .flow {
+      grid-template-columns: 1fr;
+    }
+    .core-step::after, .flow-step::after { content: none; }
+    .hero { padding: 36px 18px 28px; }
+    .wrap { padding: 20px 16px 48px; }
+  }
+
+  @media print {
+    .nav { display: none; }
+    body { background: #fff; }
+    .panel, .tile, .flow-step { box-shadow: none; break-inside: avoid; }
+    .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">CE Conformity Practice Brief</div>
+    <h1>成套撬装设备 CE 符合性实践经验</h1>
+    <p class="hero-lead">
+      核心经验只有一句：CE 不是发运前补的“出口贴纸”，
+      而是认证供应商深度参与「设计审核 → 采购前指导 → 生产复验 → 工厂验收」，
+      最终形成符合性闭环。
+    </p>
+    <div class="hero-tags">
+      <span>设计审核</span>
+      <span>采购前指导</span>
+      <span>生产复验</span>
+      <span>工厂验收</span>
+      <span>符合性闭环</span>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#position">核心判断</a>
+    <a href="#basics">科普精要</a>
+    <a href="#directives">指令组合</a>
+    <a href="#boundary">认证边界</a>
+    <a href="#workflow">工作链路</a>
+    <a href="#files">文件接口</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section class="panel hero-panel" id="position">
+    <h2><span class="num">01</span> 核心判断</h2>
+    <p class="key-line">
+      CE 不是发运前补的<em>“出口贴纸”</em>，
+      而是认证供应商全程参与
+      <em>设计审核 → 采购前指导 → 生产复验 → 工厂验收</em>，
+      最终得到<em>符合性闭环</em>。
+    </p>
+    <p>
+      可复用的做法不是“临近发货再找机构出证”，而是把认证供应商嵌进制造主线：
+      前四步有其持续参与，最后一步完成 DoC / 证书、铭牌与说明书的一致闭环。
+    </p>
+    <div class="core-flow">
+      <div class="core-step">
+        <span class="idx">1</span>
+        <strong>设计审核</strong>
+        <p>指令划定<br>风险点锁定</p>
+      </div>
+      <div class="core-step">
+        <span class="idx">2</span>
+        <strong>采购前指导</strong>
+        <p>规格写入<br>供应商证据</p>
+      </div>
+      <div class="core-step">
+        <span class="idx">3</span>
+        <strong>生产复验</strong>
+        <p>制造一致性<br>关键工序见证</p>
+      </div>
+      <div class="core-step">
+        <span class="idx">4</span>
+        <strong>工厂验收</strong>
+        <p>FAT 验证<br>问题闭环</p>
+      </div>
+      <div class="core-step final">
+        <span class="idx">目标</span>
+        <strong>符合性闭环</strong>
+        <p>DoC / 证书<br>铭牌说明书一致</p>
+      </div>
+    </div>
+    <div class="takeaway">
+      <strong>核心就这一条：</strong>有认证供应商参与的前四步过程，才换得上最后的符合性闭环；没有过程参与，末端补证不成立。
+    </div>
+  </section>
+
+  <section class="panel teal" id="basics">
+    <h2><span class="num">02</span> 科普精要</h2>
+
+    <h3>CE 标志解决什么问题</h3>
+    <p>
+      CE（Conformité Européenne）是产品进入欧盟市场流通的强制性符合性标识。
+      它表明制造商声明：该产品已满足所适用欧盟“新方法”指令中的基本健康、安全与相关要求。
+      对出口方而言，CE 的实质工作是<strong>识别适用指令 → 完成合格评定 → 形成技术文件与符合性声明 → 正确加贴标识</strong>，而不是单纯“拿一张证”。
+    </p>
+
+    <h3>指令与标准：谁强制、谁支持</h3>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>指令（Directive）</strong>
+        <ul>
+          <li>具有法律强制力，规定产品类别与基本安全要求（EHSR）</li>
+          <li>决定是否需要、以及需要何种合格评定路径</li>
+          <li>同一产品可同时落入多条指令</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <strong>协调标准（Standard）</strong>
+        <ul>
+          <li>提供更细的技术路径，用于证明满足指令要求</li>
+          <li>原则上属支持性、可选用的符合证据工具</li>
+          <li>按适用标准设计与验证，是最常用的符合路径</li>
+        </ul>
+      </div>
+    </div>
+    <div class="takeaway" style="margin-top:12px">
+      关键原则：当产品同时受多条指令覆盖时，必须<strong>全部符合后</strong>才能加贴 CE；只满足其中一条不够。
+    </div>
+
+    <h3>两类常见输出：DoC 与公告机构评估</h3>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>DoC 符合性声明</strong>
+        <p>由制造商签署（Declaration of Conformity）。声明产品符合所列指令与标准，是加贴 CE 的核心法律文件之一，通常还需明确欧洲代表等信息。</p>
+      </div>
+      <div class="tile">
+        <strong>公告机构（Notified Body, NB）</strong>
+        <p>在指令要求第三方介入时，由获欧盟授权编号的机构开展型式评估、体系审核、验证等，并在授权范围内出具相应评估/证书。</p>
+      </div>
+    </div>
+    <p style="margin-top:12px">
+      是否必须走 NB，取决于指令与产品风险类别（合格评定模块）。低风险路径可能以制造商内部生产控制 + DoC 为主；承压、防爆等高风险场景更常需要第三方介入。
+      选型机构时，应核对<strong>授权范围是否覆盖对应指令与产品类型</strong>。
+    </p>
+
+    <h3>成套撬装常见相关指令（概念层）</h3>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>MD / ATEX / EMC / PED</strong>
+        <ul>
+          <li><strong>MD</strong>：机械与成套装置的基本健康与安全要求</li>
+          <li><strong>ATEX</strong>：用于潜在爆炸环境的设备与保护系统</li>
+          <li><strong>EMC</strong>：设备不产生过度电磁干扰、且具备抗扰能力</li>
+          <li><strong>PED</strong>：承压设备及承压装置的设计制造与合格评定</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <strong>理解时避免两个混淆</strong>
+        <ul>
+          <li><strong>单体有证 ≠ 整橇自动合规</strong>：成套边界、接口与系统风险仍需整体评估</li>
+          <li><strong>CE 合规 ≠ 现场即可投用</strong>：属地安装检查、SAT 等属于另一工作层</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>市场准入与属地监管的差别</h3>
+    <p>
+      英国脱欧后存在 UKCA 等体系差异，具体适用需按目标市场确认。
+      更通用的经验是：<strong>出口前符合性工作</strong>解决的是产品以何种身份合法进入市场；
+      <strong>属地安装与使用监管</strong>解决的是到场后如何组装、检查与投用。两者相关，但不宜混为一个包干事项。
+    </p>
+  </section>
+
+  <section class="panel" id="directives">
+    <h2><span class="num">03</span> 指令组合：先做正确划定</h2>
+    <p class="muted">以“整体撬装、含设备/机泵/仪表/阀门/管线/电控、涉氢、防爆场所”为典型场景的实践划定。</p>
+    <div class="grid-4">
+      <div class="tile directive md">
+        <strong>MD 机械指令</strong>
+        <p>覆盖撬装作为机械/成套装置的基本健康与安全要求，是整橇符合性的底座之一。</p>
+      </div>
+      <div class="tile directive atex">
+        <strong>ATEX 防爆指令</strong>
+        <p>电气设备须具备可用的 CE-ATEX 证据链（声明、说明书、铭牌等）；非电设备亦可接受满足指令的供应商 DoC。</p>
+      </div>
+      <div class="tile directive emc">
+        <strong>EMC 电磁兼容</strong>
+        <p>电控系统是关键抓手。主电柜说明、关键元器件符合性与系统级干扰抑制，应在设计阶段纳入。</p>
+      </div>
+      <div class="tile directive ped">
+        <strong>PED 承压设备</strong>
+        <p>单体压力容器与整体装置级 PED 往往并存；介质与操作条件直接影响划类与合格评定路径。</p>
+      </div>
+    </div>
+    <h3>实践做法</h3>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>先问“什么作为一件产品进入市场”</strong>
+        <p>整橇作为成套装置认证，与“只认证单体设备再现场拼装”是两条路径。边界不清会导致后期文件、铭牌、责任主体全部返工。</p>
+      </div>
+      <div class="tile">
+        <strong>噪声等项：设计抑制优先</strong>
+        <p>对某些环境类要求，优先在设计中落实抑制措施；是否需要专项认证，按机构评估结论执行，避免默认“全部都要专项证”。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="boundary">
+    <h2><span class="num">04</span> 认证边界：清关前符合性 ≠ 属地验收</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>工作层</th>
+          <th>覆盖内容</th>
+          <th>经验要点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim">清关前 CE 工作</td>
+          <td>设计审核、采购前指导、生产复验、测试、整改、发证/符合性文件闭环</td>
+          <td>认证机构可深度介入制造端；这是出口前可控的主战场。</td>
+        </tr>
+        <tr>
+          <td class="dim">属地安装与使用</td>
+          <td>分块组装、保温、上下游管线与电控连接；属地监察机构检查；SAT 现场验收</td>
+          <td>与 CE 清关前工作不在同一范畴；不宜默认由同一认证方包办。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="takeaway">
+      可复用结论：合同与计划里要把“出口符合性”和“现场投用验收”拆成两条线，分别定义责任方、交付物与窗口期。
+    </div>
+  </section>
+
+  <section class="panel" id="workflow">
+    <h2><span class="num">05</span> 推荐工作链路：把认证前移到制造主线</h2>
+    <div class="flow">
+      <div class="flow-step"><b>设计审核</b><span>指令划定<br>风险点锁定</span></div>
+      <div class="flow-step"><b>采购前指导</b><span>规格写入<br>供应商证据</span></div>
+      <div class="flow-step"><b>生产复验</b><span>制造一致性<br>关键工序见证</span></div>
+      <div class="flow-step"><b>工厂验收</b><span>FAT 验证<br>问题闭环</span></div>
+      <div class="flow-step"><b>整改确认</b><span>设计/文件<br>/实物同步</span></div>
+      <div class="flow-step"><b>符合性闭环</b><span>DoC / 证书<br>铭牌说明书</span></div>
+    </div>
+    <div class="grid-3" style="margin-top:14px">
+      <div class="tile">
+        <strong>设计阶段</strong>
+        <ul>
+          <li>用 P&amp;ID / 3D / 设备表把“产品边界”钉死</li>
+          <li>涉氢泄漏路径、排气与检漏策略同步评估</li>
+          <li>材料与电气选型先过符合性门槛</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <strong>采购阶段</strong>
+        <ul>
+          <li>关键件采购规格写入 CE/ATEX/PED 证据要求</li>
+          <li>拒绝“货到再补证书”的默认路径</li>
+          <li>对非电防爆件，明确可接受的供应商 DoC 形式</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <strong>制造与发运</strong>
+        <ul>
+          <li>生产复验盯一致性，而不是只看抽检报告</li>
+          <li>FAT 把可在工厂验证的项做完</li>
+          <li>铭牌、说明书、符合性文件与实物版本一致</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="files">
+    <h2><span class="num">06</span> 文件接口包</h2>
+    <p>机构核算认证路径、工作量和周期，依赖一套“可评审的产品定义文件”。经验上，宜尽早按接口包组织，而不是零散补交。</p>
+    <div class="grid-2">
+      <div class="tile">
+        <strong>基础定义文件</strong>
+        <ul>
+          <li>完整 P&amp;ID（建议同步标注介质信息）</li>
+          <li>设备、机泵、阀门、仪表等明细表</li>
+          <li>撬装布置 / 3D 图纸</li>
+          <li>主电柜说明（服务 EMC 评审）</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <strong>风险与材料证据</strong>
+        <ul>
+          <li>HAZOP 分析报告（可参与复核）</li>
+          <li>金属材料材质报告</li>
+          <li>涉氢兼容与材料等级要求的设计依据</li>
+          <li>关键供应商符合性声明与说明书/铭牌信息</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>
