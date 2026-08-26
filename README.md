@@ -46,7 +46,7 @@
 | `0114` / `0509` / `0701` 版 `.xlsx`、`timeline_compare.png` | 历史版本与对比 |
 
 ### 隔周进度汇报
-`Progress_Report_0715.pptx` / `0729` / `0811`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。
+`Progress_Report_0715.pptx` / `0729` / `0811` / `0826`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。
 
 ### CE 认证
 `CE相关/`（供应商资料与项目要点）、`ce_mark_practice_experience.html`（经验汇报）、`ce_mark_practice_talking_points.md`（讲解词）。
