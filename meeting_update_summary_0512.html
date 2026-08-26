@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Meeting Update Summary — 2026/05/12 (with Keith)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+         margin: 0; color: #1f2937; background: #f5f7fa; padding: 24px; }
+  .container { max-width: 1240px; margin: 0 auto; }
+  .header { background: linear-gradient(120deg, #0f3460, #16213e); color: #fff;
+            padding: 22px 28px; border-radius: 12px; margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(15,52,96,0.15); }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header .sub { font-size: 13px; color: #cbd5e1; margin-top: 6px; }
+  .legend { display: flex; gap: 18px; margin-top: 12px; font-size: 12px;
+            flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .sw { width: 12px; height: 12px; border-radius: 3px; }
+
+  .group { background: #fff; border-radius: 12px; margin-bottom: 16px;
+           box-shadow: 0 1px 3px rgba(15,52,96,0.06); overflow: hidden; }
+  .group-head { padding: 12px 18px; border-bottom: 1px solid #e2e8f0;
+                background: #f8fafc; display: flex; align-items: center;
+                gap: 12px; }
+  .group-head .gh-icon { font-size: 22px; }
+  .group-head h2 { margin: 0; font-size: 16px; color: #0f3460; }
+  .group-head .gh-en { color: #94a3b8; font-weight: 400;
+                       font-size: 12px; margin-left: auto; }
+
+  .card { padding: 14px 18px; border-top: 1px solid #f1f5f9; display: grid;
+          grid-template-columns: 1fr 1fr; gap: 16px; align-items: start;
+          position: relative; }
+  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+                  width: 4px; }
+  .card.done::before  { background: #16a34a; }
+  .card.prog::before  { background: #d97706; }
+  .card.open::before  { background: #dc2626; }
+
+  .card .col-zh, .card .col-en { font-size: 13px; line-height: 1.6; }
+  .card .topic { font-weight: 600; color: #0f3460; font-size: 14px;
+                  margin-bottom: 6px; }
+  .card .col-en .topic { color: #475569; }
+  .card .label { color: #d97706; font-weight: 600; font-size: 12px;
+                  text-transform: uppercase; letter-spacing: 0.5px;
+                  margin-top: 8px; display: block; }
+  .card .label.q { color: #be185d; }
+  .card .label.ans { color: #16a34a; }
+  .card ul, .card ol { margin: 4px 0 4px 18px; padding: 0; }
+  .card li { margin: 2px 0; }
+  .card .tag { display: inline-block; font-size: 10px;
+                padding: 1px 6px; border-radius: 10px;
+                background: #e0f2fe; color: #075985; font-weight: 600;
+                margin-right: 6px; vertical-align: middle; }
+  .card .tag.new { background: #fef3c7; color: #b45309; }
+  .card .tag.qfk { background: #fce7f3; color: #9d174d; }
+
+  .nav { font-size: 12px; color: #64748b; margin-bottom: 14px; }
+  .nav a { color: #0369a1; text-decoration: none; margin-right: 12px; }
+  .nav a:hover { text-decoration: underline; }
+  .footer { font-size: 11px; color: #94a3b8; text-align: center;
+            margin: 20px 0; }
+  @media (max-width: 800px) {
+    .card { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Sandwich Continuous Hydrogenation — Meeting Update Summary</h1>
+  <div class="sub">
+    Compared <code>Meeting Minutes Tracking Record 0421.xlsx</code> ⇄
+    <code>Meeting Minutes Tracking Record 0512.xlsx</code> · Prepared for
+    technical session with Keith on 2026/05/12
+  </div>
+  <div class="legend">
+    <span><span class="sw" style="background:#16a34a"></span>已完成 / Closed</span>
+    <span><span class="sw" style="background:#d97706"></span>新进展，仍开放 / In progress with new info</span>
+    <span><span class="sw" style="background:#dc2626"></span>待 Keith 回复 / Open — needs Keith input</span>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="#a">A. 新关闭项 / Newly closed</a>
+  <a href="#b">B. 新进展中 / Newly progressed</a>
+  <a href="#c">C. 待 Keith 讨论 / Open for Keith</a>
+</div>
+
+<!-- ============ A. Newly closed ============ -->
+<div class="group" id="a">
+  <div class="group-head">
+    <span class="gh-icon">✅</span>
+    <h2>A. 自 04/21 以来新关闭的议题</h2>
+    <span class="gh-en">A. Items newly closed since 04/21</span>
+  </div>
+
+  <div class="card done">
+    <div class="col-zh">
+      <div class="topic">
+        <span class="tag new">关闭</span>
+        PRV 选型 — Bronkhorst 电子压力阀的工艺适配性已澄清
+      </div>
+      原本担心的 4 个不匹配点全部有了答案：
+      <ol>
+        <li><b>温度</b>：核实后介质操作温度为 30 ℃（而非 70 ℃），电子压力阀 50 ℃ 上限完全够用。</li>
+        <li><b>防爆分区</b>：Keith 确认现场有 1 区和 2 区，Bronkhorst 电子压力阀（II 3 G Ex ec IIC T4 Gc）可用于 2 区。</li>
+        <li><b>气液分离器气相出口背压</b>：核实后工艺需求 10–60 barg，厂家可做 9–60 barg 可调，<b>已满足</b>。</li>
+        <li><b>气液分离器液相出口减压</b>（唯一遗留点，见 B 区第 1 条）：需求 10–60 barg → 0.1 barg，单台 Bronkhorst 无法一步到位。</li>
+      </ol>
+      <span class="label ans">原状态</span> NO &nbsp; → &nbsp; <b>YES（关闭原 PRV 选型担忧 row）</b>
+    </div>
+    <div class="col-en">
+      <div class="topic">
+        <span class="tag new">CLOSED</span>
+        PRV — Bronkhorst electronic pressure valve fitness confirmed
+      </div>
+      All four original concerns now have answers:
+      <ol>
+        <li><b>Temperature</b>: medium operating temperature re-confirmed as 30 °C (not 70 °C); the 50 °C upper limit of the Bronkhorst valve is sufficient.</li>
+        <li><b>ATEX zoning</b>: Keith confirmed the site has both Zone 1 and Zone 2; the Bronkhorst electronic pressure valve (II 3 G Ex ec IIC T4 Gc) is acceptable in Zone 2.</li>
+        <li><b>Gas-liquid separator gas outlet back-pressure</b>: process need 10–60 barg, vendor capability 9–60 barg adjustable — <b>fits</b>.</li>
+        <li><b>Gas-liquid separator liquid outlet reduction</b> (only residual gap — see B-1 below): need 10–60 barg → 0.1 barg, a single Bronkhorst valve cannot do it in one stage.</li>
+      </ol>
+      <span class="label ans">Status</span> NO &nbsp; → &nbsp; <b>YES (original PRV concern row closed)</b>
+    </div>
+  </div>
+</div>
+
+<!-- ============ B. In progress with new info ============ -->
+<div class="group" id="b">
+  <div class="group-head">
+    <span class="gh-icon">🟠</span>
+    <h2>B. 新增进展 / 仍开放的议题</h2>
+    <span class="gh-en">B. Items with new progress, still open</span>
+  </div>
+
+  <div class="card prog">
+    <div class="col-zh">
+      <div class="topic">
+        <span class="tag qfk">需 Keith 确认</span>
+        B-1. PRV 液相出口减压 — 两段式减压方案
+      </div>
+      工艺需求：液相出口压力 10–60 barg → 0.1 barg。
+      厂家能力：仅能从 10–60 barg → 1–20 barg。
+      <br><br>
+      <b>初步方案</b>：先用 Bronkhorst 电子压力阀把压力降到 ~1.5–2 barg，再
+      利用下游 CV 调节阀把压力从 1.5–2 barg 进一步降到 0.1 barg。
+      <span class="label q">问 Keith</span>
+      ① 接受两段式减压架构吗？<br>
+      ② 下游 CV 调节阀的选型由谁主导？是否需要厂家联动确认？
+    </div>
+    <div class="col-en">
+      <div class="topic">
+        <span class="tag qfk">For Keith</span>
+        B-1. PRV liquid outlet reduction — proposed two-stage scheme
+      </div>
+      Process need: liquid outlet 10–60 barg → 0.1 barg.
+      Vendor capability: 10–60 barg → 1–20 barg only.
+      <br><br>
+      <b>Proposal</b>: use Bronkhorst electronic pressure valve to drop to
+      ~1.5–2 barg, then a downstream CV control valve to further reduce
+      from 1.5–2 barg to 0.1 barg.
+      <span class="label q">Ask Keith</span>
+      ① Do you agree with the two-stage reduction architecture?<br>
+      ② Who leads the downstream CV selection — and do we loop in the vendor for a joint sizing check?
+    </div>
+  </div>
+
+  <div class="card prog">
+    <div class="col-zh">
+      <div class="topic">B-2. 安全阀计算 (Relief valve calculation)</div>
+      <span class="label">04/28 进展</span>
+      <b>部分</b>安全阀已计算完成（注：0421 版本写的是"已计算完成"，0512 版本核实后改为"部分"）。数据单待整理。
+      <br><br>
+      模板已由 Keith 04/17 提供，研发 04/21 提供了乙酸异丙酯的 SDS。
+      <span class="label q">问 Keith</span>
+      ① 已完成的部分能否先共享 Keith 复核？<br>
+      ② 剩余工况（紧急泄放、火灾工况等）的输入信息是否齐全？
+    </div>
+    <div class="col-en">
+      <div class="topic">B-2. Relief valve calculation</div>
+      <span class="label">04/28 progress</span>
+      <b>Partial</b> relief valves have been calculated (note: the 0421
+      file said "completed"; the 0512 file revised this to
+      "partial"). Data sheets pending compilation.
+      <br><br>
+      Template provided by Keith on 04/17; R&D provided isopropyl
+      acetate SDS on 04/21.
+      <span class="label q">Ask Keith</span>
+      ① Can we share the completed portion for your review now?<br>
+      ② Are inputs for the remaining cases (emergency relief, fire case, …) complete from your side?
+    </div>
+  </div>
+
+  <div class="card prog">
+    <div class="col-zh">
+      <div class="topic">B-3. Burkert 电磁阀 — 5 bar 最小开启压力问题</div>
+      <span class="label">04/28 进展</span>
+      代理商已联系德国 Burkert 原厂，确认型号可买，<b>货期 ~12 周</b>。
+      <br>
+      资料显示<b>需要至少 5 bar 最小压差才能开启</b>；该型号是常闭电磁阀（断电关闭，故障关型）。
+      <span class="label q">问 Keith</span>
+      该 5 bar 最小开启压力对于 CV03 / CV08 的工艺场景（尤其开车前阶段压力尚未建立时）是否可接受？是否需要另选型号？
+    </div>
+    <div class="col-en">
+      <div class="topic">B-3. Burkert solenoid valve — 5 bar minimum opening pressure</div>
+      <span class="label">04/28 progress</span>
+      The agent has reached Burkert (Germany); the model is available
+      with a <b>~12-week lead time</b>.
+      <br>
+      Datasheet flags a <b>5 bar minimum differential pressure required
+      to actuate</b>. It is a normally-closed solenoid (fail-closed).
+      <span class="label q">Ask Keith</span>
+      Is the 5 bar minimum acceptable for CV03 / CV08 in the actual process — particularly during start-up when pressure has not yet built? Do we need to consider an alternative model?
+    </div>
+  </div>
+
+  <div class="card prog">
+    <div class="col-zh">
+      <div class="topic">B-4. URS / QTM 文件 — 工艺部分审查完成</div>
+      <span class="label">发现一处需更新</span>
+      URS 7.12 "Equipment Functions" 写的是冷凝器/分离器温控范围 −20 ~ 130 °C ± 2 °C（基于夹套）。
+      <br>
+      <b>实际工艺需求是 10 ~ 30 °C ± 2 °C</b>（0421 版本备注 "04/30 会议已澄清，Keith 修改 URS 对应部分"，0512 版本未带 04/30 更新，需要再确认）。
+      <span class="label q">问 Keith</span>
+      URS 7.12 的温控范围是否已按 10–30 °C 修订并定稿？最新版能否发我们一份？
+    </div>
+    <div class="col-en">
+      <div class="topic">B-4. URS / QTM — process portion reviewed</div>
+      <span class="label">One item flagged</span>
+      URS 7.12 "Equipment Functions" reads condenser / separator
+      controlled within −20 to 130 °C ± 2 °C (jacket basis).
+      <br>
+      <b>Actual process need is 10–30 °C ± 2 °C</b> (the 0421 file says
+      "clarified at 04/30 meeting; Keith to update URS accordingly", but
+      the 0512 file does not yet carry that note — to be re-confirmed).
+      <span class="label q">Ask Keith</span>
+      Has URS 7.12 been amended to 10–30 °C and re-issued? Could we have the latest version?
+    </div>
+  </div>
+
+  <div class="card prog">
+    <div class="col-zh">
+      <div class="topic">B-5. MP01 / MP02 计量泵流量</div>
+      <span class="label">工艺锁定 2–20 L/h</span>
+      04/22 邮件返回的 PFD 上仍然写的是 4–40 L/h，需要按工艺需求<b>修订 PFD 并同步更新设备数据单</b>。
+      <br>
+      0421 版本记录"04/30 会议澄清为 2–20 L/h，Keith 修改 PFD"，0512 版本未带该 04/30 更新。
+      <span class="label q">问 Keith</span>
+      PFD 是否已按 2–20 L/h 修订？最新版能否发我们？
+    </div>
+    <div class="col-en">
+      <div class="topic">B-5. MP01 / MP02 metering pump flow</div>
+      <span class="label">Process locked at 2–20 L/h</span>
+      The PFD returned in the 04/22 email still shows 4–40 L/h; PFD
+      should be <b>amended and the equipment datasheet synchronised</b>.
+      <br>
+      The 0421 file notes "clarified to 2–20 L/h at 04/30 meeting,
+      Keith to update PFD"; the 0512 file does not yet carry that.
+      <span class="label q">Ask Keith</span>
+      Has the PFD been updated to 2–20 L/h, and could we have the latest version?
+    </div>
+  </div>
+
+  <div class="card prog">
+    <div class="col-zh">
+      <div class="topic">B-6. 设备 & 仪表数据单</div>
+      设备数据单已更新（含冷凝器后操作温度 30 °C、BT06 容积变更、反应柱 DN80/DN65 等）。
+      <br>
+      <b>仪表数据单尚未完成</b>。
+      <span class="label q">问 Keith</span>
+      仪表数据单 IEPE 内部下周可出 update 版；Keith 一侧的 Instrument Schedule（量程、设定值、报警值）能否同步推进？
+    </div>
+    <div class="col-en">
+      <div class="topic">B-6. Equipment & instrument datasheets</div>
+      Equipment datasheet updated (post-condenser operating temperature
+      30 °C; BT06 volume change; reactor columns DN80 / DN65; …).
+      <br>
+      <b>Instrument datasheet still pending</b>.
+      <span class="label q">Ask Keith</span>
+      IEPE expects to issue an updated instrument datasheet next week; can your Instrument Schedule (ranges, set points, alarms) move in parallel?
+    </div>
+  </div>
+</div>
+
+<!-- ============ C. Open for Keith ============ -->
+<div class="group" id="c">
+  <div class="group-head">
+    <span class="gh-icon">❓</span>
+    <h2>C. 待 Keith 答复 / 确认 的开放项</h2>
+    <span class="gh-en">C. Open items awaiting Keith's input</span>
+  </div>
+
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-1. 穿墙电缆预留孔数量</div>
+      现场只有 14 个预留过墙孔。
+      <br>
+      CIMT 初步计算：当前方案需要 18 ~ 20 个穿线孔，<b>可优化至 14 个，待进一步确认</b>。
+      <span class="label q">问 Keith</span>
+      ① 现有 14 孔是否能容纳 32 芯及以上的电缆？<br>
+      ② 是否需要增设过墙孔，或者可调整 R23 模块布置？
+    </div>
+    <div class="col-en">
+      <div class="topic">C-1. Wall-penetration cable holes</div>
+      Only 14 reserved cable holes are available on-site.
+      <br>
+      CIMT preliminary: current design needs 18–20; <b>can be optimised down to 14, pending confirmation</b>.
+      <span class="label q">Ask Keith</span>
+      ① Can the existing 14 holes accommodate cables of 32 cores or more?<br>
+      ② Would adding a few more wall penetrations be possible, or can the R23 module layout be adjusted?
+    </div>
+  </div>
+
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-2. BT01（常压罐）— 用安全阀还是呼吸阀？</div>
+      04/22 邮件返回的 PID：BT01 是常压罐，配置了安全阀而非呼吸阀。
+      <br>
+      0421 版本曾记录初步答复"取消尾气管线手阀，取消安全阀，Keith 修改 PID"，0512 版本该答复未带过来。
+      <span class="label q">问 Keith</span>
+      最终结论是？尾气管线手阀和安全阀都取消的设计是否已落实到最新 PID？
+    </div>
+    <div class="col-en">
+      <div class="topic">C-2. BT01 (atmospheric tank) — relief valve vs. breather valve?</div>
+      In the 04/22 PID, BT01 is an atmospheric tank but is fitted with a relief valve rather than a breather valve.
+      <br>
+      The 0421 file noted a preliminary answer ("remove the tail-gas hand
+      valve and the relief valve; Keith to update PID"), but the 0512 file
+      does not yet carry it.
+      <span class="label q">Ask Keith</span>
+      Is that still the conclusion? Has the latest PID removed both the tail-gas hand valve and the relief valve on BT01?
+    </div>
+  </div>
+
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-3. CR01 / CR02 / CR03 — 压差报警与联锁去向</div>
+      04/22 邮件返回的 PID 中，反应柱 CR01 / CR02 / CR03 的压差报警和联锁被取消。
+      <br>
+      0421 版本曾备注"PLC 系统中有压差报警和联锁，未删除"。
+      <span class="label q">问 Keith</span>
+      ① 压差报警和联锁的最终设置位置是 DCS / PLC？<br>
+      ② PID 上是否需要重新显式标注（避免审查时被误解为缺失）？
+    </div>
+    <div class="col-en">
+      <div class="topic">C-3. CR01 / CR02 / CR03 — differential-pressure alarms & interlocks</div>
+      In the 04/22 PID the differential-pressure alarms and interlocks
+      on reactor columns CR01 / CR02 / CR03 were removed.
+      <br>
+      The 0421 file noted "the PLC system still has the differential
+      pressure alarms and interlocks, not deleted".
+      <span class="label q">Ask Keith</span>
+      ① Where do the alarms / interlocks finally live — DCS or PLC?<br>
+      ② Should the PID re-show them explicitly to avoid being read as "missing" during HAZOP review?
+    </div>
+  </div>
+
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-4. PRV030 是否删除？</div>
+      04/22 邮件返回的 PID 删除了 PRV030。
+      工艺侧：SE01 操作压力 10–60 bar，BT04 常压。
+      <br>
+      0421 版本初步意见："<b>不</b>删除 PRV030；调节阀 FCV004 通过流量调节还是液位调节还需讨论"。
+      <span class="label q">问 Keith</span>
+      ① 同意保留 PRV030 吗？<br>
+      ② FCV004 的控制策略：流量控制 / 液位控制 / 流量串级液位？（IEPE 内部讨论倾向于"液位作为外环、把质量流量控制器视为执行机构"。）
+    </div>
+    <div class="col-en">
+      <div class="topic">C-4. Should PRV030 be removed?</div>
+      The 04/22 PID removes PRV030. Process: SE01 at 10–60 bar, BT04 at
+      atmospheric.
+      <br>
+      The 0421 file's preliminary view: "<b>do not</b> delete PRV030;
+      FCV004 control strategy (flow vs. level vs. cascade) still
+      to be discussed."
+      <span class="label q">Ask Keith</span>
+      ① Agreed to keep PRV030?<br>
+      ② FCV004 control strategy: flow / level / flow-level cascade? (Our internal preference: level as the outer loop, treating the mass-flow controller as the actuator.)
+    </div>
+  </div>
+
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-5. 爆炸危险区域划分 (HAC) — 联合复核</div>
+      Keith 4 月已发邮件给出 HAC 预判（软口 0.5 m + 开口 1 m 内多为 1 区）。
+      各专业 04/30 已做内部预审，<b>仍待形成统一意见再发 Keith</b>。
+      <span class="label q">问 Keith</span>
+      ① 最终 HAC 图是否由 UK 属地按当地规范出图？时间节点？<br>
+      ② 我们的 3D 模型 5 月底冻结后，能否在 6 月上旬启动正式 HAC 划区？
+    </div>
+    <div class="col-en">
+      <div class="topic">C-5. Hazardous Area Classification (HAC) — joint review</div>
+      Keith's April email gave a preliminary HAC view (Zone 1 within
+      0.5 m of hose ports / 1 m around openings).
+      Internal cross-discipline pre-review completed on 04/30, <b>but
+      consolidated feedback to Keith is still pending</b>.
+      <span class="label q">Ask Keith</span>
+      ① Will the final HAC drawing be produced by the UK site per local code? What's the target date?<br>
+      ② Once our 3D model is frozen end-of-May, can we kick off the formal HAC zoning in early June?
+    </div>
+  </div>
+
+  <div class="card open">
+    <div class="col-zh">
+      <div class="topic">C-6. 3D 模型 — STP 格式 + 反应柱图纸</div>
+      04/30 行动项：CFCT 向 SW 发送最新 3D 模型 STP 文件 + 反应柱 PDF 图纸。
+      <span class="label q">问 Keith</span>
+      ① UK 一侧是否已收到？<br>
+      ② SW 复核反馈预计什么时候能给我们？我们的 3D 冻结依赖这条。
+    </div>
+    <div class="col-en">
+      <div class="topic">C-6. 3D model — STP + reactor column drawings</div>
+      04/30 action: CFCT to send SW the latest 3D model in STP plus the
+      reactor column drawings (PDF).
+      <span class="label q">Ask Keith</span>
+      ① Have they been received on your side?<br>
+      ② When can SW return its review comments? Our 3D model freeze depends on this loop closing.
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Source: <code>Meeting Minutes Tracking Record 0421.xlsx</code> vs.
+  <code>Meeting Minutes Tracking Record 0512.xlsx</code> · Diff
+  prepared by Peter for 2026/05/12 technical session with Keith.
+</div>
+
+</div>
+</body></html>
