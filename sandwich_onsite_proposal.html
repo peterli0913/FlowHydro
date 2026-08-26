@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sandwich 连续氢化撬块 · 3D 布置现场集中工作与 HAZOP 合并行程方案</title>
+<style>
+  :root{
+    --ink:#16202E; --ink2:#3A4759; --mute:#7A8798; --line:#E2E8F0;
+    --blue:#1D4ED8; --blueSoft:#EEF3FE;
+    --red:#C0392B; --redSoft:#FDF1EF;
+    --amber:#B26A00; --amberSoft:#FFF7EA;
+    --green:#0F7B4F; --greenSoft:#EDF8F2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0 0 56px;
+    background:#F4F6FA;
+    color:var(--ink);
+    font-family:"Microsoft YaHei","PingFang SC","Segoe UI",Helvetica,Arial,sans-serif;
+    font-size:14px; line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    max-width:1080px; margin:0 auto; background:#fff;
+    box-shadow:0 1px 3px rgba(20,32,52,.08), 0 12px 40px rgba(20,32,52,.06);
+  }
+
+  /* ---------- header ---------- */
+  header{
+    padding:34px 52px 26px;
+    border-top:5px solid var(--blue);
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-size:11.5px; letter-spacing:.16em; color:var(--mute);
+    text-transform:uppercase; margin-bottom:12px;
+  }
+  h1{
+    margin:0 0 6px; font-size:26px; line-height:1.35; font-weight:700;
+    letter-spacing:-.2px;
+  }
+  .subtitle{ font-size:14px; color:var(--ink2); margin:0 0 18px; }
+  .metarow{
+    display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--line);
+    border-radius:6px; overflow:hidden;
+  }
+  .metarow div{
+    flex:1 1 0; min-width:150px; padding:11px 16px;
+    border-right:1px solid var(--line); background:#FBFCFE;
+  }
+  .metarow div:last-child{ border-right:none; }
+  .mk{ font-size:11px; color:var(--mute); letter-spacing:.06em; }
+  .mv{ font-size:14px; font-weight:600; color:var(--ink); margin-top:2px; }
+
+  /* ---------- sections ---------- */
+  main{ padding:12px 52px 44px; }
+  section{ padding:26px 0 6px; border-bottom:1px solid var(--line); }
+  section:last-child{ border-bottom:none; }
+  h2{
+    margin:0 0 14px; font-size:17.5px; font-weight:700;
+    display:flex; align-items:baseline; gap:11px;
+  }
+  h2 .num{
+    flex:0 0 auto; font-size:12px; font-weight:700; color:var(--blue);
+    background:var(--blueSoft); border-radius:4px; padding:3px 8px;
+    letter-spacing:.04em;
+  }
+  h3{
+    margin:22px 0 9px; font-size:14.5px; font-weight:700; color:var(--ink);
+  }
+  p{ margin:0 0 11px; color:var(--ink2); }
+  strong{ color:var(--ink); font-weight:700; }
+  .lede{ font-size:14.5px; color:var(--ink); }
+
+  ul{ margin:0 0 12px; padding-left:0; list-style:none; }
+  li{
+    position:relative; padding-left:17px; margin-bottom:7px; color:var(--ink2);
+  }
+  li:before{
+    content:""; position:absolute; left:3px; top:.68em;
+    width:5px; height:5px; border-radius:50%; background:#B9C4D4;
+  }
+
+  /* ---------- tables ---------- */
+  table{ width:100%; border-collapse:collapse; margin:6px 0 14px; font-size:13px; }
+  th,td{ text-align:left; vertical-align:top; padding:9px 12px; border-bottom:1px solid var(--line); }
+  thead th{
+    background:#F7F9FC; color:var(--ink); font-weight:700; font-size:12px;
+    letter-spacing:.03em; border-bottom:1.5px solid #D6DEE9;
+  }
+  td{ color:var(--ink2); }
+  td.t{ color:var(--ink); font-weight:600; }
+  td.date{ color:var(--mute); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  tbody tr:last-child td{ border-bottom:none; }
+
+  /* ---------- callouts ---------- */
+  .call{
+    border-radius:7px; padding:15px 18px; margin:14px 0 16px;
+    border-left:4px solid var(--blue); background:var(--blueSoft);
+  }
+  .call.warn{ border-left-color:var(--amber); background:var(--amberSoft); }
+  .call.risk{ border-left-color:var(--red); background:var(--redSoft); }
+  .call.ok{ border-left-color:var(--green); background:var(--greenSoft); }
+  .call .ct{
+    font-size:12px; font-weight:700; letter-spacing:.06em; margin-bottom:6px;
+    color:var(--blue);
+  }
+  .call.warn .ct{ color:var(--amber); }
+  .call.risk .ct{ color:var(--red); }
+  .call.ok .ct{ color:var(--green); }
+  .call p{ margin:0; color:var(--ink); }
+  .call p + p{ margin-top:7px; }
+
+  blockquote{
+    margin:12px 0; padding:11px 16px; border-left:3px solid #CBD5E1;
+    background:#FAFBFD; color:var(--ink2); font-size:13px; font-style:normal;
+  }
+  blockquote .src{ display:block; margin-top:5px; font-size:11.5px; color:var(--mute); }
+
+  /* ---------- fact grid ---------- */
+  .grid{ display:flex; flex-wrap:wrap; gap:12px; margin:6px 0 14px; }
+  .card{
+    flex:1 1 220px; border:1px solid var(--line); border-radius:7px;
+    padding:14px 16px; background:#FDFEFF;
+  }
+  .card .n{ font-size:22px; font-weight:700; color:var(--blue); line-height:1.2; }
+  .card .l{ font-size:12.5px; color:var(--ink2); margin-top:4px; }
+  .card .s{ font-size:11.5px; color:var(--mute); margin-top:5px; }
+
+  footer{
+    padding:20px 52px 26px; border-top:1px solid var(--line);
+    font-size:11.5px; color:var(--mute); display:flex;
+    justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+
+  @media print{
+    body{ background:#fff; padding:0; font-size:11.5pt; }
+    .page{ box-shadow:none; max-width:none; }
+    header{ padding:18px 0 14px; }
+    main{ padding:0; }
+    footer{ padding:12px 0; }
+    section{ page-break-inside:avoid; padding:16px 0 4px; }
+    table, .call, .grid, blockquote{ page-break-inside:avoid; }
+  }
+  @media (max-width:720px){
+    header,main,footer{ padding-left:22px; padding-right:22px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="eyebrow">Asymchem · Sandwich Site&nbsp;&nbsp;|&nbsp;&nbsp;T-2502 Continuous Hydrogenation Skid</div>
+  <h1>3D 布置现场集中工作与 HAZOP 合并行程方案</h1>
+  <p class="subtitle">On-site 3D Layout Workshop &amp; Combined Hazard Study — Sandwich, UK</p>
+  <div class="metarow">
+    <div><div class="mk">拟派人员</div><div class="mv">2 名工程师 + 1 名项目经理</div></div>
+    <div><div class="mk">现场周期</div><div class="mv">1 周（5 个工作日）</div></div>
+    <div><div class="mk">目标窗口</div><div class="mv">2026 年 9 月内</div></div>
+    <div><div class="mk">关键前置</div><div class="mv">签证 ≥ 2 周</div></div>
+  </div>
+</header>
+
+<main>
+
+<!-- 1 -->
+<section>
+  <h2><span class="num">01</span>方案要点</h2>
+  <p class="lede">
+    派 <strong>2 名工程师 + 1 名项目经理</strong>赴 Sandwich 现场集中 <strong>一周</strong>，在实体空间中一次性关闭 3D 布置的全部未决事项，
+    并<strong>将 HAZOP 并入同一行程</strong>，在布置定案后立即于现场开展。
+  </p>
+  <div class="grid">
+    <div class="card">
+      <div class="n">3 次</div>
+      <div class="l">08/13 – 08/25 已召开的技术会次数</div>
+      <div class="s">3D 布置的核心分歧仍未关闭</div>
+    </div>
+    <div class="card">
+      <div class="n">10 项</div>
+      <div class="l">必须在实体空间中确认的未决事项</div>
+      <div class="s">见第 04 节清单</div>
+    </div>
+    <div class="card">
+      <div class="n">100 kg</div>
+      <div class="l">单件设备法兰重量</div>
+      <div class="s">决定了受限空间方案不可行</div>
+    </div>
+    <div class="card">
+      <div class="n">1 次</div>
+      <div class="l">HAZOP 允许的开展次数</div>
+      <div class="s">布置未定则有效性存疑、需重做</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2><span class="num">02</span>当前状态</h2>
+  <p>
+    设计与工艺侧的工程功能性问题已基本收敛。清洗方案经 08/13、08/18 两场技术会讨论后基本收口，修订版已于本周发出；
+    PFD 因反应器尺寸与 TCU 引起的变更已于 08/25 解除；高压垫片确定以 316L 软金属环为主路线、钽材为退路，正在向供应商取硬度证明。
+  </p>
+  <p>
+    <strong>唯一未收敛、且处于关键路径上的是 3D 布置与维护可达性。</strong>该议题自 08/18 提出后经三场会议讨论，至今没有结论。
+  </p>
+
+  <table>
+    <thead>
+      <tr><th style="width:78px">日期</th><th style="width:210px">议题</th><th>结果</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="date">08/13</td>
+        <td class="t">3D 模型三点<br />（端子箱位置 / 撬宽 / 降高）</td>
+        <td>会议在清洗方案第一条即超时，<strong>三点全部未讨论</strong>，整体顺延。</td>
+      </tr>
+      <tr>
+        <td class="date">08/18</td>
+        <td class="t">维护可达性与布局重排</td>
+        <td>暴露出中英双方对"维护可达性如何实现"存在根本分歧，<strong>当场未解决</strong>；约定先交换图纸再谈。</td>
+      </tr>
+      <tr>
+        <td class="date">08/25</td>
+        <td class="t">控制柜尺寸与模块重排</td>
+        <td>箱体尺寸<strong>无法核算</strong>——尺寸取决于每箱接线数量，而接线数量取决于仪表如何分配到各模块，该分配尚未确定。</td>
+      </tr>
+      <tr>
+        <td class="date">08/26</td>
+        <td class="t">布置与 HAZOP 时间</td>
+        <td>布置仍未定案；<strong>HAZOP 已不具备在 9 月开展的条件</strong>。</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2><span class="num">03</span>线上推进已达到效率边界</h2>
+
+  <h3>信息在传递中失真</h3>
+  <p>
+    布置类议题依赖对实体空间的共同理解。当前方式是双方在屏幕上转动模型、辅以手绘草图，接收方需要推断对方意图，
+    再由 CAD 团队按推断建模，返回后往往与原意不符，一个来回即消耗数日。
+  </p>
+  <blockquote>
+    "关于前段做成可拆卸的想法，很难手绘到图纸上交给 CAD 团队。他们花大量时间按自己理解做出来，返回后才发现不是那个意思。"
+    <span class="src">— 08/26 会议记录</span>
+  </blockquote>
+
+  <h3>关键判断依赖现场实体条件，图纸无法替代</h3>
+  <ul>
+    <li><strong>撬块无法加宽</strong>：撬块紧贴楼梯井，该空间必须保持畅通，二层楼梯另有消防要求。</li>
+    <li><strong>受限空间方案不可行</strong>：即使挤出 400–500 mm 缝隙，部分设备法兰<strong>单件重约 100 kg</strong>，在受限空间内完成人工搬运需多人同时进入，不具备可操作性。该结论由人工搬运要求决定，与尺寸优化无关。</li>
+    <li><strong>紧急淋浴冲突性质未澄清</strong>：控制柜"碍事"属于物理干涉还是淋浴溅水，两者的解决方向完全不同；洗眼器能否移至门外亦需现场判断。该问题自 08/13 提出至今未澄清。</li>
+    <li><strong>可达性判据是人的作业姿态</strong>：法兰离墙距离、探身深度、垫片更换所需操作空间，均需在实体空间中以人验证。</li>
+  </ul>
+
+  <h3>已有同类先例</h3>
+  <p>
+    地面层中试车间改造项目中，工程人员到现场后，多项在历次会议中反复无法讲清的问题在十几分钟内即完成确认。
+    该项目与本项目的共同特征是<strong>既有厂房改造</strong>——空间为既有条件，而非可在图面上自由布置的空地。
+  </p>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2><span class="num">04</span>现场一周需关闭的事项</h2>
+  <p>以下事项均已在历次会议中提出并记录在跟踪表内，共同特征是<strong>需在实体空间中确认，或需 CAD 现场即时修改验证</strong>。</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:78px">来源</th><th style="width:250px">待关闭事项</th><th>需现场的原因</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="date">08/18</td><td class="t">维护可达性路线定案<br />（中间通道 / 可拆卸模块）</td><td>需在实体空间中验证人员作业姿态与搬运可行性，该路线直接决定现场拆装工程量与 SAT 范围。</td></tr>
+      <tr><td class="date">08/18</td><td class="t">设备顺序重排（U 形）能否释放 500–600 mm</td><td>需对照现场边界据实核算，并即时在 CAD 中验证。</td></tr>
+      <tr><td class="date">08/25</td><td class="t">模块分体边界与各模块仪表归属</td><td>控制柜尺寸核算的前置条件；需与布置同步确定，图纸往返无法收敛。</td></tr>
+      <tr><td class="date">08/13</td><td class="t">控制柜与紧急淋浴的冲突性质<br />及洗眼器能否外移</td><td>需现场判断是物理干涉还是溅水，并核对淋浴实体尺寸与地面边界线。</td></tr>
+      <tr><td class="date">08/18</td><td class="t">接线箱拆分方案与电缆数对齐</td><td>两侧统计存在 16 根与 21 根的差异，需与实体接线一并核对。</td></tr>
+      <tr><td class="date">08/18</td><td class="t">分离器安装高度下降<br />及软管接口引至正面</td><td>清洗改由排净阀排放后不需自流排空，可降高；若移至后部，软管接口须引到正面，取决于实际可达性。</td></tr>
+      <tr><td class="date">08/18</td><td class="t">HTF 管路走后部、竖直上墙与穿墙板位置</td><td>穿墙位置与法兰离墙距离需与现场墙体、设备间接口对应。</td></tr>
+      <tr><td class="date">08/25</td><td class="t">整撬高度与货梯适配<br />（去顶部段 / 管道散件 / 柜体铰接）</td><td>需现场核对货梯与进场路径尺寸，确认降高方案成立。</td></tr>
+      <tr><td class="date">08/26</td><td class="t">阀门可达性、取样方式、是否增设气动阀</td><td>HAZOP 可操作性审查的直接输入，需在实体空间中逐点确认。</td></tr>
+      <tr><td class="date">08/12</td><td class="t">接入点（tie-in points）位置确认</td><td>与公用工程穿墙位置、设备间布置相关，现场确认一次即可定案。</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2><span class="num">05</span>与 HAZOP 合并的依据</h2>
+  <p>
+    HAZOP 的未决部分不在工程功能性，而在<strong>可操作性（operability）</strong>：操作工能否接近阀门、如何接近、如何取样。
+    这些问题的答案由布置决定。
+  </p>
+
+  <div class="call risk">
+    <div class="ct">若在布置未定案时开展 HAZOP</div>
+    <p>
+      审查中若得出"需增设气动阀"或"需将阀门移位"的结论，即构成实体变更；变更量足够时，
+      <strong>该次风险研究的有效性将受质疑并需要重做</strong>。这与项目既定的"HAZOP 只做一次"目标直接冲突。
+    </p>
+  </div>
+
+  <p>
+    合并行程后的顺序为：<strong>现场关闭布置事项 → 布置定案 → 就地开展 HAZOP</strong>。
+    参与人员、实体空间与图纸在同一时间同一地点齐备，是一次性通过的最有利条件。
+  </p>
+
+  <div class="call ok">
+    <div class="ct">行程期间不影响其他工作</div>
+    <p>
+      控制系统、单线图与报价用材料清单可与布置<strong>并行推进</strong>，其中约 90% 的内容不受布置结论影响，
+      下单前仅需局部调整。这部分工作在等待期与行程期均可持续。
+    </p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2><span class="num">06</span>行程安排</h2>
+
+  <table>
+    <thead><tr><th style="width:150px">项目</th><th>安排</th></tr></thead>
+    <tbody>
+      <tr><td class="t">人员构成</td><td><strong>IEPE 1 人 + CFCT 1 人 + 项目经理 1 人</strong>。CFCT 人员需具备<strong>现场直接修改 CAD 模型</strong>的能力并熟悉工艺；项目经理承担现场协调与议程管理。人数从紧，以保证决策效率与差旅可控。</td></tr>
+      <tr><td class="t">现场周期</td><td><strong>5 个工作日</strong>。周期按"一次把需现场确认的事项全部关闭"设定，不设第二次行程。</td></tr>
+      <tr><td class="t">时间窗口</td><td><strong>2026 年 9 月内</strong>，具体周次待与 Sandwich 侧人员可用时间匹配后确定。</td></tr>
+      <tr><td class="t">现场工作方式</td><td>行前编制<strong>逐日详细议程</strong>，每项对应第 04 节中的具体待关闭事项，现场当日形成结论并即时更新模型与跟踪表。</td></tr>
+      <tr><td class="t">HAZOP 衔接</td><td>布置事项关闭后于同一行程内开展，避免二次集结与二次差旅。</td></tr>
+      <tr><td class="t">方向说明</td><td>设备最终安装在 Sandwich 现场，布置结论必须与该现场的既有空间条件匹配，因此工作地点为 Sandwich。</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2><span class="num">07</span>前置条件与时间约束</h2>
+
+  <div class="call warn">
+    <div class="ct">时间上最紧的一项</div>
+    <p>
+      <strong>签证办理即使加急也需两周以上。</strong>行程窗口自审批完成起至少后移两周，因此审批与签证需即刻启动，
+      方能保住 9 月内的窗口。
+    </p>
+  </div>
+
+  <table>
+    <thead><tr><th style="width:190px">前置事项</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="t">出差审批</td><td>按公司流程完成审批；涉及 CFCT 人员，需相关负责人同意，并同步告知天津生产侧。</td></tr>
+      <tr><td class="t">签证</td><td>确定人员后立即启动，为全程最长前置项。</td></tr>
+      <tr><td class="t">人员确定</td><td>需先明确赴英人员，签证与议程编制均以此为前提。</td></tr>
+      <tr><td class="t">对方时间匹配</td><td>需取得 Sandwich 侧关键人员 9 月至 10 月初的可用时间，据此锁定周次。</td></tr>
+      <tr><td class="t">英国假期</td><td><strong>8 月 31 日为英国 bank holiday</strong>（8 月最后一个周一），当周多数人员休假，需将该周排除在沟通与排期之外。</td></tr>
+      <tr><td class="t">行前准备</td><td>等待审批与签证期间，继续以线上方式将可在纸面定案的事项定案，压缩现场时间占用。</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2><span class="num">08</span>不实施的后果</h2>
+  <ul>
+    <li><strong>布置僵局按当前速率延续。</strong>三场技术会未能关闭核心分歧，且已出现"控制柜尺寸等仪表分配、仪表分配等布置定案"的相互依赖，线上方式难以自行打破。</li>
+    <li><strong>HAZOP 持续后移，并带来重做风险。</strong>布置不定则 HAZOP 无法有效开展；勉强开展则面临有效性质疑与重做，"只做一次"的目标失效。</li>
+    <li><strong>长周期件采购受影响。</strong>PLC 与控制器属长周期件，其交付是对项目影响最大的环节；相关下单不宜长期悬置。</li>
+    <li><strong>投用日期承压。</strong>3D 布置与控制说明是 HAZOP 的前置条件，HAZOP 又位于"主设备采购 → 制造 → FAT → 认证 → 海运 → 现场安装"这条关键路径的起点，前端每延一周即等量传递至末端。</li>
+  </ul>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2><span class="num">09</span>需确定的事项</h2>
+  <table>
+    <thead><tr><th style="width:44px">#</th><th style="width:230px">事项</th><th>待定内容</th></tr></thead>
+    <tbody>
+      <tr><td class="date">1</td><td class="t">行程与人数</td><td>2 名工程师 + 1 名项目经理、现场 5 个工作日，是否照此执行。</td></tr>
+      <tr><td class="date">2</td><td class="t">赴英人员</td><td>IEPE 与 CFCT 各 1 人的具体人选（CFCT 侧需可现场改 CAD 并熟悉工艺）。</td></tr>
+      <tr><td class="date">3</td><td class="t">审批启动</td><td>出差审批与签证即刻启动，以保住 9 月窗口。</td></tr>
+      <tr><td class="date">4</td><td class="t">HAZOP 合并</td><td>HAZOP 是否并入本次行程、在布置定案后就地开展。</td></tr>
+      <tr><td class="date">5</td><td class="t">差旅费用</td><td>按 3 人 1 周核定，具体金额待机票与住宿询价后补充。</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  <div>Asymchem · Sandwich Site&nbsp;&nbsp;|&nbsp;&nbsp;T-2502 Continuous Hydrogenation Skid</div>
+  <div>3D 布置现场集中工作与 HAZOP 合并行程方案&nbsp;&nbsp;·&nbsp;&nbsp;2026-08-26</div>
+</footer>
+
+</div>
+</body>
+</html>

@@ -49,6 +49,9 @@
 ### 隔周进度汇报
 `Progress_Report_0715.pptx` / `0729` / `0811` / `0826`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。
 
+### 现场行程提案
+`sandwich_onsite_proposal.html`：赴 Sandwich 现场集中一周关闭 3D 布置未决事项、并将 HAZOP 并入同一行程的行程方案（可直接发送 / 打印）。
+
 ### CE 认证
 `CE相关/`（供应商资料与项目要点）、`ce_mark_practice_experience.html`（经验汇报）、`ce_mark_practice_talking_points.md`（讲解词）。
 
