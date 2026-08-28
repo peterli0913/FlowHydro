@@ -54,6 +54,7 @@
 |---|---|
 | `sandwich_onsite_proposal.html` | 赴 Sandwich 现场集中 1–2 周关闭 3D 布置未决事项、并将 HAZOP 并入同一行程的提案（可直接发送 / 打印） |
 | `sandwich_onsite_proposal_email.md` | 配套提案邮件正文（收件人：凯总、国喜博士、Alex 博士） |
+| `Agenda of the visit to Sandwich (3D & HAZOP).xlsx` | 赴英现场议程（Day 1–Day 8），沿用 `【SW】Agenda of the visit` 的表格样式，新增 Objective 目标列；由 `scripts/build_uk_visit_agenda.py` 生成 |
 
 ### CE 认证
 `CE相关/`（供应商资料与项目要点）、`ce_mark_practice_experience.html`（经验汇报）、`ce_mark_practice_talking_points.md`（讲解词）。
