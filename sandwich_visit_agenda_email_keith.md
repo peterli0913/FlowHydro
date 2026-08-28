@@ -19,7 +19,7 @@ We would value your view on two points.
 
 **The time allowed for each topic.** These estimates are ours, so please tell us where you think we have allowed too much or too little — the control panel split and the HAZOP in particular.
 
-**On timing.** 1–7 October is our National Day public holiday in China. Taking that into account, and assuming we complete everything including the HAZOP in the UK in a single trip, we are considering:
+**On timing.** We have two public holidays in China before the window: 25 September is the Mid-Autumn Festival, and 1–7 October is our National Day holiday. Taking those into account, and assuming we complete everything including the HAZOP in the UK in a single trip, we are considering:
 
 - **Monday 12 – Friday 16 October** — site walkdown, 3D layout, operating manual, control philosophy and sequence control
 - **Midweek of the week commencing 19 October** — HAZOP, i.e. Tuesday 20 to Thursday 22
