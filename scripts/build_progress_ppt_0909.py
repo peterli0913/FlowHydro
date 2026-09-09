@@ -185,9 +185,8 @@ def slide_01(prs):
             ("High-pressure gasket accepted as a 316L metallic ring; "
              "tantalum is withdrawn",
              "高压垫片接受 316L 金属环方案，钽材路线取消"),
-            ("PIC-028 remains Bronkhorst, provided the mechanical seal "
-             "does not leak at the 270 °C relief case",
-             "PIC-028 继续用 Bronkhorst，前提是 270 ℃ 泄放时机械密封不外漏"),
+            ("PIC-028 stays Bronkhorst if the mechanical seal holds at 270 °C",
+             "PIC-028 继续用 Bronkhorst，前提是 270 ℃ 时机械密封不外漏"),
         ],
         gap=0.16,
     )
@@ -197,9 +196,8 @@ def slide_01(prs):
         "agreed on 8 September",
         "3D 布置尚未冻结，下一版模型按 9 月 8 日商定的方向更新",
         subs=[
-            ("Compact split-skid, 2.5 m shipping height, withdrawable front "
-             "module rather than a centre aisle",
-             "紧凑分撬、运输高度 2.5 m、前撬可拉出，不再留中间通道"),
+            ("Compact split-skid, 2.5 m shipping height, withdrawable front module",
+             "紧凑分撬、运输高度 2.5 m、前撬可拉出，不留中间通道"),
         ],
         gap=0.16,
     )
@@ -216,10 +214,9 @@ def slide_01(prs):
         "proposed 12–22 October",
         "现场议程草案已发出：四块内容、八个工作日，建议 10 月 12–22 日",
         subs=[
-            ("Site walkdown · 3D model · operating manual / control / "
-             "sequence · HAZOP — dates for confirmation with Keith and Claire",
-             "现场勘察 · 3D 模型 · 操作手册 / 控制说明 / 顺控 · HAZOP"
-             "——日期待与 Keith、Claire 确认"),
+            ("Walkdown, 3D, manuals / control / sequence, then HAZOP — "
+             "dates for Keith and Claire to confirm",
+             "勘察、3D、手册 / 控制 / 顺控，然后 HAZOP——日期待 Keith、Claire 确认"),
         ],
         gap=0.12,
     )
@@ -245,15 +242,12 @@ def slide_02(prs):
     )
     y = add_bullet_block(
         s, y, color,
-        "PIC-028 — closed.  Electronics may fail in a 270 °C relief event; "
-        "the seal must not",
-        "PIC-028 已关闭：270 ℃ 泄放时电子件允许失效，密封不得外漏",
+        "PIC-028 — closed.  Electronics may fail at 270 °C; the seal must not",
+        "PIC-028 已关闭：270 ℃ 时电子件允许失效，密封不得外漏",
         subs=[
-            ("Relief remains on the PSV; the valve is replaced afterwards.  "
-             "Seal material is FFKM, to be on the datasheet and the order.  "
-             "The same check applies to FCV-004 if needed",
-             "泄放仍由安全阀承担，事后换阀。密封材质 FFKM，须写入数据单与合同；"
-             "FCV-004 视情况同样处理"),
+            ("PSV takes the relief; valve is replaced afterwards.  FFKM on "
+             "the datasheet and the order; same check for FCV-004 if needed",
+             "泄放由安全阀承担，事后换阀。FFKM 写入数据单与合同；FCV-004 视情况同样处理"),
         ],
         gap=0.12,
     )
@@ -262,23 +256,20 @@ def slide_02(prs):
         "Layout direction for the next 3D revision",
         "下一版 3D 的布置方向",
         subs=[
-            ("Ten TCU pipes through a wall plate — China supplies the plate, "
-             "UK cuts the slot; last elbow fitted on site",
-             "10 根 TCU 管经穿墙板：中方出板、英方开槽；最后弯头现场安装"),
-            ("Separator may be lowered after the CIP change; new height goes "
-             "to process for residual pressure after letdown",
+            ("Ten TCU pipes through a wall plate (China plate / UK slot); "
+             "last elbow fitted on site",
+             "10 根 TCU 管经穿墙板（中方出板、英方开槽）；最后弯头现场安装"),
+            ("Separator may be lowered after the CIP change; new height "
+             "goes to process",
              "清洗方案调整后分离器可降低，新高度交工艺核算减压后余压"),
-            ("Control cabinet moved back and made rectangular so it can be "
-             "reached; envelope to be sent to Keith for enquiry",
-             "控制柜后移并改为长方形以便够到，目标外形尺寸发给 Keith 询价"),
-            ("Vents above 2.5 m are prefabricated, stripped for transport "
-             "and restored on site",
-             "超过 2.5 m 的放散管国内预制，运输拆下、现场复原"),
+            ("Cabinet set back and rectangular; vents over 2.5 m stripped "
+             "for shipping",
+             "控制柜后移并改为长方形；超 2.5 m 放散管运输拆下、现场复原"),
         ],
-        gap=0.08,
+        gap=0.22,
     )
     add_issue_card(
-        s, y, 1.18,
+        s, y, 1.12,
         "Still open — model being redrawn; one instrument item not reached "
         "on 8 September",
         "仍开放：模型按新方向重排中；9 月 8 日未轮到一项仪表问题",
@@ -314,27 +305,27 @@ def slide_03(prs):
     rows = [
         ("End Sep 2026", "9 月底",
          "Draft FDS / SDS / HDS, control description and operating "
-         "instructions issued as HAZOP input.  Finals after FAT.",
+         "instructions as HAZOP input.  Finals after FAT.",
          "FDS / SDS / HDS、控制说明与操作手册出初稿，作为 HAZOP 输入；定稿在 FAT 之后。"),
         ("End Sep 2026", "9 月底",
-         "Reactor column specification confirmed for enquiry.  Main-equipment "
-         "procurement can start from this point — it does not wait for 3D freeze.",
+         "Reactor specification confirmed for enquiry.  Main-equipment "
+         "procurement can then start — it does not wait for 3D freeze.",
          "反应柱规格确认后即可发起主设备采购，不必等待 3D 冻结。"),
         ("12–16 Oct 2026", "10/12–16",
-         "Sandwich — site walkdown, 3D layout, operating manual, control "
-         "philosophy and sequence.  Proposed; for confirmation.",
-         "赴 Sandwich：现场勘察、3D 布置、操作手册、控制说明与顺控。建议档期，待确认。"),
+         "Sandwich: walkdown, 3D layout, operating manual, control "
+         "philosophy and sequence.  Proposed — for confirmation.",
+         "赴 Sandwich：现场勘察、3D、操作手册、控制说明与顺控。建议档期，待确认。"),
         ("20–22 Oct 2026", "10/20–22",
-         "Sandwich HAZOP on the layout frozen that week.  Proposed; "
-         "for confirmation with Keith and Claire.",
-         "在当周冻结的布置上做 HAZOP。建议档期，待与 Keith、Claire 确认。"),
+         "Sandwich HAZOP on the layout frozen that week.  Proposed — "
+         "Keith and Claire to confirm.",
+         "在当周冻结的布置上做 HAZOP。建议档期，待 Keith、Claire 确认。"),
         ("Oct W2 2026", "10 月第 2 周",
-         "Main-equipment enquiry window after the 1–7 October public holiday "
-         "in China, once the reactor specification is in hand.",
-         "中国 10 月 1–7 日假期之后，反应柱规格到位即可进入主设备询价窗口。"),
+         "Main-equipment enquiry after the 1–7 October holiday in China, "
+         "once the reactor specification is in hand.",
+         "中国 10 月 1–7 日假期之后，规格到位即可进入主设备询价。"),
         ("~ Nov W3 2026", "约 11 月第 3 周",
          "Vendor information confirmation — after manufacturer selection, "
-         "not before.  Indicative four-week loop.",
+         "not before.  About four weeks.",
          "厂家信息确认：在选定厂家之后，而不是之前。约四周闭环。"),
     ]
 
@@ -448,17 +439,15 @@ def slide_04(prs):
     tf.word_wrap = True
     tf.margin_left = tf.margin_right = Emu(0)
     p = tf.paragraphs[0]
-    _run(p, "Proposed window   ", size=12, bold=True, color=color)
-    _run(p, "Mon 12 – Fri 16 October  (walkdown / 3D / manuals)     "
-            "Tue 20 – Thu 22 October  (HAZOP)",
+    _run(p, "Proposed   ", size=12, bold=True, color=color)
+    _run(p, "12–16 Oct (walkdown / 3D / manuals)   ·   20–22 Oct (HAZOP)",
          size=12, color=BODY)
     p2 = tf.add_paragraph()
     p2.space_before = Pt(2)
     _run(p2, "Attendees  ", size=12, bold=True, color=color)
-    _run(p2, "Keith  ·  Li Tao  ·  Fan Shuangshuang  ·  Hu Chaoqun  ·  "
-             "Meng Dezhi     ",
+    _run(p2, "Keith · Li Tao · Fan Shuangshuang · Hu Chaoqun · Meng Dezhi",
          size=12, color=BODY)
-    _run(p2, "Full agenda in  ", size=11, color=SUB)
+    _run(p2, "    Agenda: ", size=11, color=SUB)
     _run(p2, "Agenda of the visit to Sandwich (3D & HAZOP).xlsx",
          size=11, italic=True, color="5A6675")
 
@@ -471,26 +460,26 @@ def slide_05(prs):
     add_header(s, "05", "Next Steps", "下一步", color)
 
     steps = [
-        ("Fan — redraw the 3D model to the 8 September direction, and pass "
-         "the new separator height to process",
+        ("Fan — redraw the 3D model to the 8 September direction; pass the "
+         "new separator height to process",
          "范双双：按 9 月 8 日方向重排 3D，并将分离器新高度交给工艺"),
-        ("Meng — issue the rectangular, reachable cabinet envelope to Keith "
+        ("Meng — send Keith the rectangular, reachable cabinet envelope "
          "for enquiry",
-         "孟德智：把“放得下、够得到”的长方形控制柜目标尺寸发给 Keith 询价"),
-        ("Zhao / Gao — write gasket hardness and PIC-028 (and FCV-004 if "
-         "needed) FFKM into the datasheets",
-         "赵子亮 / 高宇：垫片硬度与 PIC-028（及必要时 FCV-004）的 FFKM 写入数据单"),
+         "孟德智：把长方形、够得到的控制柜目标尺寸发给 Keith 询价"),
+        ("Zhao / Gao — write gasket hardness and PIC-028 FFKM into the "
+         "datasheets (FCV-004 if needed)",
+         "赵子亮 / 高宇：垫片硬度与 PIC-028 的 FFKM 写入数据单（必要时含 FCV-004）"),
         ("Issue draft FDS, control description and operating instructions "
          "by the end of September, as HAZOP input",
          "9 月底发出 FDS、控制说明与操作手册初稿，作为 HAZOP 输入"),
         ("Raise the main-equipment enquiry once the reactor specification "
-         "is confirmed — do not hold it for the 3D freeze",
+         "is confirmed — do not wait for 3D freeze",
          "反应柱规格确认后即发起主设备询价，不因 3D 未冻结而等待"),
-        ("Confirm the 12–22 October visit window with Keith and Claire, "
-         "and start visa / travel once the dates are firm",
-         "与 Keith、Claire 确认 10 月 12–22 日行程窗口，日期确定后启动签证与差旅"),
-        ("Close the remaining tracker lines — cleaning, manuals and control "
-         "description — at the visit or the next technical session",
+        ("Confirm 12–22 October with Keith and Claire; start visa / travel "
+         "once the dates are firm",
+         "与 Keith、Claire 确认 10 月 12–22 日，日期确定后启动签证与差旅"),
+        ("Close remaining tracker lines — cleaning, manuals, control "
+         "description — at the visit or the next session",
          "剩余跟踪条目（清洗、手册、控制说明）在现场或下一次技术会上关闭"),
     ]
 
