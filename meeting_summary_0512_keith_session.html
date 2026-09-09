@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>05-12 Keith 技术会议 — 总结与专业解读</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+         margin: 0; color: #1f2937; background: #f5f7fa; padding: 24px; line-height: 1.6; }
+  .container { max-width: 1280px; margin: 0 auto; }
+
+  .header { background: linear-gradient(120deg, #0f3460, #16213e); color: #fff;
+            padding: 22px 28px; border-radius: 12px; margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(15,52,96,0.15); }
+  .header h1 { margin: 0; font-size: 22px; }
+  .header .sub { font-size: 13px; color: #cbd5e1; margin-top: 6px; }
+  .header .meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px;
+                   font-size: 12px; color: #cbd5e1; }
+  .header .meta b { color: #fff; }
+
+  .nav { background: #fff; padding: 10px 16px; border-radius: 8px; margin-bottom: 14px;
+         font-size: 12px; box-shadow: 0 1px 3px rgba(15,52,96,0.06); }
+  .nav a { color: #0369a1; text-decoration: none; margin-right: 14px; }
+  .nav a:hover { text-decoration: underline; }
+
+  .topic { background: #fff; border-radius: 12px; margin-bottom: 16px;
+           box-shadow: 0 1px 3px rgba(15,52,96,0.06); overflow: hidden; }
+  .topic-head { padding: 14px 20px; color: #fff; display: flex;
+                 align-items: center; gap: 10px; font-size: 16px; font-weight: 600; }
+  .topic-head .num { background: rgba(255,255,255,0.2); border-radius: 6px;
+                      padding: 2px 9px; font-size: 14px; }
+  .topic-1 .topic-head { background: linear-gradient(120deg, #dc2626, #b91c1c); }
+  .topic-2 .topic-head { background: linear-gradient(120deg, #ea580c, #c2410c); }
+  .topic-3 .topic-head { background: linear-gradient(120deg, #d97706, #b45309); }
+  .topic-4 .topic-head { background: linear-gradient(120deg, #7c3aed, #6d28d9); }
+  .topic-5 .topic-head { background: linear-gradient(120deg, #16a34a, #15803d); }
+  .topic-6 .topic-head { background: linear-gradient(120deg, #0284c7, #0369a1); }
+
+  .topic-body { padding: 16px 20px; }
+  .section-title { font-size: 13px; font-weight: 600; color: #0f3460;
+                    text-transform: uppercase; letter-spacing: 0.5px;
+                    margin: 14px 0 6px 0; display: flex; align-items: center; gap: 6px; }
+  .section-title .em { font-size: 16px; }
+
+  .quote { background: #f1f5f9; border-left: 3px solid #0369a1;
+           padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 8px 0;
+           font-size: 13px; color: #334155; font-style: italic; }
+  .quote .qzh { display: block; font-style: normal; color: #475569;
+                 margin-top: 4px; font-size: 12px; }
+  .quote.cn { border-left-color: #d97706; }
+
+  .need-list { background: #fefce8; border-left: 3px solid #facc15;
+                padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 8px 0;
+                font-size: 13px; }
+
+  .primer { background: #ecfeff; border: 1px solid #a5f3fc; border-radius: 8px;
+             padding: 12px 14px; margin: 10px 0; }
+  .primer .pt { font-weight: 600; color: #0e7490; margin-bottom: 6px;
+                 font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  table.primer-tbl { border-collapse: collapse; width: 100%; font-size: 12px;
+                      margin-top: 6px; }
+  table.primer-tbl th, table.primer-tbl td {
+    border: 1px solid #cffafe; padding: 6px 10px; text-align: left;
+    vertical-align: top; }
+  table.primer-tbl th { background: #cffafe; color: #0e7490; font-weight: 600; }
+
+  .suggestion { background: #f0fdf4; border-left: 3px solid #16a34a;
+                 padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 8px 0;
+                 font-size: 13px; }
+  .suggestion ol { margin: 4px 0 4px 22px; padding: 0; }
+  .suggestion li { margin: 4px 0; }
+
+  .script { background: #1e293b; color: #e2e8f0; padding: 12px 16px;
+             border-radius: 6px; font-size: 12.5px; line-height: 1.55;
+             font-family: 'Consolas', 'Monaco', monospace; margin: 10px 0;
+             white-space: pre-wrap; }
+  .script .role { color: #fbbf24; font-weight: 700; }
+
+  .ascii { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+            padding: 10px 14px; font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12px; line-height: 1.4; white-space: pre; overflow-x: auto; }
+
+  table.act { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; }
+  table.act th, table.act td { border-bottom: 1px solid #e2e8f0;
+                                padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.act th { background: #f1f5f9; color: #0f3460; font-weight: 600;
+                 font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  table.act .when { white-space: nowrap; color: #d97706; font-weight: 600; }
+  table.act .who  { white-space: nowrap; color: #0f766e; }
+
+  .tag { display: inline-block; font-size: 10px; padding: 1px 6px;
+          border-radius: 10px; background: #dbeafe; color: #1d4ed8;
+          font-weight: 600; margin-right: 6px; vertical-align: middle; }
+  .tag.cn { background: #fce7f3; color: #9d174d; }
+  .tag.en { background: #dcfce7; color: #166534; }
+
+  details.box { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px;
+                 margin: 6px 0; padding: 6px 12px; }
+  details.box summary { font-weight: 600; color: #0f3460; cursor: pointer;
+                         font-size: 13px; }
+  details.box[open] { padding-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>05-12 内部会议 — Keith 技术对齐 ｜ 总结与专业解读</h1>
+  <div class="sub">Sandwich Continuous Hydrogenation Skid · Internal team ↔ Keith (UK Sandwich site)</div>
+  <div class="meta">
+    <span>📅 <b>2026-05-12</b> · 15:57</span>
+    <span>⏱ 2 h 56 m</span>
+    <span>🇨🇳 李涛 / 胡超群 / 高宇 / 赵子亮 / Peter</span>
+    <span>🇬🇧 Keith</span>
+    <span>📄 Source: <code>05-12 内部会议_ 安全阀计算与设备设计分歧.docx</code></span>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="#t1">1. 安全阀计算分歧</a>
+  <a href="#t2">2. CV03 / CV08 故障位</a>
+  <a href="#t3">3. PRV 两段式减压</a>
+  <a href="#t4">4. SE01 设计模式分歧 ⚠️</a>
+  <a href="#t5">5. 反应柱 1.5 m</a>
+  <a href="#t6">6. 文件交付</a>
+  <a href="#actions">Action Items</a>
+  <a href="#script">下次会议开场词</a>
+</div>
+
+<!-- ============== Topic 1 ============== -->
+<div class="topic topic-1" id="t1">
+  <div class="topic-head"><span class="num">1</span>⚠️ 安全阀（PRV）计算 — 本次最大分歧</div>
+  <div class="topic-body">
+
+    <div class="section-title"><span class="em">🇬🇧</span> Keith's original words</div>
+    <div class="quote">
+      "API 520 calculates on a single-phase flow. We have two-phase flow.
+      We're probably a homogeneous tempered / hybrid system, relieving
+      directly off the reactor — single-phase calc will significantly
+      under-size the relief area."
+      <span class="qzh">Keith 认为我们目前只用 API 520 单相算出来的口径会偏小、偏不安全。</span>
+    </div>
+    <div class="quote">
+      "Your spreadsheet just gives a number — 1.22 m². I need to see the
+      assumptions, the equations, the choked-flow check, the inlet /
+      outlet pressure drops, the relief-pipe back-pressure correction.
+      I need a calculation report I can reproduce."
+      <span class="qzh">UK 工程公司的安全审查要求"独立复算"，我们当前 Excel 把公式都隐藏在单元格里、只显示数字，对他来说是"黑盒"。</span>
+    </div>
+
+    <div class="section-title"><span class="em">🎯</span> 他的真实需求</div>
+    <div class="need-list">
+      <b>1. 技术上</b>：要从单相 API 520 → 两相 + 反应释能 + 排放管 back-pressure 修正的完整计算。<br>
+      <b>2. 文档上</b>：要 self-contained 的计算报告，所有假设、公式、修正系数都能溯源；任何人拿到都能独立复算。
+    </div>
+
+    <div class="primer">
+      <div class="pt">🧪 技术背景速学 ｜ Technical primer</div>
+      <table class="primer-tbl">
+        <tr><th>概念</th><th>关键点</th></tr>
+        <tr><td><b>API 520</b></td><td>1960s 起的标准，<b>默认单相</b>（纯气或纯液）泄放。气体走 choked-flow 公式，液体走 orifice 方程。系统真的是两相 + 反应放热时，API 520 不够。</td></tr>
+        <tr><td><b>两相流泄放</b></td><td>泄放瞬间气液同时排出，需要的截面通常比纯气大 1.5–5×。Keith 担心的就是偏小。</td></tr>
+        <tr><td><b>DIERS 方法</b></td><td>AIChE 1985 年成立的项目，专门解决两相反应失控泄放。把系统分为 <b>gassy / vapour / hybrid</b>，又分 <b>tempered / untempered</b>。Keith 提到 "homogeneous tempered / hybrid" 就来自这个体系。</td></tr>
+        <tr><td><b>Homogeneous vs Churn-turbulent</b></td><td>容器内两相流流型。Homogeneous = 气液均匀混合（最坏情况，泄放出来全是两相），Churn-turbulent = 顶部能分离一些气出来（不那么坏）。Keith 取 homogeneous = 最保守。</td></tr>
+        <tr><td><b>Choked flow（阻塞流）</b></td><td>上下游压差大到一定程度，气速到声速，再加大压差流量不变 — 公式不同，要分类判断。</td></tr>
+        <tr><td><b>3% 入口压降 / 10% 出口背压</b></td><td>API 设计规范：PSV 入口管路压降 ≤ 3% set pressure（避免颤振），出口背压 ≤ 10% 否则要换 balanced-bellows 阀，再加上长排放管的额外背压都要算进去。</td></tr>
+      </table>
+    </div>
+
+    <div class="section-title"><span class="em">💡</span> 我的建议 ｜ Suggestion</div>
+    <div class="suggestion">
+      <ol>
+        <li><b>短期（本周）</b> — 不和他争方法对错，先解决"他看不到过程"：
+          <ul>
+            <li>胡超群把 Excel 里隐藏的公式全部展开成可见行（或另存"公式版"）</li>
+            <li>加一个 "Assumptions" 页：溶剂物性、火灾热通量、冷媒失效升温、容器初始压力 / 温度等</li>
+            <li>转 PDF 嵌入 Relief Design Study 的 Reference 栏</li>
+          </ul>
+        </li>
+        <li><b>中期（下周）</b> — 李涛博士 + Alex 博士 + Keith 三方专题会
+          <ul>
+            <li>这事的本质是"背靠背验算 + 模板对齐"，不是谁对谁错</li>
+            <li>关键技术分歧点逐条对：① 火灾 + 冷媒失效气化比例？② 是 homogeneous 还是 churn-turbulent？③ 是否需要走 DIERS Omega 法？</li>
+          </ul>
+        </li>
+        <li><b>注意</b>：Keith 自己说他的模板是<b>他作为外聘专家的 IP</b>，合同上不能给我们 → 不能等他给 "参考模板"，要自己出一份能让他看懂的</li>
+      </ol>
+    </div>
+
+    <details class="box">
+      <summary>📨 谈判时的关键话术（英文）</summary>
+      <div class="script"><span class="role">You → Keith:</span>
+"Keith, we hear you — single-phase API 520 is not sufficient for a reacting two-phase system. We'll do a back-to-back: Hu will rerun the calculation with the assumption set you flagged (homogeneous, two-phase, with inlet/outlet pressure-drop and relief-line back-pressure corrections), and present it with all assumptions and equations exposed in a self-contained PDF you can reproduce. We'll bring Alex Lin in to align with you on the methodology before the rerun, so we don't go in circles. Target: one week."</div>
+    </details>
+  </div>
+</div>
+
+<!-- ============== Topic 2 ============== -->
+<div class="topic topic-2" id="t2">
+  <div class="topic-head"><span class="num">2</span>CV03 / CV08 阀门故障位</div>
+  <div class="topic-body">
+
+    <div class="section-title"><span class="em">🇬🇧</span> Keith's original words</div>
+    <div class="quote">
+      "CV08 needs to be fail-CLOSED. When the level switch sees high
+      level, it has to close to stop liquid carry-over onto the roof."
+      <br><br>
+      "Both CV03 and CV08 should be fail-closed — last week's
+      fail-open was a misunderstanding."
+      <span class="qzh">两个开关阀都改为故障关（FC）。CV08 故障关是为了在液位过高时阻止液相喷上屋顶 process vent。</span>
+    </div>
+
+    <div class="section-title"><span class="em">🎯</span> 他的真实需求</div>
+    <div class="need-list">
+      <b>CV08 = FC</b>：SE01 顶部气相出口阀，下游通往屋顶 process vent + flame arrester 直排大气。失效开启 = 液体喷上屋顶。<br>
+      <b>CV03 = FC</b>：氢气缓冲罐泄压阀。泄压时压力可到 0，必须能在常压下开/关，靠电磁线圈 + 弹簧机械动作，不能依赖工艺侧 5 bar 压差。<br>
+      <b>额外</b>：Burkert 6080 选型已无 5-bar 限制，差压 0–900 bar，满足需求。
+    </div>
+
+    <div class="primer">
+      <div class="pt">🧪 Fail-closed vs Fail-open ｜ 工程取舍</div>
+      <table class="primer-tbl">
+        <tr><th>类型</th><th>失气 / 失电时</th><th>典型用法</th></tr>
+        <tr><td><b>Fail-closed (FC)</b></td><td>阀回到关闭位</td><td>防外泄 / 防超量加料（向大气排放线、加料阀）</td></tr>
+        <tr><td><b>Fail-open (FO)</b></td><td>阀回到开启位</td><td>防超压 / 防憋死（冷却水阀、PSV 旁通）</td></tr>
+      </table>
+      <div style="margin-top:6px;">
+        📐 <b>PID 上的箭头惯例</b>：阀符号上的小黑箭头 <b>指向阀</b> = FC；<b>指出阀</b> = FO。
+      </div>
+    </div>
+
+    <div class="section-title"><span class="em">⚠️</span> 关于胡工 "故障关会超压" 的质疑 — Keith 的反驳链</div>
+    <div class="need-list">
+      胡工担心 CV08 故障关后系统继续带压。Keith 的反驳很完整，<b>值得我们吸收用于内部 HAZOP 准备</b>：
+      <ol>
+        <li>H2 进料 80 bar 设计 + 77 bar PSV → H2 自身不可能继续升压</li>
+        <li>液相泵自带 88 bar 内部 relief</li>
+        <li>反应消耗 H2 → 整体降压趋势</li>
+        <li>唯一升压源 = 温度；但 3 个反应柱总共 10 L，热量有限</li>
+        <li>最后 PSV-19 @ 80 bar 兜底 → catch tank（液相被截下，气相再走 process vent）</li>
+      </ol>
+      所以故障关在他的安全分析框架里是 OK 的。
+    </div>
+
+    <div class="suggestion">
+      <b>建议</b>：① PID 上 CV03 / CV08 都画成箭头指向阀（FC），让高宇据此询价。② 把 Keith 这套"FC 不会超压"的论证写进内部 HAZOP 准备文件，国内审查时一定会被问到。
+    </div>
+
+  </div>
+</div>
+
+<!-- ============== Topic 3 ============== -->
+<div class="topic topic-3" id="t3">
+  <div class="topic-head"><span class="num">3</span>PRV 液相侧 — 两段式减压方案 + 喷淋球冲突</div>
+  <div class="topic-body">
+
+    <div class="section-title"><span class="em">🇬🇧</span> Keith's key push-back</div>
+    <div class="quote">
+      "I don't mind which valve type, but it needs to free-drain into
+      BT04. You've asked for a 1-inch pipe to the spray ball — 1-inch
+      will give you about 4000 L/h cleaning flow. Your normal feed is
+      only 40 L/h. A 10mm outlet will never free-drain that."
+      <span class="qzh">他对两段式减压方案（Fisher M-995-HP 自力式 → CV 调节阀 → 液位-流量串级）本身没意见，但抓住了清洗操作时下游排放不够的工程一致性问题。</span>
+    </div>
+
+    <div class="section-title"><span class="em">🎯</span> 真实需求</div>
+    <div class="need-list">
+      喷淋球进口 1" (~25 mm) → 清洗时 4000 L/h 进来。SE01 底部出口 / PRV / CV 通径只有 10 mm → 清洗液根本排不出去，会"灌满"。<br>
+      <b>按工艺流量 40 L/h 设计的下游不能承受 100× 的清洗流量。</b>
+    </div>
+
+    <div class="primer">
+      <div class="pt">🧪 技术背景速学</div>
+      <table class="primer-tbl">
+        <tr><th>概念</th><th>解释</th></tr>
+        <tr><td><b>Self-actuated PRV</b><br>（自力式调压阀）</td><td>完全机械结构，靠下游压力反馈推动阀芯。Fisher M-995-HP 这类。<br>优势：本质安全、可用于易燃易爆区；劣势：响应慢、精度低。</td></tr>
+        <tr><td><b>CV (Control Valve)</b></td><td>气动/电动驱动 + 定位器 + DCS 信号，精度高、响应快。</td></tr>
+        <tr><td><b>两段式减压</b><br>（cascade let-down）</td><td>大压差减压（60 → 0.1 barg）单阀很难做（噪声、空化、磨损），常用"先粗减再精减"两段。</td></tr>
+        <tr><td><b>液位-流量串级</b></td><td>外环：液位变送器 LT → PID 输出"液位想要的流量值" → 内环：质量流量控制器（自带 PID + 内置阀）按设定流量调阀位。</td></tr>
+        <tr><td><b>Free-draining / CIP 设计</b></td><td>制药/精细化工 CIP 清洗时必须能"自重排尽"，否则有死角藏污 → GMP / CE 都会卡。</td></tr>
+      </table>
+    </div>
+
+    <div class="suggestion">
+      <b>建议</b>：
+      <ol>
+        <li><b>不要急着改下游阀门尺寸</b> — 本质是"哪种喷淋球 → 多大清洗流量 → 出口排放是否够大"全套设计问题</li>
+        <li>CFCT 范双双 + 胡超群本周对一遍：喷淋球型号 / 单孔流量 / 最低有效清洗流量</li>
+        <li>SE01 出口管 + 下游 PRV + CV 通径统一按 <code>max(工艺流量 × 1.2, 清洗流量)</code> 重新核算</li>
+        <li>如果 1" 是 Keith 给的硬性界面，要么改下游放大，要么换喷淋球小口径</li>
+        <li>这一条<b>不要在跟 Keith 的下次会前给答案</b>，先内部对齐</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============== Topic 4 ============== -->
+<div class="topic topic-4" id="t4">
+  <div class="topic-head"><span class="num">4</span>⚠️ 气液分离器 SE01 — 本次最大新发现</div>
+  <div class="topic-body">
+
+    <div class="section-title"><span class="em">🇬🇧</span> Keith's words</div>
+    <div class="quote">
+      "Looking at the PID, your inlet to the separator is a dip pipe —
+      coming in subsurface. But on the calculation Yongguang did, it's
+      a side entry above the liquid level. These are completely
+      different equations: one is degassing a liquid, the other is
+      separating droplets from a gas stream. Which one are we going
+      with?"
+      <span class="qzh">PID 上画的是"深管"插入液面以下（脱气配置），但我们的尺寸计算却按"侧入液面以上"（除液滴配置）算的 — 完全两种不同的设备。</span>
+    </div>
+    <div class="quote">
+      "Data sheet says 1 Nm³/h gas + 40 L/h liquid. But your liquid was
+      changed to 20 L/h, and gas during reaction would only be ~20% of
+      inlet because H2 is consumed. I worry these numbers are leading
+      us to over-engineer the separator, and we don't have much space."
+      <span class="qzh">数据单的流量数据也有矛盾：液相 40 L/h 是旧值（实际已改 20 L/h），气相 1 Nm³/h 是进料量而非分离器出口的实际气量（反应消耗后约 20%）。</span>
+    </div>
+
+    <div class="section-title"><span class="em">🎯</span> 真实需求 — 两个问题</div>
+    <div class="need-list">
+      <b>4-1. 流量数据自相矛盾</b><br>
+      数据单 40 L/h（旧的 03/10 邮件数）↔ 实际定的 20 L/h ↔ PFD 也跟着改 → <b>数据单忘了同步更新</b>。<br>
+      1 Nm³/h 是<b>进料量</b>，反应消耗后 SE01 出口实际气量 ≈ 0.2 Nm³/h → 现在按 1 Nm³/h 选的 SE01 偏大。
+      <br><br>
+      <b>4-2. 设计原理走错了 — 真正的设计分歧</b>
+    </div>
+
+    <table class="primer-tbl" style="margin: 6px 0;">
+      <tr>
+        <th>项目</th>
+        <th>现 PID 画法（聂博 / Yongguang 原版）</th>
+        <th>现计算依据（胡超群算的）</th>
+      </tr>
+      <tr>
+        <td>进口位置</td>
+        <td>深管插入液面以下（dip pipe）</td>
+        <td>从容器侧面、液面以上进入</td>
+      </tr>
+      <tr>
+        <td>物理过程</td>
+        <td><b>从液体里把气脱出来（degassing）</b></td>
+        <td><b>从气体里把液滴分出来（demisting）</b></td>
+      </tr>
+      <tr>
+        <td>关键参数</td>
+        <td>气泡上升速度、停留时间</td>
+        <td>液滴沉降速度 (Stokes law)、气速 &lt; terminal velocity</td>
+      </tr>
+      <tr>
+        <td>选型公式</td>
+        <td>完全不同</td>
+        <td>完全不同</td>
+      </tr>
+    </table>
+
+    <div class="primer">
+      <div class="pt">🧪 气液分离器两大类设计目的（科普）</div>
+      <div class="ascii">A. 从气里除液（Demister / Knockout drum）       B. 从液里除气（Degasser）
+   ↓ 气 + 雾滴                                   ┌─→ 干净气 ↑
+   ─────────                                     │  ╱ ╲
+   │ ╲╲╲╲╲   ←丝网除沫                           │ │   │
+   │ ─ ─ ─   ←液面                               │ │气泡│ ←深管吹气
+   │ 液体    ─→ 液体出口                          │ ╲水/  ─→ 脱气的液体 ↓
+
+   关键：气速要慢于液滴沉降速度                   关键：足够气泡停留时间到液面释放
+   典型：反应器顶部冷凝液收集                     典型：脱氧 / 脱 CO2 操作</div>
+      <div style="margin-top:8px;">
+        <b>我们的工艺真正想做的是哪个？</b><br>
+        按"连续氢化 + 气液混合反应 + 气液分离再出料"的逻辑，应该是 <b>A. Demister（从气里除液）</b>：
+        反应器出口的"湿氢气"要把夹带液体甩干，干气走顶部 vent，液体走底部进 BT04。
+        这种设计 inlet 应该是<b>侧入 + vortex breaker（防涡流挡板）</b>，<u>不是 dip pipe</u>。
+        Keith 的质疑是合理的，PID 上的 dip-pipe 画法很可能是早期遗留错误。
+      </div>
+    </div>
+
+    <div class="suggestion">
+      <b>建议</b>：
+      <ol>
+        <li><b>本周内部要做的事</b>（不用拉 Keith）：胡超群 + 范双双 + 聂博（如能联系）确认 SE01 工艺目的 — 大概率是 demister → PID 上的 dip-pipe 改成侧入 + vortex breaker → 按 demister 公式（Souders-Brown / K-factor）重算 → 流量统一为液相 20 L/h、气相按"H2 余量" ≈ 0.2 Nm³/h（再加 20% 余量）</li>
+        <li><b>可能的好消息</b>：修正后 SE01 可以做小一号 → 给布局留空间，Keith 会高兴</li>
+      </ol>
+    </div>
+
+    <details class="box">
+      <summary>📨 下次会议的英文话术</summary>
+      <div class="script"><span class="role">You → Keith:</span>
+"You're right — we identified an inconsistency: the PID shows a dip-pipe (degasser configuration) but our sizing used a demister equation. We're aligning the PID to a side-entry demister with vortex breaker, and recalculating with the corrected flow (20 L/h liquid, ~0.2 Nm³/h gas post-reaction). Expect a smaller, properly-engineered separator."</div>
+    </details>
+
+  </div>
+</div>
+
+<!-- ============== Topic 5 ============== -->
+<div class="topic topic-5" id="t5">
+  <div class="topic-head"><span class="num">5</span>✅ 反应柱 1.5 m 高度 — 彻底关闭</div>
+  <div class="topic-body">
+
+    Keith 已在 URS 里加了一行：<code>"bed height is approximately 975 mm"</code>，外形约 1334–1443 mm（含法兰），双方理解一致。<b>这一条划掉。</b>
+
+  </div>
+</div>
+
+<!-- ============== Topic 6 ============== -->
+<div class="topic topic-6" id="t6">
+  <div class="topic-head"><span class="num">6</span>PI&D / 文件交付 — Keith 的更新承诺</div>
+  <div class="topic-body">
+
+    <table class="act">
+      <tr><th>文件</th><th>状态</th></tr>
+      <tr><td>PI&D</td><td>修正 5 处笔误，今天 / 明天发新版</td></tr>
+      <tr><td>URS</td><td>已更新（含床高度澄清等），打包同发</td></tr>
+      <tr><td>I/O Schedule</td><td>已更新，同发</td></tr>
+      <tr><td>Outline Spec — Cleaning Philosophy</td><td>还没改完，<b>明天前发</b></td></tr>
+      <tr><td>数据单管嘴尺寸 / 方位</td><td>Keith 建议等 3D 模型冻结后一次性改 — <br>但赵子亮 push back：数据单不能等 3D 模型，因为 3D 模型本身要等数据单输入（迭代关系而非串行）。Keith 没反对。</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ============== Action items ============== -->
+<div class="topic" id="actions" style="border-top: 4px solid #d97706;">
+  <div class="topic-head" style="background: linear-gradient(120deg, #d97706, #b45309);">
+    <span class="num">📋</span>下周前必须推动的 Action Items
+  </div>
+  <div class="topic-body">
+
+    <table class="act">
+      <tr><th>#</th><th>内容</th><th>责任</th><th>截止</th></tr>
+      <tr><td>1</td><td>Excel 安全阀计算文件 → 展开所有公式 + 单独"假设页" + 转 PDF</td><td class="who">胡超群</td><td class="when">本周内</td></tr>
+      <tr><td>2</td><td>约 李涛 + Alex + Keith 三方安全阀方法论专题会</td><td class="who">Peter / 李涛</td><td class="when">下周前</td></tr>
+      <tr><td>3</td><td>SE01：确认工艺目的（demister vs degasser），更新 PID 与计算</td><td class="who">胡超群 + 范双双</td><td class="when">下周</td></tr>
+      <tr><td>4</td><td>喷淋球 + 出口排放管径核算</td><td class="who">范双双 + 胡超群</td><td class="when">下周</td></tr>
+      <tr><td>5</td><td>PID 上 CV03 / CV08 故障位箭头方向确认</td><td class="who">高宇 + Keith</td><td class="when">Keith 新 PID 出来后</td></tr>
+      <tr><td>6</td><td>等 Keith 新 PID / URS / I/O Schedule</td><td class="who">Peter 跟进</td><td class="when">明天</td></tr>
+      <tr><td>7</td><td>Burkert 6080 备选 (Hambonia 品牌) — 上海代理商邮件回复</td><td class="who">高宇</td><td class="when">1-2 天</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ============== Closing script ============== -->
+<div class="topic" id="script" style="border-top: 4px solid #0369a1;">
+  <div class="topic-head" style="background: linear-gradient(120deg, #0369a1, #075985);">
+    <span class="num">💬</span>下次见 Keith 的开场词 / Opening for next session
+  </div>
+  <div class="topic-body">
+
+    会议结束你说了 <i>"we'll discuss internally and get back to you"</i>，下次见他时建议这样开场：
+
+    <div class="script">
+<span class="role">Hi Keith</span> — quick recap of where we landed after our internal discussion:
+
+1. <b>Relief valve calculation</b>: we hear you. We're rebuilding the
+   calculation report with all assumptions and equations exposed, and
+   Alex Lin will join the methodology alignment meeting with you next
+   week so we don't go in circles.
+
+2. <b>SE01 separator</b>: you caught a real inconsistency. The PID was
+   showing a dip-pipe (degasser) but our sizing used a demister
+   equation. We're aligning to a side-entry demister with vortex
+   breaker, and recalculating with corrected flow data
+   (20 L/h liquid, ~0.2 Nm³/h post-reaction gas). Likely a smaller
+   separator — which helps your layout.
+
+3. <b>Spray ball / free-drain</b>: we're reviewing the spray-ball spec
+   and downstream piping in one go, will come back with a proposal
+   next week.
+
+4. <b>CV03 / CV08</b>: fail-closed for both, Burkert 6080 selected,
+   no 5-bar limitation. Awaiting your updated PID to confirm the
+   arrow orientation.
+
+5. <b>Reactor 1.5 m</b>: closed — thanks for adding the 975 mm bed-height
+   line to the URS.
+
+Anything else you'd like us to push harder on this week?
+    </div>
+
+  </div>
+</div>
+
+</div>
+</body></html>

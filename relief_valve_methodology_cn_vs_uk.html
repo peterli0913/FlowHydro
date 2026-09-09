@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>安全阀分析方法论 ｜ CN vs UK Cheat Sheet</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+         margin: 0; color: #1f2937; background: #f5f7fa; padding: 24px; line-height: 1.55; }
+  .container { max-width: 1320px; margin: 0 auto; }
+  h1 { font-size: 22px; color: #0f3460; margin: 0 0 4px 0; }
+  .sub { font-size: 13px; color: #64748b; margin-bottom: 16px; }
+
+  .panel { background: #fff; border-radius: 10px; padding: 18px 22px;
+           box-shadow: 0 1px 3px rgba(15,52,96,0.06); margin-bottom: 16px; }
+  h2 { font-size: 15px; color: #0f3460; margin: 0 0 10px 0;
+        border-left: 4px solid #d97706; padding-left: 10px; }
+
+  .legend { display: flex; gap: 18px; font-size: 12px; color: #64748b;
+            margin-bottom: 10px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { display: inline-block; width: 14px; height: 14px;
+              border-radius: 3px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table th, table td { border: 1px solid #e2e8f0; padding: 8px 11px;
+                        vertical-align: top; text-align: left; }
+  table th { background: #f1f5f9; color: #0f3460; font-weight: 600;
+              font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+  td.dim { width: 18%; font-weight: 600; color: #0f3460; background: #f8fafc; }
+  td.cn  { width: 41%; background: #fef3c7; }
+  td.uk  { width: 41%; background: #dbeafe; }
+  td.gap { background: #fff7ed; font-style: italic; color: #b45309; }
+  table tr:hover td { background: #fef9c3 !important; }
+  table tr:hover td.uk { background: #bfdbfe !important; }
+  table tr:hover td.dim { background: #fde68a !important; }
+
+  code { background: #f1f5f9; padding: 1px 6px; border-radius: 3px;
+         font-size: 12px; color: #b45309; }
+  .ok  { color: #16a34a; font-weight: 600; }
+  .bad { color: #dc2626; font-weight: 600; }
+  .neu { color: #6b7280; }
+
+  .quote-box { background: #fef9c3; border-left: 4px solid #d97706;
+                padding: 10px 14px; border-radius: 0 6px 6px 0;
+                margin: 10px 0; font-size: 13px; }
+
+  details.box { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px;
+                 margin: 8px 0; padding: 8px 14px; }
+  details.box summary { font-weight: 600; color: #0f3460; cursor: pointer;
+                         font-size: 13px; }
+
+  .formula { background: #1e293b; color: #e2e8f0; padding: 10px 14px;
+              border-radius: 6px; font-family: 'Consolas', 'Monaco', monospace;
+              font-size: 12.5px; line-height: 1.7; margin: 6px 0;
+              white-space: pre-wrap; overflow-x: auto; }
+  .formula .var { color: #fbbf24; }
+  .formula .com { color: #94a3b8; font-style: italic; }
+
+  ul.action { margin: 6px 0 0 22px; padding: 0; font-size: 13px; }
+  ul.action li { margin: 4px 0; }
+
+  .step { background: #ecfdf5; border-left: 3px solid #16a34a;
+           padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 8px 0;
+           font-size: 13px; }
+
+  .talk-script { background: #1e293b; color: #e2e8f0; padding: 12px 16px;
+                  border-radius: 6px; font-size: 12.5px; line-height: 1.6;
+                  font-family: 'Consolas', 'Monaco', monospace;
+                  margin: 8px 0; white-space: pre-wrap; }
+  .talk-script .role { color: #fbbf24; font-weight: 700; }
+  .talk-script .hi   { color: #34d399; }
+
+  .tag { display: inline-block; font-size: 10px; padding: 1px 6px;
+          border-radius: 10px; background: #dbeafe; color: #1d4ed8;
+          font-weight: 600; margin-right: 6px; vertical-align: middle; }
+  .tag.cn { background: #fce7f3; color: #9d174d; }
+  .tag.uk { background: #dcfce7; color: #166534; }
+  .tag.gap { background: #fed7aa; color: #9a3412; }
+  .tag.warn{ background: #fee2e2; color: #b91c1c; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🔧 PRV / Relief Valve 方法论 ｜ CN vs UK Cheat Sheet</h1>
+<div class="sub">
+  Sandwich 连续氢化撬块项目 · 准备 Alex 博士 ↔ Keith 三方安全阀方法论专题会 ·
+  2026/05/13
+</div>
+
+<div class="legend">
+  <span><i style="background:#fef3c7"></i>🇨🇳 中方常见做法</span>
+  <span><i style="background:#dbeafe"></i>🇬🇧 UK 工程公司期望</span>
+  <span><i style="background:#fff7ed"></i>⚠️ 关键差距 / Gap</span>
+</div>
+
+<!-- ============ 1. Regulatory basis ============ -->
+<div class="panel">
+  <h2>1️⃣ 规范基础 ｜ Code basis</h2>
+  <table>
+    <tr>
+      <td class="dim">主要执行规范</td>
+      <td class="cn">
+        • <b>GB 150</b> 压力容器（设计压力、附件配置）<br>
+        • <b>HG/T 20570</b> 化工装置安全阀设置规定<br>
+        • <b>HG/T 20557</b> 化工装置工艺系统设计规定<br>
+        • <b>SH/T 3007</b> 石油化工储运系统罐区设计<br>
+        • API 520 / 521 / 526 多作为参考（不强制全套）
+      </td>
+      <td class="uk">
+        • <b>ASME BPVC Section VIII Div. 1</b>（设备）<br>
+        • <b>API 520 Part I &amp; II</b>（计算 + 安装）<br>
+        • <b>API 521</b>（系统级泄放与减压）<br>
+        • <b>API 526</b>（法兰式 PRV 标准化）<br>
+        • <b>DSEAR / ATEX</b>（防爆评估）<br>
+        • <b>HSE PUWER / DSEAR / COMAH</b> 整体安全监管
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">通常引用 DIERS？</td>
+      <td class="cn">少 — 仅在专门有"反应性物质 / 反应失控"考虑时偶尔引用</td>
+      <td class="uk"><b>必引</b> — 反应器、釜式反应、闪蒸罐都按 DIERS / Omega 方法判定 single-phase / two-phase</td>
+    </tr>
+    <tr>
+      <td colspan="3" class="gap">
+        <b>差距</b>：UK 把 DIERS 作为"对反应性系统的默认基线"，中方习惯先用 API 520 单相算、再用工程经验余量来"兜底"。
+        对话时<b>不要争对错</b>，要主动声明"我们这次按 DIERS Omega 同步重算并 cross-check API 520 结果"。
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 2. Scenario identification ============ -->
+<div class="panel">
+  <h2>2️⃣ 泄放工况识别 ｜ Scenario identification</h2>
+  <table>
+    <tr>
+      <td class="dim">常考虑的工况</td>
+      <td class="cn">
+        国内多数项目典型 4–6 个工况：
+        <ol>
+          <li>外部火灾（API 521 Fire case）</li>
+          <li>冷媒失效（loss of cooling）</li>
+          <li>出口阀误关 / 堵塞（blocked outlet）</li>
+          <li>仪表控制失效（control failure）</li>
+          <li>热膨胀（thermal expansion，液体管线）</li>
+          <li>仅供货 PRV 时 — 由供应商按"额定流量 + 余量"选型</li>
+        </ol>
+      </td>
+      <td class="uk">
+        UK 工程公司要求"穷尽 credible scenarios"，常见 10–15 个：
+        <ol>
+          <li>External fire (pool fire)</li>
+          <li>Loss of cooling / quench failure</li>
+          <li>Blocked outlet (各种位置)</li>
+          <li>Control valve failure (FO / FC 两种)</li>
+          <li>Thermal expansion</li>
+          <li>Tube rupture (换热器)</li>
+          <li><b>Reaction runaway</b> ← 反应系统必须</li>
+          <li>Power failure (各种连锁后果)</li>
+          <li>Inadvertent reactant addition</li>
+          <li>Inadvertent isolation (人误)</li>
+          <li>Gas breakthrough (上游气进液系统)</li>
+          <li>Vacuum (失压情形)</li>
+          <li>External jet fire (邻近设备影响)</li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">每个工况要写什么</td>
+      <td class="cn">通常只为"被选中"的工况写一段，未选的不解释</td>
+      <td class="uk">每个工况都要写：要么计算，要么<b>给"不需计算"的理由</b>（preceded / non-credible / lower than another case）。<u>"未列出 = 没考虑"是不被接受的</u></td>
+    </tr>
+    <tr>
+      <td colspan="3" class="gap">
+        <b>差距</b>：Keith 在 05-12 会议明确说"我会把<u>不算的工况</u>也写在 events identification 里，并说明<u>为什么不算</u>"。
+        中方目前只列了算了的工况。<br>
+        <b>对策</b>：胡超群在重做计算报告时，把 13 个标准工况都列出来；不算的逐一写一句"preceded by case X" / "lower magnitude than case Y" / "not credible because..."。
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 3. Calculation methodology ============ -->
+<div class="panel">
+  <h2>3️⃣ 计算方法论 ｜ Sizing methodology</h2>
+  <table>
+    <tr>
+      <td class="dim">单相还是两相？</td>
+      <td class="cn">
+        默认<b>单相</b>：火灾 / 冷媒失效都按气化后纯气相算（API 520 Eq. 3.3 / 3.4）；
+        液体工况按液相 orifice。<br>
+        <span class="neu">逻辑：温度足够高 → 溶剂全气化 → 简化为单相</span>
+      </td>
+      <td class="uk">
+        反应器、闪蒸罐<b>默认两相</b>：用 DIERS Omega 方法或 SuperChems 算<br>
+        <span class="neu">逻辑：泄放瞬间气液不会立刻分离，二相同时排出，需要的口径比纯气大 1.5–5×</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">关键公式</td>
+      <td colspan="2">
+        <div class="formula"><span class="com">// 单相气体 API 520 (Section 5.6)</span>
+<span class="var">A</span> = <span class="var">W</span> / [ <span class="var">C·Kd·P1·Kb·Kc</span> · √( <span class="var">M</span>/(<span class="var">T·Z</span>) ) ]
+   W = 泄放量 (kg/h); P1 = 泄放压力 (kPa abs)
+   C  = 气体系数 (k 函数); Kd = 排放系数 (~0.975)
+   Kb = 背压修正; Kc = 旁通修正
+   M  = 摩尔质量; T = 排放温度; Z = 压缩因子</div>
+        <div class="formula"><span class="com">// 两相 DIERS Omega 方法 (Leung 1986)</span>
+<span class="var">G_max</span> = <span class="var">P0·√(α0/(ω·v0))</span>  <span class="com">// kg/m²s 质量通量</span>
+   ω 系数 = <span class="var">α0·(1-α0)·v0g/v0</span> + (...)
+   α0 = inlet void fraction
+   v0 = 入口比容
+<span class="var">A</span> = <span class="var">W / (Kd · G_max)</span>
+        </div>
+        <div class="formula"><span class="com">// 容器内流型判定（Fauske, 1988）</span>
+ψ = <span class="var">jg_∞ / (vbubble · α_avg)</span>
+  ψ &lt; 1 → <span class="hi">Homogeneous</span>（最坏，全两相）
+  ψ &gt; 5 → Churn-turbulent（顶部分离气）
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">阻塞流判定</td>
+      <td class="cn">国内自编 Excel 多数<b>不显式判定</b>，按公式选用</td>
+      <td class="uk"><b>必须显式判定</b>：P2/P1 &lt; Pcrit/P1 → choked，独立公式；要在报告里写出 critical pressure ratio</td>
+    </tr>
+    <tr>
+      <td class="dim">入口压降 / 出口背压</td>
+      <td class="cn">通常用 10% 默认值简化</td>
+      <td class="uk">
+        必须<b>核算管路 ΔP</b>：<br>
+        • 入口 &le; 3% set pressure（否则 chatter）<br>
+        • 出口 &le; 10% set（否则换 balanced bellows 或 pilot-operated）<br>
+        • 长排放管要算 isothermal/adiabatic compressible flow
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" class="gap">
+        <b>差距 + 对策</b>：我们这次必须按 DIERS Omega <b>同步重算两相结果</b>，
+        把单相 API 520 当作 sanity check。两个数据并列写在报告里，让 Keith 看到我们覆盖了"他要的方法"。
+        <br>
+        <b>预期</b>：两相算出来的口径会比单相大 1.5–3×，
+        现有 1.22 m²（单相）可能升到 2.0–3.5 m²。<u>这是合理的</u>，不是我们之前算错。
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 4. Documentation format ============ -->
+<div class="panel">
+  <h2>4️⃣ 文档格式 ｜ Deliverable format</h2>
+  <table>
+    <tr>
+      <td class="dim">交付物</td>
+      <td class="cn">
+        • 安全阀<b>数据单</b>（一表一阀）<br>
+        • 安全阀<b>设置一览表</b>（设置压力、口径汇总）<br>
+        • 必要时一份<b>计算说明书</b>（PDF, 数页, 简要）
+      </td>
+      <td class="uk">
+        • <b>Relief Design Study (RDS)</b>：通常 30–100 页<br>
+        每台 PRV 一节，包含：<br>
+        　— Equipment data &amp; design conditions<br>
+        　— Scenario identification (含未算工况的理由)<br>
+        　— Per-scenario calc：assumptions + equations + intermediate values + result<br>
+        　— Reference 嵌入 (Excel / Mathcad / SuperChems output)<br>
+        　— Independent reviewer 复算痕迹
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">复算可追溯性</td>
+      <td class="cn">公式常隐藏在 Excel 单元格里，只显示数字</td>
+      <td class="uk"><b>必须可独立复算</b>：报告要让人凭文档就重做一遍；典型做法是 Mathcad 报告导出 PDF</td>
+    </tr>
+    <tr>
+      <td class="dim">假设页</td>
+      <td class="cn">通常无单独"Assumptions"章节</td>
+      <td class="uk"><b>必须有</b>：含溶剂物性、火灾热通量来源、初始 P/T、设备 wetted area 计算、容器内液位假设等</td>
+    </tr>
+    <tr>
+      <td colspan="3" class="gap">
+        <b>差距 + 对策</b>：胡超群本周内要做：
+        ① 把 Excel 公式全部展开成可见行；
+        ② 单独建一个 "Assumptions" Sheet；
+        ③ 每个工况单独一节（即使没算）；
+        ④ 整套<b>导出为 PDF</b> 作为 RDS Reference 附件。
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 5. Tools / software ============ -->
+<div class="panel">
+  <h2>5️⃣ 工具与软件 ｜ Tools / software</h2>
+  <table>
+    <tr>
+      <td class="dim">PRV 计算工具</td>
+      <td class="cn">自编 Excel（公司内部模板，沿用多年）</td>
+      <td class="uk">
+        • <b>Mathcad</b> + <b>Aspen Flarenet</b>（管网）<br>
+        • <b>SuperChems Expert</b>（DIERS 工业标准）<br>
+        • <b>Phast / Safeti</b>（DNV，火灾/爆炸建模）<br>
+        • Excel 也用，但仅作 sanity check
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">两相 / 反应失控</td>
+      <td class="cn">少数公司有 ARC / VSP 实验数据；多数靠工程经验保守取值</td>
+      <td class="uk">默认要做 ARC / VSP / DSC 实验测 dQ/dt，喂入 SuperChems 算 Omega 方法</td>
+    </tr>
+    <tr>
+      <td colspan="3" class="gap">
+        <b>务实路径</b>：我们不需要现学 SuperChems。Keith 真正在乎的是<b>方法论严谨</b>而不是必须用什么软件。
+        Excel 算两相 DIERS Omega 完全可以，只要：(a) 公式显式、(b) 假设页齐备、(c) 步骤可追溯。
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 6. Process integration ============ -->
+<div class="panel">
+  <h2>6️⃣ 项目流程定位 ｜ Project integration</h2>
+  <table>
+    <tr>
+      <td class="dim">PRV 计算 vs HAZOP 顺序</td>
+      <td class="cn">
+        多数项目：<b>PRV 计算先做</b> → HAZOP review → 必要时 update PRV<br>
+        <span class="neu">逻辑：先有数据单才能采购</span>
+      </td>
+      <td class="uk">
+        <b>HAZOP 输入到 PRV 计算</b>：HAZOP 工作组识别新工况 → 回灌到 Relief Design Study<br>
+        <span class="neu">逻辑：完整 scenario set 来自 HAZOP，不来自工艺工程师一个人脑补</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">谁主导 PRV 选型</td>
+      <td class="cn">工艺工程师 + 仪表工程师</td>
+      <td class="uk">工艺 + 仪表 + Process Safety (独立角色)；常含 cross-discipline review</td>
+    </tr>
+    <tr>
+      <td colspan="3" class="gap">
+        <b>对我们的影响</b>：项目当前 HAZOP 排在 6/2-6/3 周（3D 模型冻结后）。我们的 PRV 计算 V1 必须能<u>承受 HAZOP 反馈的工况补充</u>，做成"模块化"，每个工况一节。
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 7. Common pitfalls ============ -->
+<div class="panel">
+  <h2>7️⃣ 常见跨文化坑 ｜ Common pitfalls bridging CN ↔ UK</h2>
+  <table>
+    <tr>
+      <td class="dim">坑 1</td>
+      <td colspan="2" class="gap">
+        <b>"我们用工程经验取保守值"</b>不被 UK 接受 — 必须明确写出每个保守假设的<b>来源 + 量化值</b>。
+        例如不能写"考虑余量取 1.2"，要写"按 API 521 §5.15.2.2 火灾热通量 q = 22 kW/m² (适用 prompt fire-fighting)，加 20% 保守余量"。
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">坑 2</td>
+      <td colspan="2" class="gap">
+        <b>"PRV 数据单上只写一个尺寸"</b>不够 — UK 数据单要列：set P / accumulation %（10/16/21）/ rated flow / required orifice area / next-standard orifice (D/E/F...) / inlet ΔP / outlet back-pressure / 阀类型（balanced bellows / pilot）。
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">坑 3</td>
+      <td colspan="2" class="gap">
+        <b>"火灾工况按整个设备表面积算"</b>过保守，UK 按 API 521 wetted area 计算（仅含液面以下 + 7.6 m 内）。
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">坑 4</td>
+      <td colspan="2" class="gap">
+        <b>认为 API 520 单相结果再加 20% 余量 = 两相结果</b>。错。两相要的口径可能是单相的 1.5–5×，不是线性放大。
+      </td>
+    </tr>
+    <tr>
+      <td class="dim">坑 5</td>
+      <td colspan="2" class="gap">
+        <b>"出口管随便接"</b>—UK 要做 flare network 反算，长排放管会让背压超 10% set，意味着原选阀型号不对，要换 balanced bellows 或 pilot-operated。
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 8. Recommended scenarios for our project ============ -->
+<div class="panel">
+  <h2>8️⃣ 针对本项目建议的工况清单 ｜ Recommended scenarios for Sandwich</h2>
+  <table>
+    <tr>
+      <th style="width:5%;">#</th>
+      <th style="width:25%;">工况 Scenario</th>
+      <th style="width:35%;">说明 Rationale</th>
+      <th style="width:35%;">处理建议 Treatment</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td><b>External pool fire</b> 外部池火</td>
+      <td>溶剂泄漏池火，按 API 521 q = 22 kW/m²</td>
+      <td><span class="ok">必算</span> · 按反应柱 wetted area 单独算</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><b>Loss of cooling</b> 冷媒失效</td>
+      <td>HTF 系统失效，反应放热无导出，温度升高</td>
+      <td><span class="ok">必算</span> · 用反应热数据 + dT/dt → 蒸汽产生速率</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><b>Reaction runaway (DIERS)</b></td>
+      <td>催化剂过量 / 误进料 / 温度失控触发链式放热</td>
+      <td><span class="ok">必算</span> · DIERS Omega 两相方法 · ARC/VSP 数据 (如有)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><b>Blocked outlet (CV04 误关)</b></td>
+      <td>反应器出口 control valve 故障关 → 内压累积</td>
+      <td><span class="ok">必算</span> · 反应放热持续 → 接 case 2 / 3</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><b>H₂ control valve fail-open</b></td>
+      <td>FICV003 故障开 → H₂ 进料过量</td>
+      <td><span class="ok">必算</span> · 单相气体 case，简单</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><b>Inadvertent isolation</b></td>
+      <td>人误关手阀 → blocked outlet 变体</td>
+      <td><span class="ok">必算</span> · preceded by case 4 if magnitude lower</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><b>Thermal expansion</b></td>
+      <td>液段管两阀间被关 → 太阳暴晒 / 加热</td>
+      <td><span class="ok">必算</span> · 各管段 PSV-30 类 small thermal valves</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><b>Power failure</b></td>
+      <td>断电连锁触发，泵停 → 类似 blocked + loss of cooling</td>
+      <td><span class="neu">列出</span> · "Preceded by combination of case 2 + 4"</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td><b>Tube rupture (换热器)</b></td>
+      <td>预热器 / 冷凝器换热管破裂 → 高压侧介质进低压侧</td>
+      <td><span class="ok">必算</span> · API 521 §5.19，PSV 容量 ≥ 2A·G</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td><b>Vacuum / loss of containment</b></td>
+      <td>BT01 / BT04 常压罐降温产生真空</td>
+      <td><span class="ok">必算</span> · 用 vacuum breaker 而不是 PRV</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td><b>Control failure (其他)</b></td>
+      <td>各种仪表 / DCS 故障组合</td>
+      <td><span class="neu">列出</span> · 多数 "preceded by" 上述</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td><b>Inadvertent reactant addition</b></td>
+      <td>误加催化剂 / 异常溶剂</td>
+      <td><span class="neu">列出</span> · "non-credible due to operational procedure + LOTO"</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td><b>External jet fire / nearby explosion</b></td>
+      <td>邻近设备影响</td>
+      <td><span class="neu">列出</span> · "addressed by site-level safety distance"</td>
+    </tr>
+  </table>
+
+  <div class="quote-box">
+    <b>记法</b>：算 7 个核心 + 列出 6 个 "preceded / non-credible / addressed elsewhere"，
+    构成完整 events identification table，Keith 不会再说"under-scoped"。
+  </div>
+</div>
+
+<!-- ============ 9. Action plan for Alex ============ -->
+<div class="panel">
+  <h2>9️⃣ Alex 开会前需要准备的 ｜ Pre-meeting checklist for Alex</h2>
+
+  <div class="step">
+    <b>Step 1 — 内部对齐（开 Keith 会前）</b>
+    <ul class="action">
+      <li>胡超群提供：现有 Excel 计算文件 + 单相 API 520 用了哪些假设</li>
+      <li>Alex 翻看 DIERS Technology Report，复习 Omega 方法（重点 §5–7）</li>
+      <li>三个反应柱的反应热数据（ΔH_rxn, kJ/mol H₂）— 从研发拿</li>
+      <li>是否有 ARC / VSP 数据 — 若没有，Alex 决定用<b>什么文献数据替代</b>（关键决策）</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <b>Step 2 — 和 Keith 开会要确认的 4 件事</b>
+    <ul class="action">
+      <li>① <b>方法论锁定</b>：DIERS Omega + API 520 cross-check，OK 吗？</li>
+      <li>② <b>容器流型</b>：reactor 取 homogeneous (worst case) 还是 churn-turbulent (need justification)？</li>
+      <li>③ <b>火灾热通量</b>：q = 22 kW/m² (with adequate firefighting) 还是 44 kW/m²（无 active firefighting）？— 取决于场地安全配置，需 Keith 给</li>
+      <li>④ <b>RDS 模板</b>：Keith 不能提供自己的（IP 限制），但能否给一份"通用 outline" 让我们对照？</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <b>Step 3 — 后续 1 周交付</b>
+    <ul class="action">
+      <li>胡超群 + Alex 联合输出 Relief Design Study V1（按 §8 的 13 工况清单）</li>
+      <li>Alex 复核 → Peter 翻译关键节 → 发 Keith</li>
+      <li>Keith review 后做 V2 update</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 10. Talking points ============ -->
+<div class="panel">
+  <h2>🔟 Alex 开会的英文开场词 ｜ Opening for the three-way meeting with Keith</h2>
+
+  <div class="talk-script"><span class="role">Alex → Keith:</span>
+"Hi Keith, thanks for setting time aside. Peter has briefed me on the
+relief sizing concerns you raised on 12 May. Before we dive in, let me
+share where we currently stand and where we'd like alignment:
+
+1. <span class="hi">Methodology</span>: we agree single-phase API 520 alone is
+   insufficient for the reactor column relief. We propose to rerun the
+   sizing using <span class="hi">DIERS Omega method</span> for the reactor PRVs,
+   and keep the API 520 single-phase as a sanity-check cross-reference.
+
+2. <span class="hi">Vessel flow regime</span>: for the reactor columns we'd
+   default to <span class="hi">homogeneous (worst-case)</span> unless you have a
+   reason to use churn-turbulent. Confirm?
+
+3. <span class="hi">Scenario set</span>: we'll structure the events
+   identification as 13 scenarios — 7 calculated, 6 documented as
+   "preceded by / non-credible / addressed elsewhere" — mirroring the
+   API 521 / DSEAR style your team is used to.
+
+4. <span class="hi">Deliverable format</span>: a self-contained Relief Design
+   Study with one section per PRV per scenario, all assumptions, all
+   equations exposed, Excel sheets attached as references — fully
+   reproducible without our involvement.
+
+5. <span class="hi">Two specific inputs we need from you today</span>:
+   (a) fire heat flux to assume — 22 kW/m² (adequate firefighting) or
+       44 kW/m² (no active firefighting)?
+   (b) is there a generic RDS outline / table of contents you can share
+       even if your specific template is IP-restricted?
+
+Anything else you'd like us to scope into V1?"
+</div>
+</div>
+
+</div>
+</body></html>
