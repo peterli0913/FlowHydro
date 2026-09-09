@@ -39,7 +39,8 @@
 ### 时间线（Timeline）
 | 文件 | 说明 |
 |---|---|
-| `0812-Sandwich Continuous Hydrogen Timeline.xlsx` | **最新版**时间表 |
+| `0909-Sandwich Continuous Hydrogen Timeline.xlsx` | **最新版**时间表（9 月 9 日对齐，含 Timeline 0907 工作表） |
+| `0812-Sandwich Continuous Hydrogen Timeline.xlsx` | 8 月 12 日版时间表 |
 | `timeline_0812_master_schedule.html` | 0812 版总进度展示页 |
 | `Timeline_0812_Talking_Points.md` | 讲解词（中英），含预判问答 |
 | `Timeline_0812_Duration_Rationale.md` | 各阶段工期依据（应对质询用） |
@@ -47,7 +48,7 @@
 | `0114` / `0509` / `0701` 版 `.xlsx`、`timeline_compare.png` | 历史版本与对比 |
 
 ### 隔周进度汇报
-`Progress_Report_0715.pptx` / `0729` / `0811` / `0826`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。
+`Progress_Report_0715.pptx` / `0729` / `0811` / `0826` / `0909`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。`0909` 为可直接给 SW 的纯净版（8 月 27 日–9 月 9 日）。
 
 ### 现场行程提案
 | 文件 | 说明 |
