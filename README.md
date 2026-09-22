@@ -55,6 +55,8 @@
 |---|---|
 | `sandwich_onsite_proposal.html` | 赴 Sandwich 现场集中 1–2 周关闭 3D 布置未决事项、并将 HAZOP 并入同一行程的提案（可直接发送 / 打印） |
 | `sandwich_onsite_proposal_email.md` | 配套提案邮件正文（收件人：凯总、国喜博士、Alex 博士） |
+| `0909-Agenda of the visit to Sandwich (3D & HAZOP).xlsx` | 9 月 9 日上传的赴英现场议程（英文主表） |
+| `0909-赴Sandwich现场议程（3D与HAZOP）.xlsx` | 上一文件的纯中文另存版：现场 / 线上两列 + 备注，A3 横版一页打印；由 `scripts/build_cn_visit_agenda_0909.py` 生成 |
 | `Agenda of the visit to Sandwich (3D & HAZOP).xlsx` | 赴英现场议程（Day 1–Day 8），沿用 `【SW】Agenda of the visit` 的表格样式，新增 Objective 目标列；初版由 `scripts/build_uk_visit_agenda.py` 生成，现为人工修订版 |
 | `sandwich_visit_agenda_email_keith.md` | 致 Keith 的英文邮件：征询议程主题与各项用时意见，并提出 10/12 起与 10/20–22 HAZOP 的时间建议 |
 
