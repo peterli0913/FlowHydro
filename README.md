@@ -2,13 +2,13 @@
 
 凯莱英 UK Sandwich site 中试工厂连续氢化撬块项目的资料汇总、进度跟踪与可视化。
 
-本分支为**综合工作分支**：此前分散在多个分支的会议转写、纪要、跟踪表、时间线、汇报材料与生成脚本已全部合并到这里。写进展、做汇报、准备与 Keith 的讨论时，直接在本分支查阅与新增即可。
+本分支 `cursor/full-workspace-9e08` 是**唯一工作分支**。15 个远程分支上的文件已全部并入这里，旧分支保留不动。之后写进展、做汇报、准备与 Keith 的讨论，都在本分支进行。
 
 ## 目录导航
 
 ### 事件跟踪表（Meeting Minutes Tracking Record）
-按日期滚动升版，每个文件含历史 sheet。**最新为 `0812`**。
-`0414` / `0421` / `0512` / `0519` / `0701` / `0703` / `0706` / `0723` / `0729` / `0730` / `0806` / `0812`
+按日期滚动升版，每个文件含历史 sheet。**最新为 `0922`**。
+`0414` / `0421` / `0512` / `0519` / `0701` / `0703` / `0706` / `0723` / `0729` / `0730` / `0806` / `0812` / `0922`
 
 > `0414` 与 `0421` 原为同名文件的两个不同快照（分别为 0414、0430 页），合并时按内容拆分保留。
 
@@ -23,6 +23,8 @@
 | `Meeting_Summary_0818_Technical_Keith.md` | 08-18 技术会（Keith）：撬块设计与清洗方案 |
 | `Meeting_Summary_0825_Technical_Keith.md` | 08-25 技术会（Keith）：PFD 定案、垫片方案、控制柜与 3D 重排 |
 | `Meeting_Summary_0826_Biweekly_Review.md` | 08-26 双周汇报会：提议赴 Sandwich 现场攻 3D、HAZOP 延期预警、PFD 口径更正 |
+| `Meeting_Summary_0907_Internal.md` | 09-07 内部短会：现场窗口与对 Keith 的议题 |
+| `Meeting_Summary_0908_Technical_Keith.md` | 09-08 技术会（Keith）：垫片、PIC-028、3D 分撬 |
 
 ### 会议转写（原始录音转文字）
 `05-09` / `05-12` / `07-01` / `07-06` / `07-14` / `08-05` / `08-06` / `08-12` / `08-13` / `08-18` 各场 `.docx`，以及 `2026-05-09`、`2026-06-09`、`2026-07-29`、`2026-08-13` 录音转写。
@@ -30,6 +32,7 @@
 ### 与 Keith 的会议材料
 | 文件 | 用途 |
 |---|---|
+| `Keith_Discussion_0908.pptx` | 09-08 与 Keith 讨论的英文 PPT；由 `scripts/build_keith_discussion_0908.py` 生成 |
 | `Keith_Agenda_0825.md` | 08-25 议程与交流要点（含时间分配与说服主线） |
 | `Feng_PFD_Brief_0825.md` | 给冯博士的 PFD / 物料平衡会前说明 |
 | `Keith_Talking_Points_0723.md` / `Keith_Talking_Points_0806.md` | 交流要点 |
@@ -48,13 +51,16 @@
 | `0114` / `0509` / `0701` 版 `.xlsx`、`timeline_compare.png` | 历史版本与对比 |
 
 ### 隔周进度汇报
-`Progress_Report_0715.pptx` / `0729` / `0811` / `0826` / `0909`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。`0909` 为可直接给 SW 的纯净版（8 月 27 日–9 月 9 日）。
+`Progress_Report_0715.pptx` / `0729` / `0811` / `0826` / `0909` / `0923`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。`0909` 为可直接给 SW 的纯净版（8 月 27 日–9 月 9 日）。`0923` 为 9 月 9–23 日向领导的双周进展，由 `scripts/build_progress_ppt_0923.py` 生成。
 
 ### 现场行程提案
 | 文件 | 说明 |
 |---|---|
 | `sandwich_onsite_proposal.html` | 赴 Sandwich 现场集中 1–2 周关闭 3D 布置未决事项、并将 HAZOP 并入同一行程的提案（可直接发送 / 打印） |
 | `sandwich_onsite_proposal_email.md` | 配套提案邮件正文（收件人：凯总、国喜博士、Alex 博士） |
+| `0909-Agenda of the visit to Sandwich (3D & HAZOP).xlsx` | 9 月 9 日上传的赴英现场议程（英文主表） |
+| `0909-赴Sandwich现场议程（3D与HAZOP）.xlsx` | 赴英现场议程中文版（现场 / 线上两列 + 备注） |
+| `0909-Agenda of the visit to Sandwich (3D & HAZOP)_EN.xlsx` | 上一文件的纯英文另存版，版式不变；由 `scripts/build_en_visit_agenda_0909.py` 生成 |
 | `Agenda of the visit to Sandwich (3D & HAZOP).xlsx` | 赴英现场议程（Day 1–Day 8），沿用 `【SW】Agenda of the visit` 的表格样式，新增 Objective 目标列；初版由 `scripts/build_uk_visit_agenda.py` 生成，现为人工修订版 |
 | `sandwich_visit_agenda_email_keith.md` | 致 Keith 的英文邮件：征询议程主题与各项用时意见，并提出 10/12 起与 10/20–22 HAZOP 的时间建议 |
 
@@ -77,6 +83,8 @@ python3 scripts/build_timeline_view.py        # 中文内部版甘特图
 python3 scripts/build_timeline_view_en.py     # 英文 UK 展示版
 python3 scripts/build_timeline_0812.py        # 0812 版总进度页
 python3 scripts/build_progress_ppt_0811.py    # 隔周进度汇报 PPT
+python3 scripts/build_en_visit_agenda_0909.py # 0909 现场议程纯英文另存
+python3 scripts/build_keith_discussion_0908.py # 09-08 Keith 讨论英文 PPT
 ```
 
 其余脚本见 `scripts/`：跟踪表升版、议程生成、HAZOP 模板、思维导图等。
