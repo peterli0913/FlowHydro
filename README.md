@@ -51,7 +51,7 @@
 | `0114` / `0509` / `0701` 版 `.xlsx`、`timeline_compare.png` | 历史版本与对比 |
 
 ### 隔周进度汇报
-`Progress_Report_0715.pptx` / `0729` / `0811` / `0826` / `0909`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。`0909` 为可直接给 SW 的纯净版（8 月 27 日–9 月 9 日）。
+`Progress_Report_0715.pptx` / `0729` / `0811` / `0826` / `0909` / `0923`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。`0909` 为可直接给 SW 的纯净版（8 月 27 日–9 月 9 日）。`0923` 为 9 月 9–23 日向领导的双周进展，由 `scripts/build_progress_ppt_0923.py` 生成。
 
 ### 现场行程提案
 | 文件 | 说明 |
