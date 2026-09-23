@@ -2,13 +2,13 @@
 
 凯莱英 UK Sandwich site 中试工厂连续氢化撬块项目的资料汇总、进度跟踪与可视化。
 
-本分支为**综合工作分支**：此前分散在多个分支的会议转写、纪要、跟踪表、时间线、汇报材料与生成脚本已全部合并到这里。写进展、做汇报、准备与 Keith 的讨论时，直接在本分支查阅与新增即可。
+本分支 `cursor/full-workspace-9e08` 是**唯一工作分支**。15 个远程分支上的文件已全部并入这里，旧分支保留不动。之后写进展、做汇报、准备与 Keith 的讨论，都在本分支进行。
 
 ## 目录导航
 
 ### 事件跟踪表（Meeting Minutes Tracking Record）
-按日期滚动升版，每个文件含历史 sheet。**最新为 `0812`**。
-`0414` / `0421` / `0512` / `0519` / `0701` / `0703` / `0706` / `0723` / `0729` / `0730` / `0806` / `0812`
+按日期滚动升版，每个文件含历史 sheet。**最新为 `0922`**。
+`0414` / `0421` / `0512` / `0519` / `0701` / `0703` / `0706` / `0723` / `0729` / `0730` / `0806` / `0812` / `0922`
 
 > `0414` 与 `0421` 原为同名文件的两个不同快照（分别为 0414、0430 页），合并时按内容拆分保留。
 
@@ -23,6 +23,8 @@
 | `Meeting_Summary_0818_Technical_Keith.md` | 08-18 技术会（Keith）：撬块设计与清洗方案 |
 | `Meeting_Summary_0825_Technical_Keith.md` | 08-25 技术会（Keith）：PFD 定案、垫片方案、控制柜与 3D 重排 |
 | `Meeting_Summary_0826_Biweekly_Review.md` | 08-26 双周汇报会：提议赴 Sandwich 现场攻 3D、HAZOP 延期预警、PFD 口径更正 |
+| `Meeting_Summary_0907_Internal.md` | 09-07 内部短会：现场窗口与对 Keith 的议题 |
+| `Meeting_Summary_0908_Technical_Keith.md` | 09-08 技术会（Keith）：垫片、PIC-028、3D 分撬 |
 
 ### 会议转写（原始录音转文字）
 `05-09` / `05-12` / `07-01` / `07-06` / `07-14` / `08-05` / `08-06` / `08-12` / `08-13` / `08-18` 各场 `.docx`，以及 `2026-05-09`、`2026-06-09`、`2026-07-29`、`2026-08-13` 录音转写。
@@ -30,6 +32,7 @@
 ### 与 Keith 的会议材料
 | 文件 | 用途 |
 |---|---|
+| `Keith_Discussion_0908.pptx` | 09-08 与 Keith 讨论的英文 PPT；由 `scripts/build_keith_discussion_0908.py` 生成 |
 | `Keith_Agenda_0825.md` | 08-25 议程与交流要点（含时间分配与说服主线） |
 | `Feng_PFD_Brief_0825.md` | 给冯博士的 PFD / 物料平衡会前说明 |
 | `Keith_Talking_Points_0723.md` / `Keith_Talking_Points_0806.md` | 交流要点 |
@@ -81,6 +84,7 @@ python3 scripts/build_timeline_view_en.py     # 英文 UK 展示版
 python3 scripts/build_timeline_0812.py        # 0812 版总进度页
 python3 scripts/build_progress_ppt_0811.py    # 隔周进度汇报 PPT
 python3 scripts/build_en_visit_agenda_0909.py # 0909 现场议程纯英文另存
+python3 scripts/build_keith_discussion_0908.py # 09-08 Keith 讨论英文 PPT
 ```
 
 其余脚本见 `scripts/`：跟踪表升版、议程生成、HAZOP 模板、思维导图等。
