@@ -1,5 +1,5 @@
 """
-Build a 4-slide biweekly progress deck (16:9) for 9–23 Sep 2026,
+Build a 5-slide biweekly progress deck (16:9) for 9–23 Sep 2026,
 for the leadership review.  Same chrome as the 0826 / 0909 decks:
 English primary, Chinese secondary.
 
@@ -39,7 +39,7 @@ FOOT = "9AA6B8"
 LINE = "E3E8F0"
 
 PERIOD = "Bi-weekly Progress 2026-09-09 ~ 09-23"
-TOTAL = "04"
+TOTAL = "05"
 OUT = "Progress_Report_0923.pptx"
 
 
@@ -122,32 +122,119 @@ def blank_slide(prs):
     return prs.slides.add_slide(prs.slide_layouts[6])
 
 
-def add_bullet_block(slide, y, color, en, cn, *, small=False, subs=None, gap=0.14):
+from PIL import ImageFont
+
+_LATIN = ImageFont.truetype(
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", 100)
+_LATIN_B = ImageFont.truetype(
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf", 100)
+_CJK = ImageFont.truetype(
+    "/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf", 100)
+
+
+def _token_width(token, size, bold):
+    font = _LATIN_B if bold else _LATIN
+    w = 0.0
+    for ch in token:
+        if "\u4e00" <= ch <= "\u9fff" or ch in "，。；：、（）":
+            w += _CJK.getlength(ch) * size / 100.0
+        else:
+            w += font.getlength(ch) * size / 100.0
+    return w
+
+
+def _nlines(text, size, width_in, bold=False):
+    """Word-wrap width in the same point units PowerPoint uses."""
+    width_pt = width_in * 72 * 0.92  # leave room for PowerPoint's side bearing
+    tokens = []
+    buf = ""
+    for ch in text:
+        if ch == "\n":
+            if buf:
+                tokens.append(buf)
+                buf = ""
+            tokens.append("\n")
+        elif "\u4e00" <= ch <= "\u9fff" or ch in "，。；：、（）":
+            if buf:
+                tokens.append(buf)
+                buf = ""
+            tokens.append(ch)
+        elif ch == " ":
+            if buf:
+                tokens.append(buf)
+                buf = ""
+            tokens.append(" ")
+        else:
+            buf += ch
+    if buf:
+        tokens.append(buf)
+    lines = 1
+    used = 0.0
+    for tok in tokens:
+        if tok == "\n":
+            lines += 1
+            used = 0.0
+            continue
+        cw = _token_width(tok, size, bold)
+        if tok != " " and used + cw > width_pt and used > 0:
+            lines += 1
+            used = cw
+        else:
+            used += cw
+    return max(lines, 1)
+
+
+def _block_h(en, cn, subs, small):
+    en_sz = 14 if small else 15
+    cn_sz = 12
+    sub_en, sub_cn = 13, 12
+    text_w = 11.35
+    sub_w = 10.95
+    h = 0.12
+    h += _nlines(en, en_sz, text_w, bold=not small) * (en_sz * 1.22) / 72
+    h += 0.05
+    h += _nlines(cn, cn_sz, text_w) * (cn_sz * 1.35) / 72
+    for se, sc in subs:
+        h += 0.07
+        h += _nlines(se, sub_en, sub_w) * (sub_en * 1.22) / 72
+        h += 0.02
+        h += _nlines(sc, sub_cn, sub_w) * (sub_cn * 1.35) / 72
+    h += 0.12
+    return h
+
+
+def add_bullet_block(slide, y, color, en, cn, *, small=False, subs=None, gap=0.10):
     subs = subs or []
-    en_sz = 14 if small else 16
-    cn_sz = 10.5 if small else 11.5
-    dot_sz = 14 if small else 16
-    h_box = 0.48 + 0.30 * len(subs)
-    tb = slide.shapes.add_textbox(Inches(0.62), Inches(y),
-                                  Inches(12.1), Inches(h_box))
+    h = _block_h(en, cn, subs, small)
+    fill = "F4F7FB" if not small else "F8FAFC"
+    box(slide, MSO_SHAPE.ROUNDED_RECTANGLE, 0.55, y, 12.23, h,
+        fill=fill, line="E3E8F0", lw=1.0)
+    box(slide, MSO_SHAPE.RECTANGLE, 0.55, y, 0.07, h, fill=color)
+
+    en_sz = 14 if small else 15
+    cn_sz = 12
+    tb = slide.shapes.add_textbox(Inches(0.82), Inches(y + 0.06),
+                                  Inches(11.75), Inches(max(h - 0.10, 0.3)))
     tf = tb.text_frame
     tf.word_wrap = True
+    tf.auto_size = None
     tf.margin_left = tf.margin_right = Emu(0)
+    tf.margin_top = tf.margin_bottom = Emu(0)
     p = tf.paragraphs[0]
-    _run(p, "●  ", size=dot_sz, bold=True, color=(SUB if small else color))
-    _run(p, en, size=en_sz, bold=(not small),
-         color=(BODY if not small else "5A6675"))
+    _run(p, en, size=en_sz, bold=not small,
+         color=(BODY if not small else "3C4A5A"))
     p2 = tf.add_paragraph()
-    p2.space_before = Pt(1)
-    _run(p2, "     " + cn, font=FONT_ZH, size=cn_sz, color=SUB)
+    p2.space_before = Pt(3)
+    _run(p2, cn, font=FONT_ZH, size=cn_sz, color=SUB)
     for se, sc in subs:
         ps = tf.add_paragraph()
-        ps.space_before = Pt(2)
-        _run(ps, "        –  ", size=12, color="B7C0CF")
+        ps.space_before = Pt(6)
+        _run(ps, "–  ", size=13, color="94A3B8")
         _run(ps, se, size=13, color="3C4A5A")
         pc = tf.add_paragraph()
-        _run(pc, "             " + sc, font=FONT_ZH, size=10, color=SUB)
-    return y + 0.46 + 0.30 * len(subs) + gap
+        pc.space_before = Pt(1)
+        _run(pc, sc, font=FONT_ZH, size=12, color=SUB)
+    return y + h + gap
 
 
 def slide_01(prs):
@@ -226,12 +313,21 @@ def slide_02(prs):
         ],
         gap=0.08,
     )
+    add_footer(s, "02")
+    return y
+
+
+def slide_03(prs):
+    color = "16A34A"
+    s = blank_slide(prs)
+    add_header(s, "03", "Piping Rules from 22 Sep", "9 月 22 日定下的管路规则", color)
+    y = 1.64
     y = add_bullet_block(
         s, y, color,
         "Reactor 3 HTF nozzle turns toward the wall riser.  "
         "The pipe no longer runs out to the skid end and doubles back.",
         "反应器 3 的 HTF 管嘴改朝穿墙立管。管子不再先跑到撬端再折回。",
-        gap=0.08,
+        gap=0.14,
     )
     y = add_bullet_block(
         s, y, color,
@@ -244,16 +340,25 @@ def slide_02(prs):
              "够不到的阀用 Habonim 小型气动球阀，在撬端操作。"
              "伸手 300–400 mm 能到的可以保持手动。"),
         ],
-        gap=0.06,
+        gap=0.14,
     )
-    add_footer(s, "02")
+    y = add_bullet_block(
+        s, y, color,
+        "Width cannot drop 100–200 mm — the limit is the pump and BT01.  "
+        "Cleaning-mode high-level bypass is written into the manual, "
+        "and is not yet agreed with Keith.",
+        "宽度减不了 100–200 mm，限制在泵和 BT01。"
+        "清洗模式旁路高液位联锁已写入手册，Keith 尚未认可。",
+        gap=0.14,
+    )
+    add_footer(s, "03")
     return y
 
 
-def slide_03(prs):
+def slide_04(prs):
     color = "DC2626"
     s = blank_slide(prs)
-    add_header(s, "03", "What Changes the Plan", "相对 9 月 9 日计划的变化", color)
+    add_header(s, "04", "What Changes the Plan", "相对 9 月 9 日计划的变化", color)
     y = 1.62
     y = add_bullet_block(
         s, y, color,
@@ -293,47 +398,38 @@ def slide_03(prs):
         ],
         gap=0.10,
     )
-    y = add_bullet_block(
-        s, y, color,
-        "Still open, and not a layout choice for this meeting: "
-        "width cannot drop 100–200 mm (pump and BT01).  "
-        "Cleaning-mode high-level bypass is in the manual, not yet agreed.",
-        "本次不需要领导选型。宽度受泵和 BT01 限制，减 100–200 mm 没有意义。"
-        "清洗模式旁路高液位联锁已写入手册，Keith 尚未认可。",
-        small=True, gap=0.06,
-    )
-    add_footer(s, "03")
+    add_footer(s, "04")
     return y
 
 
-def slide_04(prs):
+def slide_05(prs):
     color = "0E9AA7"
     s = blank_slide(prs)
-    add_header(s, "04", "Next Steps", "下一步", color)
+    add_header(s, "05", "Next Steps", "下一步", color)
     y = 1.62
     steps = [
-        ("Fan — draw both layouts, turn the reactor-3 nozzle toward the "
-         "wall riser, and place drain / CIP valves at the tee.",
-         "范双双：两版布置都画出来；反应器 3 管嘴朝向穿墙立管；排净 / CIP 阀放到三通处。"),
-        ("Gao Yu — Habonim ball valve and actuator envelope to Fan, "
-         "and whether it can be bought in China.",
-         "高宇：把 Habonim 球阀和气动头的外形给范双双，并确认国内能否买到。"),
-        ("Meng — which signals stay on the pull-out module, and which "
-         "still leave it.  Cable count waits on the junction-box size.",
-         "孟德智：可拉出模块上哪些信号留在本撬、哪些还要外引。电缆数量等接线箱尺寸。"),
-        ("Keith — send the NWD model; junction-box feedback by "
-         "25 or 28 Sep; valve tidy-up once the layout is close.",
-         "Keith：发 NWD；接线箱 9 月 25 日或 28 日反馈；布置接近后再精简阀门。"),
-        ("Zhao — hold the 18 Aug equipment issue until the nozzles and "
-         "HTF runs are accepted.  CE document set continues in parallel.",
-         "赵子亮：管嘴和 HTF 被接受前，不按 8 月 18 日图提采购。CE 资料并行准备。"),
-        ("Confirm the visit window with Keith.  Next technical session: "
-         "23 Sep, on the same model.",
-         "与 Keith 确认赴英窗口。下一次技术会是 9 月 23 日，仍对着这版模型。"),
+        ("Fan — both layouts; reactor-3 nozzle toward the wall riser; "
+         "drain and CIP valves at the tee.",
+         "范双双：两版布置、反应器 3 管嘴朝向穿墙立管、排净和 CIP 阀放在三通处。"),
+        ("Gao Yu — Habonim valve and actuator envelope to Fan, "
+         "and whether China can buy it.",
+         "高宇：Habonim 阀和气动头外形交给范双双，并确认国内能否采购。"),
+        ("Meng — which signals stay on the pull-out module. "
+         "Cable count waits on the junction box.",
+         "孟德智：列出可拉出模块上留下的信号。电缆数量等接线箱尺寸。"),
+        ("Keith — send the NWD; junction-box size by 25 or 28 Sep; "
+         "tidy valves when the layout is close.",
+         "Keith：发送 NWD；9 月 25 日或 28 日反馈接线箱；布置接近后精简阀门。"),
+        ("Zhao — hold the 18 Aug equipment issue until nozzles and "
+         "HTF runs are accepted.",
+         "赵子亮：管嘴和 HTF 被接受之前，不按 8 月 18 日的图提采购。"),
+        ("Confirm the visit window with Keith. "
+         "Next session is 23 Sep, on this model.",
+         "与 Keith 确认赴英窗口。9 月 23 日继续对着这版模型讨论。"),
     ]
     for en, cn in steps:
-        y = add_bullet_block(s, y, color, en, cn, gap=0.08)
-    add_footer(s, "04")
+        y = add_bullet_block(s, y, color, en, cn, gap=0.10)
+    add_footer(s, "05")
     return y
 
 
@@ -341,9 +437,12 @@ def main():
     prs = Presentation()
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
-    ys = [slide_01(prs), slide_02(prs), slide_03(prs), slide_04(prs)]
+    ys = [slide_01(prs), slide_02(prs), slide_03(prs), slide_04(prs),
+          slide_05(prs)]
     prs.save(OUT)
     print("Saved:", OUT, "end-y:", [round(y, 2) for y in ys])
+    if any(y > 6.95 for y in ys):
+        raise SystemExit("A slide runs into the footer. Shorten copy or spacing.")
 
 
 if __name__ == "__main__":
