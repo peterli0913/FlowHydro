@@ -25,6 +25,7 @@
 | `Meeting_Summary_0826_Biweekly_Review.md` | 08-26 双周汇报会：提议赴 Sandwich 现场攻 3D、HAZOP 延期预警、PFD 口径更正 |
 | `Meeting_Summary_0907_Internal.md` | 09-07 内部短会：现场窗口与对 Keith 的议题 |
 | `Meeting_Summary_0908_Technical_Keith.md` | 09-08 技术会（Keith）：垫片、PIC-028、3D 分撬 |
+| `Meeting_Summary_1008_Technical_Keith.md` | 10-08 技术会（Keith）：IS I/O 柜、计量泵脉动缓冲器、顶部温度变送器、DN50 催化剂管嘴 |
 
 ### 会议转写（原始录音转文字）
 `05-09` / `05-12` / `07-01` / `07-06` / `07-14` / `08-05` / `08-06` / `08-12` / `08-13` / `08-18` 各场 `.docx`，以及 `2026-05-09`、`2026-06-09`、`2026-07-29`、`2026-08-13` 录音转写。
