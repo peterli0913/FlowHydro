@@ -1,5 +1,5 @@
 """
-Build a 7-slide progress report (16:9) for 23 Sep – 21 Oct 2026.
+Build an 8-slide progress report (16:9) for 23 Sep – 21 Oct 2026.
 
 Same chrome as the 0909 / 0923 decks (numbered tile, coloured header bar,
 footer), but English only so the file can go to SW as-is.
@@ -8,6 +8,7 @@ Sources
 -------
 - Meeting Minutes Tracking Record 1020.xlsx (sheet 1020 vs 0922)
 - 8 Oct technical session with Keith (Meeting_Summary_1008_Technical_Keith.md)
+- 20 Oct technical session with Keith (Meeting_Summary_1020_Technical_Keith.md)
 - Keith's 9 Oct email on multipoint RTDs; 14 Oct nozzle-size email
 - 撬块及辅助设备投资评估表-2026.xlsx (CFCT re-estimate)
 - R&D temperature-rise results (DN40 / DN65)
@@ -44,7 +45,7 @@ UP = "B91C1C"
 DOWN = "15803D"
 
 PERIOD = "Progress 2026-09-23 ~ 10-21"
-TOTAL = "07"
+TOTAL = "08"
 OUT = "Progress_Report_1021.pptx"
 
 BUDGET_GBP = 351_591
@@ -302,7 +303,7 @@ def slide_01(prs):
 def slide_02(prs):
     color = "16A34A"
     s = blank_slide(prs)
-    add_header(s, "02", "Layout — Settled and Open Points",
+    add_header(s, "02", "Layout — Settled Points",
                "From the 8, 15 and 20 October reviews", color)
     y = 1.62
     y = add_block(
@@ -333,14 +334,14 @@ def slide_02(prs):
             "agreed.",
         ], gap=0.10)
     y = add_block(
-        s, y, "D97706",
-        "Open: SE01 / CU01 — wall side or end face of module 3.  Drain and "
-        "CIP valves at the front.",
+        s, y, color,
+        "SE01 / CU01 go on the end face of module 3, reachable from the end "
+        "(SW choice, 20 Oct).",
         subs=[
-            "The end-face option clashes with the Reactor 3 HTF.  Both "
-            "points are in the 20 Oct model for SW review.",
-            "Valves within 300–400 mm of the end stay manual; beyond that, "
-            "compact actuated valves.",
+            "Separator level switches move to that side.  The Reactor 3 HTF "
+            "clash in this option is being resolved.",
+            "The separator top keeps its Class 900 flange: a welded dished "
+            "head cannot take all the nozzles.",
         ], gap=0.08)
     add_footer(s, "02")
     return y
@@ -354,31 +355,30 @@ def slide_03(prs):
                color)
     y = 1.62
     y = add_block(
-        s, y, color,
-        "Metering pump: a three-head pump with inlet and outlet manifolds "
-        "and no discharge damper replaces the single head with a pulsation "
+        s, y, "B45309",
+        "Metering pump — open.  SW wants the pulsation damper removed; the "
+        "vendor's alternative is a three-head pump with manifolds and no "
         "damper.",
         subs=[
-            "Addresses SW's concern: the damper is a dead leg, and a "
-            "diaphragm failure could go undetected.",
-            "Vendor drawing received 20 Oct and placed in the 3D; pulsation "
-            "curves supplied.  20 L/h, 7.5 MPa discharge, GMP.",
+            "SW is not keen on the three-head option (20 Oct).  The vendor "
+            "does not recommend a single head without a damper at this "
+            "pressure.",
+            "CFCT will send SW the vendor discussion and the pulsation curves "
+            "for both options.  Three-head basis: 20 L/h, 7.5 MPa, GMP.",
             "CE marking is sufficient; no foreign motor brand is required "
             "(15 Oct).",
-            "Vendor: flow can be calibrated on site for each material; a "
-            "flowmeter is needed only for remote flow indication.  To be "
-            "confirmed by process.",
         ], gap=0.12)
     y = add_block(
         s, y, color,
-        "Reactor temperatures: SW's multipoint RTD concept is feasible — no "
-        "local transmitters or displays; readings on the HMI.",
+        "Reactor temperatures: no local transmitters or displays; readings "
+        "on the HMI.",
         subs=[
-            "E+H iTherm MultiSens Slim TMS21 on flexible conduit, wired "
-            "direct to Siemens RTD module 6ES7134-7SD51-0AB0 in the ET200iSP "
-            "panel.",
-            "E+H has confirmed supply; Siemens has confirmed the RTD module.  "
-            "Parameter review with E+H this week.",
+            "Multipoint: E+H iTherm MultiSens Slim TMS21 on flexible conduit, "
+            "wired direct to Siemens RTD module 6ES7134-7SD51-0AB0.  E+H and "
+            "Siemens have confirmed supply.",
+            "Single points: small transmitters without display, or RTDs wired "
+            "direct to the IS I/O panel as SW proposes — to be agreed.  "
+            "Flexible conduit is acceptable inside the skid (IS circuits).",
         ], gap=0.12)
     y = add_block(
         s, y, color,
@@ -391,9 +391,58 @@ def slide_03(prs):
 
 
 def slide_04(prs):
+    color = "16A34A"
+    s = blank_slide(prs)
+    add_header(s, "04", "Detailed Review — Piping and Valves",
+               "Principles agreed with SW on 20 October", color)
+    y = 1.62
+    y = add_block(
+        s, y, color,
+        "Equipment positions are held.  Each P&ID line is now walked "
+        "through on the model, start to finish.",
+        subs=[
+            "Check vents, drains, dead legs, low points and pockets, and "
+            "match to the P&ID.  Fix on the spot or log a comment; update the "
+            "P&ID with every change.",
+        ], gap=0.10)
+    y = add_block(
+        s, y, color,
+        "Remove what is not needed.  CV06 goes; its feed interlock moves "
+        "to CV12.",
+        subs=[
+            "Next candidates: the drain beside FIT01, one of two adjacent "
+            "isolation valves, and a tee moved down to shorten a dead leg.",
+            "One drain may serve where the final rinse is emptied; "
+            "individual legs rarely need draining on their own.",
+        ], gap=0.10)
+    y = add_block(
+        s, y, color,
+        "Shortest routes, fewer fittings.  Hydrogen and feed lines follow "
+        "the process order: preheater, then straight into Reactor 1 and "
+        "across to Reactor 2.",
+        subs=[
+            "Drains leave from the side, not the bottom, so residue runs "
+            "back into the main line.  Drain and spray-ball hose points are "
+            "grouped at the front.",
+        ], gap=0.10)
+    y = add_block(
+        s, y, color,
+        "Jacket HTF nozzles to face the back wall.  Temperature element at "
+        "the outlet elbow; flange faces back so the front module slides in "
+        "onto it.",
+        subs=[
+            "CFCT will send a sketch of this arrangement to confirm it "
+            "matches SW's intent.  The jacket keeps opposite-side inlet and "
+            "outlet.",
+        ], gap=0.08)
+    add_footer(s, "04")
+    return y
+
+
+def slide_05(prs):
     color = "DC2626"
     s = blank_slide(prs)
-    add_header(s, "04", "Decision 1 — Equipment Cost Re-estimate",
+    add_header(s, "05", "Decision 1 — Equipment Cost Re-estimate",
                "Skid and auxiliary equipment, CFCT estimate, RMB thousand",
                color)
     y = 1.62
@@ -438,14 +487,14 @@ def slide_04(prs):
          "Modular assembly, CE certification and freight are not yet "
          "re-estimated and are carried at the previous figures.",
          size=12, italic=True, color=SUB)
-    add_footer(s, "04")
+    add_footer(s, "05")
     return y + 0.6
 
 
-def slide_05(prs):
+def slide_06(prs):
     color = "DC2626"
     s = blank_slide(prs)
-    add_header(s, "05", "Decision 1 — Against the Approved Budget",
+    add_header(s, "06", "Decision 1 — Against the Approved Budget",
                "Skid and auxiliary equipment + E&I and control cabinets",
                color)
     budget_then = BUDGET_GBP * RATE_APPROVED
@@ -493,14 +542,14 @@ def slide_05(prs):
             "Assembly, certification and freight are still to be "
             "re-estimated, so the total may move.",
         ], gap=0.08)
-    add_footer(s, "05")
+    add_footer(s, "06")
     return y
 
 
-def slide_06(prs):
+def slide_07(prs):
     color = "7C3AED"
     s = blank_slide(prs)
-    add_header(s, "06", "Decision 2 — Reactor 1 (R24-CR01) at DN65",
+    add_header(s, "07", "Decision 2 — Reactor 1 (R24-CR01) at DN65",
                "Preliminary decision, 15 October", color)
     y = 1.62
     y = add_block(
@@ -534,34 +583,34 @@ def slide_06(prs):
         "volume.  PFD and mass balance are unchanged; the DN65 relief "
         "calculation already exists.",
         gap=0.08)
-    add_footer(s, "06")
+    add_footer(s, "07")
     return y
 
 
-def slide_07(prs):
+def slide_08(prs):
     color = "0E9AA7"
     s = blank_slide(prs)
-    add_header(s, "07", "Next Steps", "Owners and open items", color)
+    add_header(s, "08", "Next Steps", "Owners and open items", color)
     y = 1.62
     steps = [
-        "SW (Keith) — review the 20 Oct model: SE01 / CU01 position, drain "
-        "and CIP valves, cabinet positions, three-head pump.",
-        "CFCT (Fan Shuangshuang) — freeze nozzle orientation and HTF routes, "
-        "then release the main-equipment drawings for enquiry.",
-        "CIMT (Meng Dezhi) — align the Siemens IS I/O module list and "
-        "Profinet / Profibus; agree UK or China purchase.",
-        "Instruments (Gao Yu) — E+H parameter review; apply the multipoint "
-        "RTD concept to other temperature points where it suits.",
-        "Process (Hu Chaoqun) — confirm feed-flow measurement against the "
-        "three-head pulsation curves.",
+        "CFCT (Fan Shuangshuang) — P&ID walk-through on the model; SE01 / "
+        "CU01 on the end face; jacket-nozzle sketch to SW.",
+        "Then freeze nozzle orientation and HTF routes, and release the "
+        "main-equipment drawings for enquiry.",
+        "Process (Hu Chaoqun) — remove CV06 and move its interlock to CV12; "
+        "send SW the pump vendor discussion and pulsation curves.",
+        "Instruments / CIMT — single-point temperature approach; Siemens "
+        "IS I/O module list and Profinet / Profibus; UK or China purchase.",
         "R&D (Dr Feng) — catalyst loading and bed-dilution procedure for "
         "R24-CR01 at DN65.",
         "CFCT — re-estimate assembly, certification and freight; update the "
         "budget comparison.",
+        "Site visit planned for the week of 2 November, subject to visas; "
+        "confirmation early next week.",
     ]
     for text in steps:
         y = add_block(s, y, color, text, small=True, gap=0.09)
-    add_footer(s, "07")
+    add_footer(s, "08")
     return y
 
 
@@ -570,7 +619,7 @@ def main():
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
     ys = [f(prs) for f in (slide_01, slide_02, slide_03, slide_04, slide_05,
-                           slide_06, slide_07)]
+                           slide_06, slide_07, slide_08)]
     prs.save(OUT)
     print("Saved:", OUT, "end-y:", [round(y, 2) for y in ys])
     if any(y > 6.95 for y in ys):
