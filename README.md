@@ -26,6 +26,7 @@
 | `Meeting_Summary_0907_Internal.md` | 09-07 内部短会：现场窗口与对 Keith 的议题 |
 | `Meeting_Summary_0908_Technical_Keith.md` | 09-08 技术会（Keith）：垫片、PIC-028、3D 分撬 |
 | `Meeting_Summary_1008_Technical_Keith.md` | 10-08 技术会（Keith）：IS I/O 柜、计量泵脉动缓冲器、顶部温度变送器、DN50 催化剂管嘴 |
+| `Meeting_Summary_1020_Technical_Keith.md` | 10-20 技术会（Keith）：SE01/CU01 定端面、删 CV06、按 P&ID 逐条精简、夹套管嘴朝后墙、计量泵分歧 |
 
 ### 会议转写（原始录音转文字）
 `05-09` / `05-12` / `07-01` / `07-06` / `07-14` / `08-05` / `08-06` / `08-12` / `08-13` / `08-18` 各场 `.docx`，以及 `2026-05-09`、`2026-06-09`、`2026-07-29`、`2026-08-13` 录音转写。
@@ -52,7 +53,7 @@
 | `0114` / `0509` / `0701` 版 `.xlsx`、`timeline_compare.png` | 历史版本与对比 |
 
 ### 隔周进度汇报
-`Progress_Report_0715.pptx` / `0729` / `0811` / `0826` / `0909` / `0923` / `1021`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。`0909` 为可直接给 SW 的纯净版（8 月 27 日–9 月 9 日）。`0923` 为 9 月 9–23 日向领导的双周进展，由 `scripts/build_progress_ppt_0923.py` 生成。`1021` 为 9 月 23 日–10 月 21 日的纯英文版，可直接给英国同事；含投资评估表预算对比和反应器 1 选 DN65，由 `scripts/build_progress_ppt_1021.py` 生成。
+`Progress_Report_0715.pptx` / `0729` / `0811` / `0826` / `0909` / `0923` / `1021`，思维导图 `progress_mindmap_0715.html`、`progress_mindmap_0811.html`，另有 `SW_Sandwich_Progress_0710_Briefing.pptx`。`0909` 为可直接给 SW 的纯净版（8 月 27 日–9 月 9 日）。`0923` 为 9 月 9–23 日向领导的双周进展，由 `scripts/build_progress_ppt_0923.py` 生成。`1021` 为 9 月 23 日–10 月 21 日的纯英文版（8 页），可直接给英国同事；含 10 月 20 日会上定下的管路和阀门原则、投资评估表预算对比和反应器 1 选 DN65，由 `scripts/build_progress_ppt_1021.py` 生成。
 
 ### 现场行程提案
 | 文件 | 说明 |
